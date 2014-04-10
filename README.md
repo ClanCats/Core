@@ -1,4 +1,4 @@
-CCF
-===
+CCF Core
+========
 
-This is the ClanCatsFramework Core repository.
+This is just the ClanCatsFramework Core repository. 

@@ -1,0 +1,10 @@
+{
+	"name": "ClanCats/CCF",
+	"description": "The ClanCatsFramework Core repository",
+	"license": "MIT",
+	"require": {
+		"php": ">=5.3",
+		"composer/installers": "~1.0"
+	}
+}
+
