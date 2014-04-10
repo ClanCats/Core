@@ -1,5 +1,5 @@
 {
-	"name": "ClanCats/CCF",
+	"name": "clancats/core",
 	"description": "The ClanCatsFramework Core repository",
 	"license": "MIT",
 	"require": {
