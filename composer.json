@@ -1,6 +1,7 @@
 {
 	"name": "clancats/core",
 	"description": "The ClanCatsFramework Core repository",
+	"type": "clancatsframework-core",
 	"license": "MIT",
 	"require": {
 		"php": ">=5.3",
