@@ -11,3 +11,13 @@
 
 // and the shdaow
 \CCFinder::shadow( 'DB', 'DB', COREPATH.'bundles/Database/DB'.EXT );
+
+/*
+ *---------------------------------------------------------------
+ * UI Bundle
+ *---------------------------------------------------------------
+ * 
+ * The UI Bundle contains some helpers to generate HTML.
+ */
+// namepace
+\CCFinder::map( 'UI', COREPATH.'bundles/UI/' );
