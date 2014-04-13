@@ -26,7 +26,7 @@ class CCLog
 	 */
 	public static function _init() 
 	{
-		CCEvent::mind( 'ccf.shutdown', array( get_class(), 'write' ) );
+		CCEvent::mind( 'CCF.shutdown', array( get_class(), 'write' ) );
 	}
 	
 	/**

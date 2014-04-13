@@ -21,3 +21,16 @@
  */
 // namepace
 \CCFinder::map( 'UI', COREPATH.'bundles/UI/' );
+
+/*
+ *---------------------------------------------------------------
+ * Authentication Bundle
+ *---------------------------------------------------------------
+ * 
+ * The Authentication bundle for basic a basic user and login
+ */
+// namepace
+\CCFinder::map( 'Auth', COREPATH.'bundles/Auth/' );
+
+// and the shdaow
+\CCFinder::shadow( 'Auth', 'Auth', COREPATH.'bundles/Auth/Auth'.EXT );
