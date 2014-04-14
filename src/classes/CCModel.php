@@ -1,76 +1,77 @@
-<?php namespace CC\Core;
+<?php namespace Core;
 /**
- * ClanCats Model
+ * Base Model 
+ ** 
  *
- * @package 		ClanCats-Framework
- * @author     		Mario Döring <mariodoering@me.com>
- * @version 		0.4
- * @copyright 		2010 - 2013 ClanCats GmbH 
+ * @package		ClanCatsFramework
+ * @author		Mario Döring <mario@clancats.com>
+ * @version		2.0
+ * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class CCModel {
-
-	/*
-	 * the static data cache 
-	 * because php is stupid
+class CCModel 
+{
+	/**
+	 * The static data array
+	 *
+	 * Because we don't want to generate the defauts etc. on every
+	 * created model again we save them static. But because of the 
+	 * behavior of php and static vars we cannot just set these in 
+	 * static vars, so we add them to a static array with our class name.
+	 *
+	 * @var array
 	 */
 	public static $_static_array = array();
 
-	/*
-	 * defaults
+	/**
+	 * Defaults
 	 */
 	// protected static $_defaults = array();
-
-	/*
-	 * the fields
-	 */
-	// protected static $_fields = array();
-
-	/*
-	 * the table
-	 */
-	// public static $_table = null;
-
-	/*
-	 * primary key
-	 */
-	// public static $_primary_key = 'id';
-
-	/*
-	 * the relationships
-	 */
-	// protected static $_relationships = array();
-
-	/*
-	 * the query defaults
-	 */
-	// protected static $_query_defaults = null;
-
-	/*
-	 * if set to true the model automatically adds: 
-	 * updated_at
-	 * created_at
-	 */
-	// protected static $_timestamps = false;
-
+	
 	/**
-	 * static initialisation
-	 * set the table automatically
-	 * and try to flatten the defaults
+	 * Prepare the model
+	 *
+	 * @param string 	$settings	The model properties
+	 * @param string 	$class 		The class name.
+	 * @return array
 	 */
-	public static function _init() {
-
-		if ( get_called_class() == get_class() ) {
+	protected static function _prepare( $setting, $class )
+	{
+		// get the default's, fix them and clean them.
+		if ( property_exists( $class, '_defaults') ) 
+		{
+			$setting['defaults'] = static::$_defaults;
+		
+			foreach( static::$_defaults as $key => $value )
+			{
+				if ( is_numeric( $key ) ) 
+				{
+					$setting['defaults'][$value] = null;
+					unset( $cache['defaults'][$key] );
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Static init
+	 * 
+	 * Here we prepare the model properties and settings for future use.
+	 */
+	public static function _init() 
+	{
+		if ( ( $class = get_called_class() ) == get_class() ) 
+		{
 			return;
 		}
-
-		$class = get_called_class();
 
 		$cache = array(
 			// object defaults
 			'defaults' 			=> array(),
+			
 			// database fields
-			'fields'			=> array(),
+			'fields'				=> array(),
+			
 			// database table
 			'table'				=> null,
 			// the primary key
@@ -83,77 +84,17 @@ class CCModel {
 			'timestamps'		=> false,
 		);
 
-		// clean the defaults 
-		if ( property_exists( $class, '_defaults') ) {
-
-			$cache['defaults'] = static::$_defaults;
-
-			foreach( static::$_defaults as $key => $value ) {
-				if ( is_numeric( $key ) ) {
-					$cache['defaults'][$value] = null;
-					unset( $cache['defaults'][$key] );
-				}
-			}
-		}
-
-		// set the fields
-		if ( property_exists( $class, '_fields') ) {
-			$cache['fields'] = static::$_fields;
-		}
-		if ( empty( $cache['fields'] ) ) {
-			$cache['fields'] = array_keys( $cache['defaults'] );
-		}
-
-
-		// set table name
-		if ( property_exists( $class, '_table') ) {
-			$cache['table'] = static::$_table;
-		}
-		if ( is_null( $cache['table'] ) ) {
-			$cache['table'] = strtolower( substr( get_called_class(), 6 ) ).'s';
-		}
-
-		// set primary key
-		if ( property_exists( $class, '_primary_key') ) {
-			$cache['primary_key'] = static::$_primary_key;
-		}
-
-		// set query defaults
-		if ( property_exists( $class, '_query_defaults') ) {
-			$cache['query_defaults'] = static::$_query_defaults;
-		}
-
-		// set relationships
-		if ( property_exists( $class, '_relationships') ) {
-			$cache['relationships'] = static::$_relationships;
-		}
-		foreach( $cache['relationships'] as $key => $relation ) {
-			// do we have an model name?
-			if ( !array_key_exists( 'model', $relation ) ) {
-				$relation['model'] = 'Model_'.ucfirst( $key );
-			}
-			// is the foreign key set?
-			if ( !array_key_exists( 'foreign_key', $relation ) ) {
-				if ( $relation['type'] == 'has_many' ) {
-					$relation['foreign_key'] = substr( $cache['table'], 0, -1 ).'_id';	
-				} else {
-					$relation['foreign_key'] = $key.'_id';
-				}
-			}
-			// is the current key set?
-			if ( !array_key_exists( 'key', $relation ) ) {
-				$relation['key'] = $cache['primary_key'];
-			}
-
-			$cache['relationships'][$key] = $relation;
-		}
-
-		// set timestamps
-		if ( property_exists( $class, '_timestamps') ) {
-			$cache['timestamps'] = static::$_timestamps;
-		}
+		
 
 		static::$_static_array[$class] = $cache;
+	}
+	
+	/**
+	 * Prepare the model
+	 */
+	protected static function _prepare()
+	{
+		
 	}
 
 	/**
