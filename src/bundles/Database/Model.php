@@ -1,4 +1,4 @@
-<?php namespace BD;
+<?php namespace DB;
 /**
  * DB Model 
  ** 
@@ -9,7 +9,7 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class Model extends CCModel
+class Model extends \CCModel
 {
 	/*
 	 * The fields
@@ -27,11 +27,6 @@ class Model extends CCModel
 	// public static $_primary_key = null;
 
 	/*
-	 * The relationships
-	 */
-	// protected static $_relationships = array();
-
-	/*
 	 * The find mofifier
 	 */
 	// protected static $_find_modifier = null;
@@ -41,40 +36,91 @@ class Model extends CCModel
 	 */
 	// protected static $_timestamps = false;
 	
-	/**
-	 * Prepare the model
+	/*
+	 * The relationships
 	 */
-	protected static function _prepare()
+	// protected static $_relationships = array();
+	
+	/**
+ 	 * Prepare the model
+	 *
+	 * @param string 	$settings	The model properties
+	 * @param string 	$class 		The class name.
+	 * @return array
+	 */
+	protected static function _prepare( $setting, $class )
 	{
-		// set the fields
-		if ( property_exists( $class, '_fields') ) {
-			$cache['fields'] = static::$_fields;
+		$settings = parent::_prepare( $settings, $class );
+		
+		// Set the select fields. If not set we simply use 
+		// the array keys of our defaults
+		if ( property_exists( $class, '_fields') ) 
+		{
+			$settings['fields'] = static::$_fields;
 		}
-		if ( empty( $cache['fields'] ) ) {
-			$cache['fields'] = array_keys( $cache['defaults'] );
+		else 
+		{
+			$settings['fields'] = array_keys( $settings['defaults'] );
 		}
 		
-		
-		// set table name
-		if ( property_exists( $class, '_table') ) {
-			$cache['table'] = static::$_table;
+		// Next step the table name. If not set we use the 
+		// class name appending an 's' in the hope that it 
+		// makes sense like Model_User = users
+		if ( property_exists( $class, '_table') ) 
+		{
+			$settings['table'] = static::$_table;
 		}
-		if ( is_null( $cache['table'] ) ) {
-			$cache['table'] = strtolower( substr( get_called_class(), 6 ) ).'s';
+		else 
+		{
+			$settings['table'] = strtolower( $class );
+			
+			// Often we have these model's in the Model folder, we 
+			// don't want this in the table name so we cut it out.
+			if ( substr( $settings['table'], 0, strlen( 'model_' ) ) == 'model_' )
+			{
+				$settings['table'] = substr( $settings['table'], strlen( 'model_' ) );
+			}
+			
+			$settings['table'].'s';
 		}
 		
-		// set primary key
-		if ( property_exists( $class, '_primary_key') ) {
-			$cache['primary_key'] = static::$_primary_key;
+		// Next we would like to know the primary key used
+		// in this model for saving, finding etc.. if not set
+		// we use the on configured in the main configuration
+		if ( property_exists( $class, '_primary_key') ) 
+		{
+			$settings['primary_key'] = static::$_primary_key;
+		}
+		else 
+		{
+			$settings['primary_key'] = \ClanCats::$config->get( 'database.default_primary_key', 'id' );
 		}
 		
-		// set query defaults
-		if ( property_exists( $class, '_query_defaults') ) {
-			$cache['query_defaults'] = static::$_query_defaults;
+		// The find modifier allows you hijack every find executed
+		// on your model an pass setting's to the query. This allows
+		// you for example to defaultly order by something etc.
+		if ( property_exists( $class, '_find_modifier') ) 
+		{
+			$settings['find_modifier'] = static::$_find_modifier;
+		}
+		else
+		{
+			$settings['find_modifier'] = null;
+		}
+		
+		// Enabling this options will set the created_at
+		// and modified at property on save
+		if ( property_exists( $class, '_timestamps') ) 
+		{
+			$settings['timestamps'] = (bool) static::$_timestamps;
+		}
+		else
+		{
+			$settings['timestamps'] = false;
 		}
 		
 		// set relationships
-		if ( property_exists( $class, '_relationships') ) {
+		/*if ( property_exists( $class, '_relationships') ) {
 			$cache['relationships'] = static::$_relationships;
 		}
 		foreach( $cache['relationships'] as $key => $relation ) {
@@ -96,14 +142,9 @@ class Model extends CCModel
 			}
 		
 			$cache['relationships'][$key] = $relation;
-		}
+		}*/
 		
-		// set timestamps
-		if ( property_exists( $class, '_timestamps') ) {
-			$cache['timestamps'] = static::$_timestamps;
-		}
-		
-		static::$_static_array[$class] = $cache;
+		return $settings;
 	}
 	
 	/**

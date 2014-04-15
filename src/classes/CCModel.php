@@ -62,12 +62,15 @@ class CCModel
 			{
 				if ( is_numeric( $key ) ) 
 				{
-					static::$_defaults[$value] = null;
-					unset( static::$_defaults[$key] );
+					$settings['defaults'][$value] = null;
+				}
+				else
+				{
+					$settings['defaults'][$key] = $value;
 				}
 			}
 			
-			$settings['defaults'] = static::$_defaults;
+			static::$_defaults = $settings['defaults'];
 		}
 		
 		return $settings;
