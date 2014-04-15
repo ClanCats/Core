@@ -17,4 +17,38 @@ class Model_Person extends \CCModel
 		'age'			=> 0,
 		'library_id'	
 	);
+	
+	/**
+	 * Test modifier
+	 */
+	public function _get_modifier_line()
+	{
+		return $this->name.' '.$this->age;
+	}
+	
+	/**
+	 * Test modifier
+	 */
+	public function _get_modifier_age( $age )
+	{
+		if ( $age < 18 )
+		{
+			$age = 18;
+		}
+		
+		return $age;
+	}
+	
+	/**
+	 * Test set modifier
+	 */
+	public function _set_modifier_age( $age )
+	{
+		if ( $age < 18 )
+		{
+			$age = 18;
+		}
+		
+		return $age;
+	}
 }

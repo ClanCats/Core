@@ -96,4 +96,46 @@ class Test_CCModel extends \PHPUnit_Framework_TestCase
 			$this->assertEquals( $people[$key], $person->raw() );
 		}
 	}
+	
+	/**
+	 * CCModel::__get
+	 *
+	 * @dataProvider people_provider
+	 */
+	public function test_get( $person ) 
+	{
+		$person_model = CCUnit\Model_Person::create( $person );
+		
+		$this->assertEquals( $person['name'], $person_model->name );
+		$this->assertTrue( $person_model->age >= 18 );
+		$this->assertEquals( $person_model->name.' '.$person_model->age, $person_model->line );
+	}
+	
+	/**
+	 * CCModel::__set
+	 *
+	 * @dataProvider people_provider
+	 */
+	public function test_set( $person ) 
+	{
+		$person_model = CCUnit\Model_Person::create( $person );
+		
+		$person_model->age = mt_rand( -20, 20 );
+		
+		$this->assertTrue( $person_model->age >= 18 );
+		$this->assertTrue( CCArr::get( 'age', $person_model->raw() ) >= 18 );
+	}
+	
+	/**
+	 * CCModel::__isset
+	 *
+	 * @dataProvider people_provider
+	 */
+	public function test_isset( $person ) 
+	{
+		$person_model = CCUnit\Model_Person::create( $person );
+		
+		$this->assertTrue( isset( $person_model->age ) );
+		$this->assertTrue( isset( $person_model->line ) );
+	}
 }

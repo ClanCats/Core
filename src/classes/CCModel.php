@@ -162,8 +162,10 @@ class CCModel
 	{
 		$data = $this->_before_assign( $data );
 
-		foreach( $data as $key => $value ) {
-			if ( array_key_exists( $key, $this->_data_store ) ) {
+		foreach( $data as $key => $value ) 
+		{
+			if ( array_key_exists( $key, $this->_data_store ) ) 
+			{
 				$this->_data_store[$key] = $value;
 			}
 		}
