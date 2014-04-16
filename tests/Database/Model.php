@@ -39,4 +39,16 @@ class Test_Database_Model extends \DB\TestCase
 		// custom assignment
 		$this->assertEquals( '*', CCUnit\Model_DBPerson_CustomFields::_model( 'fields' ) );
 	}
+	
+	/**
+	 * CCModel::$fields
+	 */
+	public function test_table() 
+	{
+		// assigned by defaults
+		$this->assertEquals( 'people', CCUnit\Model_DBPerson::_model( 'table' ) );
+		
+		// custom assignment
+		$this->assertEquals( 'ccunit_dbperson_autotables', CCUnit\Model_DBPerson_AutoTable::_model( 'table' ) );
+	}
 }

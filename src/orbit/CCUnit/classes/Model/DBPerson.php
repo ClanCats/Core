@@ -10,6 +10,11 @@
 class Model_DBPerson extends \DB\Model
 {
 	/*
+	 * Current Table 
+	 */
+	protected static $_table = "people";
+	
+	/*
 	 * Defaults
 	 */
 	protected static $_defaults = array(

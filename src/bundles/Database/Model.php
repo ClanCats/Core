@@ -74,14 +74,20 @@ class Model extends \CCModel
 		{
 			$settings['table'] = strtolower( $class );
 			
+			$settings['table'] = explode( "\\", $settings['table'] );
+			
+			$last = array_pop( $settings['table'] );
+			
 			// Often we have these model's in the Model folder, we 
 			// don't want this in the table name so we cut it out.
-			if ( substr( $settings['table'], 0, strlen( 'model_' ) ) == 'model_' )
+			if ( substr( $last, 0, strlen( 'model_' ) ) == 'model_' )
 			{
-				$settings['table'] = substr( $settings['table'], strlen( 'model_' ) );
+				$last = substr( $last, strlen( 'model_' ) );
 			}
 			
-			$settings['table'].'s';
+			$settings['table'][] = $last;
+			
+			$settings['table'] = implode( '_', $settings['table'] ).'s';
 		}
 		
 		// Next we would like to know the primary key used
