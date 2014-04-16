@@ -164,26 +164,20 @@ class Model extends \CCModel
 	}
 	
 	/**
-	 * find from database
+	 * Model finder 
+	 * This function allows you direct access to your records.
 	 *
 	 * @param mixed		$param
 	 * @param mixed		$param2
 	 * @return CCModel
 	 */
-	public static function find( $param, $param2 = null ) {
-	
-		$cache = static::_cache();
+	public static function find( $param, $param2 = null ) 
+	{
+		$settings = static::_model();
 		
-		$fields = array();
-		foreach( $cache['fields'] as $field ) {
-			if ( substr( $field, -1 ) != '*' ) {
-				$fields[] = '`'.$field.'`';
-			} else {
-				$fields[] = $field;
-			}
-		}
+		$query = DB::select( $settings['table'], $settings['fields'] );
 		
-		$query = DB::select( $cache['table'], $fields );
+		_dd( $query->build() );
 	
 		// is it a callback? 
 		if ( is_callable( $param ) && !is_string( $param )) {
@@ -318,53 +312,59 @@ class Model extends \CCModel
 	 * @param mixed		$fields
 	 * @return self
 	 */
-	public function save( $fields = null ) {
-	
-		$cache = static::_cache();
-	
-		if ( is_null( $fields ) ) {
-			$fields = $cache['fields'];
+	public function save( $fields = null ) 
+	{
+		$settings = static::_model();
+		
+		// check if we should save just some fields
+		if ( is_null( $fields ) ) 
+		{
+			$fields = $settings['fields'];
 		}
-		elseif ( is_string( $fields ) ) {
+		elseif ( !is_array( $fields ) ) 
+		{
 			$fields = array( $fields );
 		}
-	
-		// Update
-		if ( $this->_data_store[$cache['primary_key']] > 0 ) {
-			$query = DB::update( $cache['table'] )
-				->s_where( $cache['primary_key'], $this->_data_store[$cache['primary_key']] );
+		
+		$pkey = $this->_data_store[$settings['primary_key']];
+		$data = array();
+		
+		// Now we have to filter the data to the save fields
+		foreach( $fields as $field )
+		{
+			$data[$field] = $this->_data_store[$field];
 		}
-		// Insert
-		else {
-			$query = DB::insert( $cache['table'] );
+		
+		// We have to remove the primary key from our data
+		if ( array_key_exists( $settings['primary_key'], $data ) )
+		{
+			unset( $data[$settings['primary_key']] );
+		}
+		
+		// We pass the data trough the before save callback.
+		// This is a local callback for performence reasons.
+		$data = $this->_before_save( $data );
+	
+		// When we already have a primary key we are going to 
+		// update our record instead of inserting a new one.
+		if ( !is_null( $pkey ) && $pkey > 0 ) 
+		{
+			$query = DB::update( $settings['table'], $data )
+				->where( $settings['primary_key'], $pkey );
+		}
+		// No primary key? Smells like an insert query. 
+		else 
+		{
+			$query = DB::insert( $settings['table'], $data );
 		}
 	
-		// before save hook
-		$data = $this->_before_save( $this->_data_store );
-	
-		// remove primary key
-		$key = array_search( $cache['primary_key'], $fields );
-	
-		if ( $key !== false ) {
-			unset( $fields[$key] );
-			unset( $data[$cache['primary_key']] );
+		// We check the query type to handle the response right
+		if ( $query instanceof Query_Insert ) 
+		{
+			$this->_data_store[$settings['primary_key']] = $query->run();
 		}
-	
-		// only save some data if fields is not *
-		if ( $fields != array( '*' ) ) {
-			$old_data = $data; $data = array();
-			foreach( $fields as $field ) {
-				$data[$field] = $old_data[$field];
-			}
-		}
-	
-		$query->values( $fields, $data, true );
-	
-		// we get the new id as result
-		if ( $this->{$cache['primary_key']} == 0 ) {
-			$this->{$cache['primary_key']} = $query->run();
-		}
-		else {
+		else 
+		{
 			$query->run();
 		}
 	
