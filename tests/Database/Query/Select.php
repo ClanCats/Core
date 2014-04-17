@@ -529,4 +529,36 @@ class Test_Database_Query_Select extends \DB\TestCase
 			
 		$this->assertEquals( count( $people ), DB::select( 'people' )->count() );
 	}
+	
+	/**
+	 * Test Query_Select::group_result
+	 *
+	 * @dataProvider people_provider_bulk
+	 */
+	public function test_group_result( $people )
+	{
+		// lets kill the db
+		DB::run( 'delete from people' );
+		
+		DB::insert( 'people', $people )->run();
+		
+		$people = DB::select( 'people' )
+			->group_result()
+			->run();
+		
+		foreach( $people as $key => $person )
+		{
+			$this->assertEquals( $person->id, $key );
+		}
+		
+		// diffrent key
+		$people = DB::select( 'people' )
+			->group_result( 'name' )
+			->run();
+			
+		foreach( $people as $key => $person )
+		{
+			$this->assertEquals( $person->name, $key );
+		}
+	}
 }

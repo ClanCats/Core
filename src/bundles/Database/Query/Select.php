@@ -40,6 +40,20 @@ class Query_Select extends Query
 	public $groups = array();
 
 	/**
+	 * group the results
+	 *
+	 * @var false|string 
+	 */
+	public $group_result = false;
+	
+	/**
+	 * the fetching arguments
+	 *
+	 * @var array
+	 */
+	public $fetch_arguments = array( 'obj' );
+
+	/**
 	 * Distinct select setter
 	 *
 	 * @param bool		$ignore
@@ -146,6 +160,29 @@ class Query_Select extends Query
 		
 		return $this;
 	}
+	/**
+	 * group the result's by a key
+	 *
+	 * @param string|bool		$key
+	 * @return self
+	 */
+	public function group_result( $key = true )
+	{
+		if ( $key === false )
+		{
+			$this->group_result = false;
+		}
+		elseif ( $key === true )
+		{
+			$this->group_result = \ClanCats::$config->get( 'database.default_primary_key', 'id' );
+		}
+		else
+		{
+			$this->group_result = $key;
+		}
+		
+		return $this;
+	}
 	
 	/**
 	 * Build the query to a string
@@ -177,7 +214,29 @@ class Query_Select extends Query
 			$this->handler( $handler );
 		}
 		
-		$results = $this->handler->fetch( $this->build(), $this->handler->builder()->parameters );
+		$results = $this->handler->fetch( $this->build(), $this->handler->builder()->parameters, $this->fetch_arguments );
+		
+		// Should we group the result by a special key?
+		if ( $this->group_result !== false )
+		{
+			$raw_results = $results;
+			$results = array();
+			
+			if ( in_array( 'assoc', $this->fetch_arguments ) )
+			{
+				foreach( $raw_results as $result )
+				{
+					$results[$result[$this->group_result]] = $result;
+				}
+			}
+			else
+			{
+				foreach( $raw_results as $result )
+				{
+					$results[$result->{$this->group_result}] = $result;
+				}
+			}
+		}
 		
 		// when the limit is 1 we are going to return the 
 		// result directly
