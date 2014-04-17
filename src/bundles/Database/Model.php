@@ -177,59 +177,53 @@ class Model extends \CCModel
 		
 		$query = DB::select( $settings['table'], $settings['fields'] );
 		
-		_dd( $query->build() );
+		// Do we have a find modifier?
+		if ( !is_null( $settings['find_modifier'] ) ) 
+		{
+			$callbacks = $settings['find_modifier'];
+			
+			if ( !CCArr::is_collection( $callbacks ) )
+			{
+				$callbacks = array( $callbacks );
+			}
+			
+			foreach( $callbacks as $call )
+			{
+				if ( is_callable( $call ) ) 
+				{
+					call_user_func_array( $call, array( &$query ) );
+				}
+				else 
+				{
+					throw new ModelException( "Invalid Callback given to find modifiers." );
+				}
+			}
+		}
 	
-		// is it a callback? 
-		if ( is_callable( $param ) && !is_string( $param )) {
+		// Check if paramert 1 is a valid callback and not a string.
+		// Strings as function callback are not possible because
+		// the user might want to search by key like:
+		// Model::find( 'key', 'type' );
+		if ( is_callable( $param ) && !is_string( $param ) ) 
+		{
 			call_user_func_array( $param, array( &$query ) );
 		}
-		// is it an array?
-		elseif ( is_array( $param ) ) {
-			foreach( $param as $key => $action ) {
-				if ( !is_array( $action ) ) {
-					$action = array( $action );
-				}
-				call_user_func_array( array( $query, $key ), $action );
-			}
+		// When no param 2 isset we try to find the record by primary key
+		elseif ( is_null( $param2 ) ) 
+		{
+			$query->where( $settings['table'].'.'.$settings['primary_key'], $param );
 		}
-		// no param2? like model::find( 42 )
-		elseif ( is_null( $param2 ) ) {
-			$query->s_where( $cache['table'].'.'.$cache['primary_key'], $param );
+		// When param one and two isset we try to find the record by
+		// the given key and value.
+		else 
+		{
+			$query->where( $param, $param2 );
 		}
-		// else do something like: model::find( 'name', 'supermario' )
-		else {
-			$query->s_where( $param, $param2 );
-		}
-	
-		// run the qurey defaults
-		if ( !is_null( $cache['query_defaults'] ) ) {
-	
-			// callback?
-			if ( is_callable( $cache['query_defaults'] ) ) {
-				call_user_func_array( $cache['query_defaults'], array( &$query ) );
-			}
-			// or an array?
-			elseif ( is_array( $cache['query_defaults'] ) ) {
-				foreach( $cache['query_defaults'] as $key => $action ) {
-					if ( !is_array( $action ) ) {
-						$action = array( $action );
-					}
-	
-					if ( is_array( $action[key($action)] ) ) {
-						foreach( $action as $action_arr ) {
-							call_user_func_array( array( $query, $key ), $action_arr );
-						}
-					}
-					else {
-						call_user_func_array( array( $query, $key ), $action );
-					}
-				}
-			}
-		}
-	
+		
 		// alway group the result
 		$query->group_result( $cache['primary_key'] );
-	
+		
+		// and assign
 		return static::assign( $query->run() );
 	}
 	
