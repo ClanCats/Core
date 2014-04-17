@@ -141,7 +141,7 @@ class ClanCats
 	{
 		if ( is_null( static::$in_development ) )
 		{
-			return static::$in_development = static::environment_is( 'development' );
+			return static::$in_development = ( static::environment_is( 'development' ) || static::environment_is( 'phpunit' ) );
 		}
 		return static::$in_development;
 	}

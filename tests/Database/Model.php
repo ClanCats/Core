@@ -101,7 +101,7 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::find
+	 * CCModel::find after save
 	 */
 	public function after_save_find_test( $person ) 
 	{
@@ -112,4 +112,53 @@ class Test_Database_Model extends \DB\TestCase
 			$this->assertEquals( $value, $model->{$key} );
 		}
 	}
+	
+	/**
+	 * CCModel::find
+	 */
+	public function test_find() 
+	{
+		// find by primary key
+		$model = CCUnit\Model_DBPerson::assign( array(
+			'name'			=> 'peter_fox',
+			'age'			=> '30',
+			'library_id' 	=> 0,
+		))->save();
+		
+		$this->assertEquals( $model->name, CCUnit\Model_DBPerson::find( $model->id )->name );
+		
+		// find by diffrent key
+		$this->assertEquals( $model->id, CCUnit\Model_DBPerson::find( 'name', $model->name )->id );
+		
+		// find with callback
+		$person = CCUnit\Model_DBPerson::find( function($q) 
+		{
+			$q->where( 'name', 'peter_fox' );
+			$q->where( 'age', 30 );
+			$q->limit( 1 );
+		});
+		
+		$this->assertEquals( $model->id, $person->id );
+		
+		// find no limit
+		$person = CCUnit\Model_DBPerson::find( function($q) 
+		{
+			$q->where( 'name', 'peter_fox' );
+			$q->where( 'age', 30 );
+		});
+		
+		$this->assertEquals( $model->id, reset( $person )->id );
+		
+		// find all
+		$people = CCUnit\Model_DBPerson::find();
+		
+		$this->assertTrue( reset( $people ) instanceof CCUnit\Model_DBPerson );
+
+		// did we got the primary key
+		foreach( $people as $id => $person )
+		{
+			$this->assertEquals( $id, $person->id );
+		}
+	}
+	
 }

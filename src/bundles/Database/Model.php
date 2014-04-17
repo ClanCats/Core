@@ -171,7 +171,7 @@ class Model extends \CCModel
 	 * @param mixed		$param2
 	 * @return CCModel
 	 */
-	public static function find( $param, $param2 = null ) 
+	public static function find( $param = null, $param2 = null ) 
 	{
 		$settings = static::_model();
 		
@@ -200,26 +200,29 @@ class Model extends \CCModel
 			}
 		}
 	
-		// Check if paramert 1 is a valid callback and not a string.
-		// Strings as function callback are not possible because
-		// the user might want to search by key like:
-		// Model::find( 'key', 'type' );
-		if ( is_callable( $param ) && !is_string( $param ) ) 
+		if ( !is_null( $param ) )
 		{
-			call_user_func_array( $param, array( &$query ) );
-		}
-		// When no param 2 isset we try to find the record by primary key
-		elseif ( is_null( $param2 ) ) 
-		{
-			$query->where( $settings['table'].'.'.$settings['primary_key'], $param )
-				->limit(1);
-		}
-		// When param one and two isset we try to find the record by
-		// the given key and value.
-		elseif ( !is_null( $param2 ) )
-		{
-			$query->where( $param, $param2 )
-				->limit(1);
+			// Check if paramert 1 is a valid callback and not a string.
+			// Strings as function callback are not possible because
+			// the user might want to search by key like:
+			// Model::find( 'key', 'type' );
+			if ( is_callable( $param ) && !is_string( $param ) ) 
+			{
+				call_user_func_array( $param, array( &$query ) );
+			}
+			// When no param 2 isset we try to find the record by primary key
+			elseif ( is_null( $param2 ) ) 
+			{
+				$query->where( $settings['table'].'.'.$settings['primary_key'], $param )
+					->limit(1);
+			}
+			// When param one and two isset we try to find the record by
+			// the given key and value.
+			elseif ( !is_null( $param2 ) )
+			{
+				$query->where( $param, $param2 )
+					->limit(1);
+			}
 		}
 		
 		// alway group the result
