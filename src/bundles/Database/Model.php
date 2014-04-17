@@ -211,17 +211,22 @@ class Model extends \CCModel
 		// When no param 2 isset we try to find the record by primary key
 		elseif ( is_null( $param2 ) ) 
 		{
-			$query->where( $settings['table'].'.'.$settings['primary_key'], $param );
+			$query->where( $settings['table'].'.'.$settings['primary_key'], $param )
+				->limit(1);
 		}
 		// When param one and two isset we try to find the record by
 		// the given key and value.
-		else 
+		elseif ( !is_null( $param2 ) )
 		{
-			$query->where( $param, $param2 );
+			$query->where( $param, $param2 )
+				->limit(1);
 		}
 		
 		// alway group the result
-		$query->group_result( $cache['primary_key'] );
+		$query->group_result( $settings['primary_key'] );
+		
+		// and we have to fetch assoc
+		$query->fetch_arguments = array( 'assoc' );
 		
 		// and assign
 		return static::assign( $query->run() );

@@ -97,7 +97,7 @@ class Test_Database_Model extends \DB\TestCase
 			$this->assertEquals( $value, $model->{$key} );
 		}
 		
-		//$this->after_save_find_test( $model );
+		$this->after_save_find_test( $model );
 	}
 	
 	/**
@@ -106,7 +106,6 @@ class Test_Database_Model extends \DB\TestCase
 	public function after_save_find_test( $person ) 
 	{
 		$model = CCUnit\Model_DBPerson::find( $person->id );
-		$model->save();
 		
 		foreach( $person->raw() as $key => $value )
 		{
