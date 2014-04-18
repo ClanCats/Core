@@ -148,6 +148,23 @@ class Test_CCUrl extends \PHPUnit_Framework_TestCase
 	}
 	
 	/**
+	 * CCUrl::current
+	 */
+	public function test_current() 
+	{
+		// fake some data
+		CCIn::instance( new CCIn_Instance( array( 'param'=>1, 'test'=>'tee' ), array(), array(), array(), array( 'REQUEST_URI' => '//foo/bar//file.xml?param=1&test=tee' ) ) );
+		
+		$this->assertEquals( '/foo/bar/file.xml', CCUrl::current() );
+		
+		$this->assertEquals( '/foo/bar/file.xml?param=1&test=tee', CCUrl::current( array(), true ) );
+		
+		$this->assertEquals( '/foo/bar/file.xml?param=2&test=tee', CCUrl::current( array( 'param' => 2 ), true ) );
+		
+		$this->assertEquals( '/foo/bar/file.xml?param=2', CCUrl::current( array( 'param' => 2 ), false ) );
+	}
+	
+	/**
 	 * CCUrl::to
 	 */
 	public function test_to_with_offset() 

@@ -139,7 +139,7 @@ class CCUrl
 	/**
 	 * Create the full url including protocol and hostname
 	 *
-	 * @param string		$alias
+	 * @param string		$uri
 	 * @param array  	$params
 	 * @param bool		$retain		Should we keep the get parameters?
 	 * @return string 
@@ -152,7 +152,7 @@ class CCUrl
 	/**
 	 * Create the url and force the https protocol
 	 *
-	 * @param string		$alias
+	 * @param string		$uri
 	 * @param array  	$params
 	 * @param bool		$retain		Should we keep the get parameters?
 	 * @return string 
@@ -163,12 +163,15 @@ class CCUrl
 	}
 
 	/**
-	 * get the current uri
+	 * Get the current url
 	 *
-	 * @param array|null	$params
+	 * @param array  	$params
+	 * @param bool		$retain		Should we keep the get parameters?
+	 * @return string 
 	 */
-	public static function current( $params = null ) {
-		return static::to( static::$current, $params );
+	public static function current( $params = array(), $retain = false ) 
+	{
+		return static::to( CCIn::uri(), $params, $retain );
 	}
 
 	/**
