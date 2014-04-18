@@ -120,6 +120,21 @@ class Test_CCUrl extends \PHPUnit_Framework_TestCase
 	}
 	
 	/**
+	 * CCUrl::to with retain
+	 */
+	public function test_to_retain() 
+	{
+		// fake some data
+		CCIn::instance( new CCIn_Instance( array( 'foo' => 'bar', 'view' => 'detail' ), array(), array(), array(), array( 'HTTP_HOST' => 'clancats.com' ) ) );
+		
+		$this->assertEquals( 'http://clancats.com/test/?foo=batz&view=detail', CCUrl::full( 'test/', array( 'foo' => 'batz' ), true ) );
+		
+		$this->assertEquals( '/foo/?foo=bar&view=detail', to( 'foo/', array(), true ) );
+		
+		$this->assertEquals( '/url/test/alias?foo=bar&view=detail', CCUrl::alias( 'url.test', array(), true ) );
+	}
+	
+	/**
 	 * CCUrl::to
 	 */
 	public function test_to_with_offset() 

@@ -99,7 +99,7 @@ class CCUrl
 		// we merge the get parameter array with argument parameters
 		if ( $retain )
 		{
-			$params = array_merge( CCIn::$_instance->$GET, $params );
+			$params = array_merge( CCIn::$_instance->GET, $params );
 		}
 		
 		// When we still got parameters add them to the url
