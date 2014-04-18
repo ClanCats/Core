@@ -92,6 +92,31 @@ class Test_CCUrl extends \PHPUnit_Framework_TestCase
 		
 		// parameters
 		$this->assertEquals( '/url/test/alias?foo=bar', to( '@url.test', array( 'foo' => 'bar' ) ) );
+		
+		// route parameters
+		CCRouter::on( 'url/alias/[any]/[any]/', array( 'alias' => 'url.param' ), function() {});
+		
+		$this->assertEquals( '/url/alias/foo/bar/', to( '@url.param', array( 'foo', 'bar' ) ) );
+		
+		// route parameters and normal ones
+		$this->assertEquals( '/url/alias/foo/rofl/?foo=bar', to( '@url.param', array( 'foo', 'rofl', 'foo' => 'bar' ) ) );
+	}
+	
+	/**
+	 * CCUrl::full
+	 */
+	public function test_full() 
+	{
+		// fake some data
+		CCIn::instance( new CCIn_Instance( array(), array(), array(), array(), array( 'HTTP_HOST' => 'clancats.com' ) ) );
+		
+		$this->assertEquals( 'http://clancats.com/test/', CCUrl::full( 'test/' ) );
+		
+		CCIn::instance( new CCIn_Instance( array(), array(), array(), array(), array( 'HTTP_HOST' => 'clancats.com', 'HTTPS' => 'yes' ) ) );
+		
+		$this->assertEquals( 'https://clancats.com/test/', CCUrl::full( 'test/' ) );
+		
+		$this->assertEquals( 'https://clancats.com/url/test/alias', CCUrl::full( '@url.test' ) );
 	}
 	
 	/**

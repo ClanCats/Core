@@ -137,10 +137,16 @@ class CCUrl
 	}
 
 	/**
-	 * generate an url w
+	 * Create the full url including protocol and hostname
+	 *
+	 * @param string		$alias
+	 * @param array  	$params
+	 * @param bool		$retain		Should we keep the get parameters?
+	 * @return string 
 	 */
-	public static function to_full( $uri = '', $params = null ) {
-		return static::to( $uri, $params, true );
+	public static function full( $uri = '', $params = array(), $retain = false ) 
+	{
+		return CCIn::protocol().'://'.CCIn::host().static::to( $uri, $params, $retain );
 	}
 
 	/**
