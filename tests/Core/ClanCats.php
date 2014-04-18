@@ -57,7 +57,7 @@ class ClanCats_Test extends \PHPUnit_Framework_TestCase
 	 */
 	public function testIn_development()
 	{
-		$this->assertFalse( \ClanCats::in_development() );
+		$this->assertTrue( \ClanCats::in_development() );
 	}
 	
 	/**

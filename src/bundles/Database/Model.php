@@ -426,31 +426,6 @@ class Model extends \CCModel
 	}
 	
 	/**
-	 * find from database
-	 *
-	 * @param mixed		$value
-	 * @param mixed		$key
-	 * @return CCModel
-	 */
-	public function _find( $value, $key = null ) {
-	
-		$cache = static::_cache();
-	
-		// prime 
-		if ( is_null( $key ) ) {
-			$key = $cache['primary_key'];
-		}
-	
-		// simple query
-		$query = DB::select( $cache['table'], $cache['fields'] )
-			->s_where( $key, $value )
-			->limit( 1 );
-	
-	
-		return $this->_assign( $query->run() );
-	}
-	
-	/**
 	 * Save data hook 
 	 * to modify your data before they get saved
 	 */
@@ -468,12 +443,14 @@ class Model extends \CCModel
 	 * @param $key 
 	 * @return mixed
 	 */
-	public function &__get( $key ) {
-	
+	public function &__get( $key ) 
+	{
+		return parent::__get( $key );
 		$item = null;
 	
 		// try getting the item
-		if ( array_key_exists( $key, $this->_data_store ) )  {
+		if ( array_key_exists( $key, $this->_data_store ) )  
+		{
 			$item = $this->_data_store[$key];
 		}
 		// is there a relationship
