@@ -165,6 +165,31 @@ class Test_CCUrl extends \PHPUnit_Framework_TestCase
 	}
 	
 	/**
+	 * CCUrl::action
+	 */
+	public function test_action() 
+	{
+		CCRouter::on( 'test_action', 'CCUnit::Test');
+		CCRequest::uri( 'test_action/detail' )->perform();
+		
+		$this->assertEquals( '/test_action/detail/?woo=yay', CCUrl::action( 'detail/', array( 'woo' => 'yay' ) ) );
+		
+		$this->assertEquals( '/test_action/?woo=yay', CCUrl::action( 'index', array( 'woo' => 'yay' ) ) );
+		
+		$this->assertEquals( '/test_action/', CCUrl::action() );
+		
+		// another route
+		CCRouter::on( 'test_action/wurst', 'CCUnit::Test');
+		CCRequest::uri( 'test_action/wurst/detail' )->perform();
+		
+		$this->assertEquals( '/test_action/wurst/detail/?woo=yay', CCUrl::action( 'detail/', array( 'woo' => 'yay' ) ) );
+		
+		$this->assertEquals( '/test_action/wurst/?woo=yay', CCUrl::action( 'index', array( 'woo' => 'yay' ) ) );
+		
+		$this->assertEquals( '/test_action/wurst/', CCUrl::action() );
+	}
+	
+	/**
 	 * CCUrl::to
 	 */
 	public function test_to_with_offset() 

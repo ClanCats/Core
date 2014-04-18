@@ -173,37 +173,36 @@ class CCUrl
 	{
 		return static::to( CCIn::uri(), $params, $retain );
 	}
-
+	
 	/**
-	 * generate a uri to cdn
+	 * Get the url to a action of the current route
+	 *
+	 * @param string 	$action
+	 * @param array  	$params
+	 * @param bool		$retain		Should we keep the get parameters?
+	 * @return string 
 	 */
-	public static function cdn( $cdn, $uri ) {
-		return static::$cdns[$cdn].$uri;
-	}
-
-	/**
-	 * Check if running on Domain Root
-	 */
-	public static function runningOnRoot() {
-		return ( static::$path == '/' ) ? true : false;
-	}
-
-	/**
-	 * get the Router offset
-	 */
-	public static function routingPath( $domain = false ) {
-		if ( $domain ) {
-			return static::$domain.static::$path;
+	public static function action( $action = '', $params = array(), $retain = false ) 
+	{
+		if ( $action == 'index' )
+		{
+			$action = '';
 		}
-		return static::$path;
+		
+		if ( CCRequest::current() && ( $route = CCRequest::current()->route ) )
+		{
+			$uri =  substr( $route->uri, 0, strlen( $route->action ) * -1 );
+			
+			if ( substr( $uri, -1 ) != '/' )
+			{
+				$uri .= '/';
+			}
+			
+			return static::to( $uri.$action, $params, $retain );
+		}
+		
+		throw new CCException( 'CCUrl::action - There has been no route executed yet.' );	
 	}
-
-	/**
-	 * create a URL
-	 */
-	public static function create( $path, $domain = false ) {
-		return static::routingPath( $domain ).$path;
-	}
-
-
+	
+	
 }
