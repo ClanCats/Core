@@ -59,19 +59,6 @@ class Test_CCUrl extends \PHPUnit_Framework_TestCase
 			'http://clancats.com/test/?a=b', 
 			CCUrl::to( 'http://clancats.com/test/?a=1', array( 'a' => 'b' ) ) 
 		);
-		
-		/*CCUrl::to( 'user/ladina/', array( 'raw' => 'true' ) );
-		
-		CCUrl::to( 'user/:user/', array( 'user' => 'mario', 'action' => 'detail' ) );
-		
-		CCUrl::alias( 'user.detail', array( 'user' => 'mario', 'foo' => 'bar' ) );
-		
-		CCUrl::to( '@user.detail', array( 'user' => 'mario', 'foo' => 'bar' ) );
-		
-		CCUrl::full( '@user.detail', array( 'user' => 'mario', 'foo' => 'bar' ) );
-		
-		CCUrl::action( 'detail', array( 'some/param' ) );
-		*/
 	}
 	
 	/**

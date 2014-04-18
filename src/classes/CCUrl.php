@@ -203,6 +203,4 @@ class CCUrl
 		
 		throw new CCException( 'CCUrl::action - There has been no route executed yet.' );	
 	}
-	
-	
 }
