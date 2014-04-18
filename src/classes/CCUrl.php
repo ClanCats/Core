@@ -10,127 +10,130 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class CCUrl {
-
-	/*
-	 * URL Vars
+class CCUrl 
+{
+	/**
+	 * The configured path offset
+	 *
+	 * @var string
 	 */
-	private static $path;
-	private static $domain;
-	private static $cdns;
-	private static $https;
-
-	/*
-	 * default prefixes
-	 */	
-	private static $default_full = '';
-	private static $default_path = '';
-
-	/*
-	 * use by default full urls
-	 */
-	private static $full_urls = false;
-
-	/*
-	 * current uri
-	 */
-	public static $current;
-
+	private static $path_offset = null;
+	
 	/**
 	 * static CCUrl initialisation
 	 */
-	public static function _init() {
-
-		$config = ClanCats::$config->get( 'url' );
-
-		if ( !isset( $config['path'] ) || $config['path'] == '' ) {
-			$config['path'] = '/';
+	public static function _init() 
+	{
+		static::$path_offset = ClanCats::$config->get( 'url.path', '/' );
+		
+		if ( empty( static::$path_offset ) )
+		{
+			static::$path_offset = '/';
 		}
-
-		if ( !isset( $config['domain'] ) ) {
-			$config['domain'] = CCServer::server( 'HTTP_HOST' );
+		
+		if ( substr( static::$path_offset, -1 ) != '/' )
+		{
+			static::$path_offset .= '/';
 		}
-
-		/*
-		 * set the config
-		 */
-		static::$path 	= $config['path'];
-		static::$domain = $config['domain'];
-		static::$cdns 	= $config['cdn'];
-		static::$https 	= $config['https'];
-
-		// use full urls by default?
-		static::$full_urls = $config['full_url'];
-
-		// default prefixes
-		static::$default_full = (( static::$https ) ? 'https://' : 'http://').static::$domain.static::$path;
-		static::$default_path = static::$path;
-
-		// get the current URI
-		if ( CCServer::has_server('REDIRECT_URL' ) ) {
-			$uri = CCServer::server('REDIRECT_URL');
-		} 
-		elseif ( CCServer::has_server('REQUEST_URI' ) ) {
-			$uri = explode( '?', CCServer::server('REQUEST_URI') ); $uri = $uri[0];
-		}
-		else {
-			if ( !CLI ) {
-				throw new CCException( 'Could not mach the requested URI!' );
-			}
-		}
-
-		if ( substr( $uri, -1 ) != '/' ) {
-			$uri .= '/';
-		}
-
-		// set current
-		static::$current = substr( $uri, strlen( static::$path ) );
 	}
 
 	/**
 	 * Generate an url
 	 *
-	 * @param string		$uri
-	 * @param array|null	$params
+	 * @param string			$uri
+	 * @param array			$params
+	 * @param bool			$retain		Should we keep the get parameters?
+	 * @return string 
 	 */
-	public static function to( $uri = '', $params = null, $full_url = null ) {
-
-		// use full urls for this one?
-		if ( $full_url === null ) {
-			$full_url = static::$full_urls;
-		}
-
-		// fix when you make url:to('/')
-		if ( $uri == '/' ) {
+	public static function to( $uri = '', $params = array(), $retain = false ) 
+	{
+		// To avoid // urls we check for a single slash.
+		if ( $uri === '/' ) 
+		{
 			$uri = '';
 		}
-
-		if ( substr( $uri, 0, 1 ) == '@' ) {
-			if ( array_key_exists( $uri , CCRouter::$aliases ) ) {
-				$uri = CCRouter::$aliases[$uri];
+		
+		// When the uri starts with an @ sign we handle the uri as route alias.
+		if ( substr( $uri, 0, 1 ) == '@' ) 
+		{
+			return static::alias( substr( $uri, 1 ), $params, $retain );
+		}
+		
+		// Are there already parameters in the uri? Parse them
+		// and merge them with current argument parameters
+		if ( strpos( $uri, '?' ) !== false )
+		{
+			$parts = explode( '?', $uri );
+			
+			$uri = $parts[0];
+			
+			if ( isset( $parts[1] ) )
+			{
+				parse_str( $parts[1], $old_params );
+				
+				$params = array_merge( $old_params, $params );
 			}
 		}
-
-		if ( substr( $uri, 0, 7 ) != 'http://' && substr( $uri, 0, 8 ) != 'https://' ) {
-			if ( $full_url ) {
-				$uri = static::$default_full.$uri;
-			}
-			else {
-				if ( substr( $uri, 0, 1 ) != '/' ) {
-					$uri = static::$default_path.$uri;
-				}
+		
+		
+		// When the uri contains a protocoll or starts with a slash we assume
+		// a full url is given and we don't have to add a path offest.
+		if ( strpos( $uri, '://' ) === false && substr( $uri, 0, 1 ) !== '/' ) 
+		{
+			$uri = static::$path_offset.$uri;
+		}
+		
+		// Try to replace parameters in the uri and remove them from
+		// the array so we can append them as get parameters
+		foreach( $params as $key => $value )
+		{
+			$uri = str_replace( ':'.$key, $value, $uri, $count );
+			
+			if ( $count > 0 )
+			{
+				unset( $params[$key] );
 			}
 		}
-
-		if ( is_array( $params ) ) {
-			if ( strpos( $uri, '?' ) !== false ) {
-				$uri = $uri.'&'.http_build_query( $params );
-			} else {
-				$uri = $uri.'?'.http_build_query( $params );
-			}
+		
+		// Should we keep the get parameters? If retain is enabled
+		// we merge the get parameter array with argument parameters
+		if ( $retain )
+		{
+			$params = array_merge( CCIn::$_instance->$GET, $params );
+		}
+		
+		// When we still got parameters add them to the url
+		if ( !empty( $params ) ) 
+		{
+			$uri .= '?'.http_build_query( $params );
 		}
 
 		return $uri;
+	}
+	
+	/**
+	 * Create an URL based on an router alias
+	 *
+	 * @param string		$alias
+	 * @param array  	$params
+	 * @param bool		$retain		Should we keep the get parameters?
+	 * @return string 
+	 */
+	public static function alias( $alias, $params = array(), $retain = false )
+	{
+		$route_params = array();
+		
+		// get the parameters with the numeric keys so we can 
+		// pass them as route parameters like [any]-[num]-[num]/[any]/
+		foreach( $params as $key => $value )
+		{
+			if ( is_int( $key ) )
+			{
+				$route_params[] = $value; unset( $params[$key] );
+			}
+		}
+		
+		return CCUrl::to( CCRouter::alias( $alias, $route_params ), $params, $retain );
 	}
 
 	/**

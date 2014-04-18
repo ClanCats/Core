@@ -8,6 +8,8 @@
  * @version		2.0
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
+ * @group Core
+ * @group CCIn
  */
 class CCIn_Test extends \PHPUnit_Framework_TestCase
 {
@@ -263,6 +265,10 @@ class CCIn_Test extends \PHPUnit_Framework_TestCase
 		$this->fakeServerData( array(), array(), array( 'REQUEST_URI' => '/foo/bar/?param1=yes&param2=no' ) );
 		
 		$this->assertEquals( CCIn::url(), 'http://local.ccf2.com/foo/bar/?param1=yes&param2=no' );
+		
+		$this->fakeServerData( array(), array(), array( 'REQUEST_URI' => '/foo/bar/?a=b', 'HTTPS' => 'yes' ) );
+		
+		$this->assertEquals( 'https://local.ccf2.com/foo/bar/?a=b', CCIn::url() );
 	}
 	
 	/**

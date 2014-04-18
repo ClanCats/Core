@@ -89,22 +89,9 @@ return array(
 	 * URL configuration
 	 */
 	'url'	=> array(
-		// if not in the root directory set the path offset. Dont forget to set the "RewriteBase" in the .htaccess
+		// If not in the root directory set the path offset. 
+		// Dont forget to set the "RewriteBase" in the .htaccess
 		'path'		=> null,
-		
-		// The domain without http:// and without any slash at the end!
-		'domain' 	=> null,
-		
-		// use https ?
-		'https'		=> false,
-		
-		// use full urls http://example.com/ect/bla/bla vs /ect/bla/bla
-		'full_url'	=> false,
-		
-		// cdns
-		'cdn' 		=> array(
-			'google' => 'https://ajax.googleapis.com/ajax/libs/',
-		),
 	),
 	
 	/*

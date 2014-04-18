@@ -28,6 +28,15 @@ if ( !function_exists( '_c' ) ) {
 }
 
 /*
+ * create url shortcut
+ */
+if ( !function_exists( 'to' ) ) {
+    function to() {
+        return call_user_func_array( 'CCUrl::to', func_get_args() );
+    }
+}
+
+/*
  * translate
  */
 if ( !function_exists( '__' ) ) {
