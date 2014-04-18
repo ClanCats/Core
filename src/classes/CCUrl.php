@@ -148,6 +148,19 @@ class CCUrl
 	{
 		return CCIn::protocol().'://'.CCIn::host().static::to( $uri, $params, $retain );
 	}
+	
+	/**
+	 * Create the url and force the https protocol
+	 *
+	 * @param string		$alias
+	 * @param array  	$params
+	 * @param bool		$retain		Should we keep the get parameters?
+	 * @return string 
+	 */
+	public static function secure( $uri = '', $params = array(), $retain = false ) 
+	{
+		return 'https://'.CCIn::host().static::to( $uri, $params, $retain );
+	}
 
 	/**
 	 * get the current uri

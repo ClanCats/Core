@@ -135,6 +135,19 @@ class Test_CCUrl extends \PHPUnit_Framework_TestCase
 	}
 	
 	/**
+	 * CCUrl::secure
+	 */
+	public function test_secure() 
+	{
+		// fake some data
+		CCIn::instance( new CCIn_Instance( array(), array(), array(), array(), array( 'HTTP_HOST' => 'clancats.com' ) ) );
+		
+		$this->assertEquals( 'https://clancats.com/test/?foo=batz', CCUrl::secure( 'test/', array( 'foo' => 'batz' ) ) );
+		
+		$this->assertEquals( 'https://clancats.com/', CCUrl::secure( '/' ) );
+	}
+	
+	/**
 	 * CCUrl::to
 	 */
 	public function test_to_with_offset() 
