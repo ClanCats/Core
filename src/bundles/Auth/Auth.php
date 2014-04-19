@@ -9,7 +9,7 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class Auth {
+class CCAuth {
 
 	/**
 	 * Instance holder

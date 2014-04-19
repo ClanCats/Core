@@ -24,6 +24,19 @@
 
 /*
  *---------------------------------------------------------------
+ * Session Bundle
+ *---------------------------------------------------------------
+ * 
+ * Session managment bundle
+ */
+// namepace
+\CCFinder::map( 'Session', COREPATH.'bundles/Session/' );
+
+// and the shdaow
+\CCFinder::shadow( 'CCSession', 'Session', COREPATH.'bundles/Session/CCSession'.EXT );
+
+/*
+ *---------------------------------------------------------------
  * Authentication Bundle
  *---------------------------------------------------------------
  * 
