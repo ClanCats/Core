@@ -9,15 +9,8 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class Manager 
+class Manager extends \CCDataObject
 {
-	/**
-	 * Session configuration
-	 *
-	 * @var CCConfig
-	 */
-	public static $config;
-	
 	/**
 	 * Instance holder
 	 *
@@ -33,107 +26,106 @@ class Manager
 	private static $_default = 'main';
 	
 	/**
-	 * CCSession factory
+	 * Get a session instance manager
 	 *
-	 * @param $name
-	 * @return CCSession
+	 * @param string			$name
+	 * @param array 			$conf	You can pass optionally a configuration directly. This will overwrite.
+	 * @return DB_Handler
 	 */
-	public static function instance( $name = null ) {
-	
-		if ( !isset( $name ) ) {
-			$name = static::$default;
+	public static function create( $name = null, $conf = null ) 
+	{
+		if ( is_null( $name ) ) 
+		{
+			$name = static::$_default;
 		}
-	
-		if ( !isset( static::$instances[$name] ) ) {
-	
-			if ( !isset( static::$config ) ) {
-				static::$config = CCConfig::create( 'session' );
-			}
-	
-			static::$instances[$name] = new static( $name );
+		
+		if ( !is_null( $conf ) && is_array( $conf ) )
+		{
+			return static::$_instances[$name] = new static( $name, $conf );
 		}
-	
-		return static::$instances[$name];
+		
+		if ( !isset( static::$_instances[$name] ) )
+		{
+			static::$_instances[$name] = new static( $name );
+		}
+		
+		return static::$_instances[$name];
 	}
 	
 	/**
-	 * Check if session exists 
-	 * 
-	 * @param $id
-	 * @return bool
+	 * The session driver
+	 *
+	 * @var Manager_Driver
 	 */
-	public static function check( $id, $name = null ) {
-		return static::instance( $name )->driver->check( $id );
-	}
+	protected $_driver = null;
 	
-	/*
-	 * cookie name
-	 */
-	protected $name;
-	
-	/*
-	 * Data
-	 */
-	protected $data = array();
-	protected $static_data = array();
-	
-	/*
-	 * Driver
-	 */
-	protected $driver = null;
-	
-	/*
+	/**
 	 * Session ID
+	 *
+	 * @var	string
 	 */
 	public $id;
 	
-	/*
+	/**
 	 * The Fingerprint
+	 *
+	 * @var string
 	 */
 	public $fingerprint;
 	
-	
 	/**
 	 * Session constructor
+	 *
+	 * @param string 		$name
+	 * @param array 			$config
 	 */
-	protected function __construct( $name ) {
-	
-		$this->name = $name.static::$config->get('name');
-	
-		// get session_id from cookie
-		$this->id = \CCCookie::get( $this->name );
-	
-		// set the fingerprint
-		$this->fingerprint = CCStr::hash( $this->id );
-	
-		// Register shutdown
-		CCEvent::mind( 'clancats.shutdown', array( $this, 'save' ) );
-	
-		// load the driver
-		switch( static::$config->get( 'driver' ) ) {
-	
-			case 'cookie':
-				$this->driver = CCSession_CookieDriver::factory( $name );
-			break;
-	
-			case 'database':
-				$this->driver = CCSession_DatabaseDriver::factory( $name );
-			break;
-	
-			case 'file':
-				$this->driver = CCSession_FileDriver::factory( $name );
-			break;
+	protected function __construct( $name, $config = null ) 
+	{
+		if ( is_null( $config ) )
+		{
+			$config = \CCConfig::create( 'session' )->get( $name );
+			
+			// check for an alias. If you set a string 
+			// in your config file we use the config 
+			// with the passed key.
+			if ( is_string( $config ) ) 
+			{
+				$config = \CCConfig::create( 'session' )->get( $config );
+			}
 		}
-	
-		// load session data
-		$this->load();
-	
-		CCProfiler::check( "Session initialised: {$name}" );
-	
-		// I love that thanks Kohana!
-		if ( mt_rand( 0, static::$config->get('gc') ) === static::$config->get('gc') ) {
-			$this->gc();
+		
+		// Setup the driver class. We simply use name 
+		// from the confif file and make the first letter 
+		// capital. example: Handler_Mysql, Handler_Sqlite etc.
+		$driver_class = __NAMESPACE__."\\Manager_".ucfirst( $config['driver'] );
+		
+		if ( !class_exists( $driver_class ) )
+		{
+			throw new Exception( "Session\\Manager::create - The driver (".$driver_class.") is invalid." );
 		}
+		
+		$this->set_driver( $driver_class );
+	}
+	
+	/**
+	 * Get the current driver
+	 *
+	 * @return DB\Handler_Driver
+	 */
+	public function driver()
+	{
+		return $this->_driver;
+	}
+	
+	/**
+	 * Set the current driver
+	 *
+	 * @param string		$driver		The full driver class ( Session\Manager_ExampleDriver )
+	 * @return void
+	 */
+	private function set_driver( $driver )
+	{
+		$this->_driver = new $driver;
 	}
 	
 	/**
