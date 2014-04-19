@@ -53,6 +53,13 @@ class Manager extends \CCDataObject
 	}
 	
 	/**
+	 * The session manager name
+	 *
+	 * @var string
+	 */
+	protected $_name = null;
+	
+	/**
 	 * The session driver
 	 *
 	 * @var Manager_Driver
@@ -105,6 +112,9 @@ class Manager extends \CCDataObject
 		}
 		
 		$this->set_driver( $driver_class );
+		
+		// also don't forget to set the name manager name becaue we need him later.
+		$this->_name = $name;
 	}
 	
 	/**
@@ -129,10 +139,22 @@ class Manager extends \CCDataObject
 	}
 	
 	/**
-	 * Load session data
+	 * Return the default data 
+	 *
+	 * 
 	 */
-	protected function load() {
+	protected function default_data()
+	{
+		
+	}
 	
+	/**
+	 * Read data from the session driver
+	 *
+	 * @return void 
+	 */
+	protected function read() 
+	{
 		// set static data, these get set at loading and saving again 
 		$defaultData = array(
 			'last_active'	=> time(),
@@ -142,21 +164,24 @@ class Manager extends \CCDataObject
 			'language'		=> CCLang::get_language(),
 		);
 	
-		if ( $this->id ) {
-	
-			if ( !$data = $this->driver->load( $this->id ) ) {
-	
+		if ( $this->id ) 
+		{
+			if ( !$data = $this->driver->load( $this->id ) ) 
+			{
 				// generate new id
 				$this->regenerate();
 				// set data
 				$data = $defaultData;
 			}
 	
-			if ( !is_array( $data ) ) {
+			if ( !is_array( $data ) ) 
+			{
 				$data = $defaultData;
 			}
 	
-		} else {
+		} 
+		else 
+		{
 			$this->regenerate();
 			$data = $defaultData;
 		}
@@ -165,6 +190,8 @@ class Manager extends \CCDataObject
 		$this->data = CCArr::get( 'content', $data, array() ); unset( $data['content'] );
 		$this->static_data = $data;
 	}
+	
+	
 	
 	/**
 	 * Save session data
@@ -215,85 +242,12 @@ class Manager extends \CCDataObject
 		// regenerate
 		return $this->regenerate();
 	}
-	
-	
+		
 	/*
 	 * Garbage collection, delete old sessions
 	 */
-	public function gc() {
+	public function gc() 
+	{
 		$this->driver->gc( static::$config->get( 'lifetime' ) );
-	}
-	
-	/**
-	 * Set data
-	 */
-	public function set( $key, $data ) {
-		$this->data[$key] = $data;
-	}
-	
-	/**
-	 * Check data
-	 */
-	public function has( $key ) {
-		return isset( $this->data[$key] );
-	}
-	
-	/**
-	 * Get data
-	 */
-	public function get( $key, $default = null ) {
-		if ( array_key_exists( $key, $this->data ) )  {
-			return $this->data[$key];
-		}
-		return $default;
-	}
-	
-	/**
-	 * Get once
-	 */
-	public function get_once( $key ) {
-		if ( array_key_exists( $key, $this->data ) )  {
-			$data = $this->data[$key]; unset( $this->data[$key] ); return $data;
-		}
-	}
-	
-	/**
-	 * Delete data
-	 */
-	public function delete( $key ) {
-		unset( $this->data[$key] );
-	}
-	
-	/**
-	 * get a static value
-	 *
-	 * @param $key 
-	 * @return mixed
-	 */
-	public function __get( $key ) {
-		if ( array_key_exists( $key, $this->static_data ) )  {
-			return $this->static_data[$key];
-		}
-	}
-	
-	/**
-	 * Set a static value
-	 *
-	 * @param $key
-	 * @param $value
-	 * @return void
-	 */
-	public function __set( $key, $value ) {
-		$this->static_data[$key] = $value;
-	}
-	
-	/**
-	 * check if data isset
-	 *
-	 * @param $key
-	 * @return bool
-	 */
-	public function __isset( $key ) {
-		return isset( $this->static_data[$key] );
 	}
 }
