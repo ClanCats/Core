@@ -61,10 +61,11 @@ class Manager extends \CCDataObject
 	{
 		return array(
 			'last_active'	=> time(),
+			'current_lang'	=> CCLang::current(),
 			'client_agent'	=> CCServer::client( 'agent' ),
 			'client_ip'		=> CCServer::client( 'ip' ),
 			'client_port'	=> CCServer::client( 'port' ),
-			'client_lang'	=> CCServer::client( 'language' )
+			'client_lang'	=> CCServer::client( 'port' ),
 		);
 	}
 	
@@ -170,75 +171,52 @@ class Manager extends \CCDataObject
 	 *
 	 * @return void 
 	 */
-	protected function read() 
+	public function read() 
 	{
-		// set static data, these get set at loading and saving again 
-		$defaultData = array(
-			'last_active'	=> time(),
-			'user_agent'		=> CCServer::client()->agent,
-			'client_ip'		=> CCServer::client()->ip,
-			'client_port'	=> CCServer::client()->port,
-			'language'		=> CCLang::get_language(),
-		);
-	
+		// Do we already have a session id if not we regenerate
+		// the session and assign the default data.
 		if ( $this->id ) 
 		{
-			if ( !$data = $this->driver->load( $this->id ) ) 
+			if ( !$this->_data = $this->driver->load( $this->id ) ) 
 			{
-				// generate new id
 				$this->regenerate();
-				// set data
-				$data = $defaultData;
+				$this->_data = $this->default_data();
 			}
 	
-			if ( !is_array( $data ) ) 
+			if ( !is_array( $this->_data ) ) 
 			{
-				$data = $defaultData;
+				$this->_data = $this->default_data();
 			}
 	
 		} 
 		else 
 		{
 			$this->regenerate();
-			$data = $defaultData;
+			$this->_data = $this->default_data();
 		}
-	
-		// set data
-		$this->data = CCArr::get( 'content', $data, array() ); unset( $data['content'] );
-		$this->static_data = $data;
 	}
 	
-	
-	
 	/**
-	 * Save session data
+	 * Write the session to driver
+	 *
+	 * @return void
 	 */
-	public function save() { 
+	public function write() 
+	{
+		$this->driver->save( $this->id, $this->_data );
 	
-		// set static data
-		$data = array(
-			'last_active'	=> time(),
-			'user_agent'		=> ( CCServer::$client->agent ) 	? CCServer::$client->agent 	: 'NOT_SET',
-			'client_ip'		=> ( CCServer::$client->ip ) 	? CCServer::$client->ip 		: 'NOT_SET',
-			'client_port'	=> ( CCServer::$client->port ) 	? CCServer::$client->port 	: 'NOT_SET',
-			'language'		=> CCLang::get_language(),
-		);
-	
-		$data = array_merge( $this->static_data, $data );
-		$data['content'] = $this->data;
-	
-		// save the data
-		$this->driver->save( $this->id, $data );
-	
-		// set the cookie
+		// We also have to set the cookie again to keep it alive
 		\CCCookie::set( $this->name, $this->id, static::$config->get('cooike_lifetime') );
 	}
 	
 	/**
 	 * Generate a new session_id
+	 *
+	 * @return string	The new generated session id.
 	 */
-	public function regenerate() {
-		// Check if Session ID alredy exist
+	public function regenerate() 
+	{
+		// create a new session id and check the dirver for dublicates.
 		do {
 			$id = CCStr::random( 32 );
 		}
@@ -250,8 +228,8 @@ class Manager extends \CCDataObject
 	/**
 	 * Generate a new session_id
 	 */
-	public function destroy() {
-	
+	public function destroy() 
+	{	
 		// clean all arrays 
 		$this->data = array();
 		$this->static_data = array();
@@ -260,8 +238,10 @@ class Manager extends \CCDataObject
 		return $this->regenerate();
 	}
 		
-	/*
-	 * Garbage collection, delete old sessions
+	/**
+	 * Garbage collection, delete all outdated sessions
+	 *
+	 * @return void
 	 */
 	public function gc() 
 	{

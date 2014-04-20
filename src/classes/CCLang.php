@@ -54,7 +54,8 @@ class CCLang {
 	 * 
 	 * @return string
 	 */
-	public static function get_language() {
+	public static function current() 
+	{
 		return static::$lang;
 	}
 	
