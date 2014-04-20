@@ -23,7 +23,6 @@ class Test_Session_Manager extends PHPUnit_Framework_TestCase
 		$this->assertTrue( $manager instanceof \Session\Manager );
 		
 		// got a driver?
-		$this->assertTrue( $manager->driver() instanceof \Session\Manager_Driver );
 		$this->assertTrue( $manager->driver() instanceof \Session\Manager_File );
 		
 		// test CCSession getter
@@ -32,5 +31,13 @@ class Test_Session_Manager extends PHPUnit_Framework_TestCase
 		// get another session
 		$this->assertTrue( CCSession::manager() instanceof \Session\Manager );
 		$this->assertTrue( CCSession::manager()->driver() instanceof \Session\Manager_Array );
+	}
+	
+	/**
+	 * test the handler instance
+	 */
+	public function test_read()
+	{
+		$manager = Session\Manager::create();
 	}
 }
