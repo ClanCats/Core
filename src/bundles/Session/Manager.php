@@ -53,6 +53,22 @@ class Manager extends \CCDataObject
 	}
 	
 	/**
+	 * Some default values for our session
+	 *
+	 * @return array
+	 */
+	public static function default_data_provider() 
+	{
+		return array(
+			'last_active'	=> time(),
+			'client_agent'	=> CCServer::client( 'agent' ),
+			'client_ip'		=> CCServer::client( 'ip' ),
+			'client_port'	=> CCServer::client( 'port' ),
+			'client_lang'	=> CCServer::client( 'language' )
+		);
+	}
+	
+	/**
 	 * The session manager name
 	 *
 	 * @var string
@@ -139,17 +155,18 @@ class Manager extends \CCDataObject
 	}
 	
 	/**
-	 * Return the default data 
+	 * Return the default data for the session
 	 *
-	 * 
+	 * @return array
 	 */
 	protected function default_data()
 	{
-		
+		return call_user_func( ClanCats::$config->get( 'session.default_data_provider' ) );
 	}
 	
 	/**
-	 * Read data from the session driver
+	 * Read data from the session driver. This overwrite's 
+	 * any changes made on runtime.
 	 *
 	 * @return void 
 	 */

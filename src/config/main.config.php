@@ -85,6 +85,15 @@ return array(
 		'default_primary_key' => 'id',
 	),
 	
+	/**
+	 * Session bundle
+	 */
+	'session' => array(
+	
+		// Define a callback for your default session data.
+		'default_data_provider' => '\\Session\\Manager::default_data_provider',
+	),
+	
 	/*
 	 * URL configuration
 	 */
