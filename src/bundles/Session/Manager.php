@@ -146,6 +146,16 @@ class Manager extends \CCDataObject
 		// try to get the id from cookie
 		$this->id = $this->cookie_session_id();
 		
+		// Before reading we might have to kill old sessions using 
+		// the gabrage collector
+		if ( \CCArr::get( 'gc.enabled', $this->_config, true ) )
+		{
+			if ( mt_rand( 1, \CCArr::get( 'gc.factor', $this->_config, 25 ) ) == 1 )
+			{
+				$this->gc();
+			}
+		}
+		
 		// Now get the inital data from our driver
 		$this->read();
 	}
@@ -188,7 +198,7 @@ class Manager extends \CCDataObject
 	 */
 	protected function cookie_name()
 	{
-		return $this->_name.\CCArr::get( 'cookie_suffix', $this->_config, '-ccf-token' );
+		return $this->_name.\CCArr::get( 'cookie_suffix', $this->_config, '-ccf-session' );
 	}
 	
 	/**
@@ -278,6 +288,13 @@ class Manager extends \CCDataObject
 	 */
 	public function gc() 
 	{
-		$this->_driver->gc( \CCArr::get( 'lifetime', $this->_config, \CCDate::minutes( 5 ) ) );
+		$lifetime = \CCArr::get( 'lifetime', $this->_config, \CCDate::minutes( 5 ) );
+		
+		if ( $lifetime < ( $min_lifetime = \CCArr::get( 'min_lifetime', $this->_config, \CCDate::minutes( 5 ) ) ) )
+		{
+			$lifetime = $min_lifetime;
+		}
+		
+		$this->_driver->gc( $lifetime );
 	}
 }

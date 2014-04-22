@@ -18,43 +18,26 @@ return array(
 		//     * file
 		//     * database
 		'driver'	 => 'file',
-	
-		/*
-		 * Garbage collection
-		 * define how often the system removes old sessions
-		 */
-		'gc'		=> 5,
-		/*
-		 * the name of the cookie session identifier
-		 */
-		'name'		=> '_cattoken',
-		/*
-		 * the session lifetime
-		 */
-		'lifetime'	=> 300,
-		/*
-		 * the cookie lifetime
-		 */
-		'cooike_lifetime' => 0,
 		
+		// The session lifetime. 0 means just during the browser session.
+		'lifetime'	=> 0,
 		
-		/*
-		 * cookie driver settings
-		 */
-		'cookie' => array(
-			// the salt the cookie get cryptet with
-			'salt' => 'ch4ng3Th1sToS0meth!ngS3cur3',
-		),
+		// The minimum session lifetime, this one is a bit diffrent 
+		// This defines how long a session is valid without any user
+		// action.
+		'min_lifetime'	=> CCDate::minutes(5),
 		
-		/*
-		 * databse driver settings
-		 */
-		'database' => array(
-			// what database instance
-			'instance' => null,
+		// Garbage collector
+		// The gc deletes old and outdated sessions.
+		'gc' => array(
+			'enabled' => true,
 			
-			// what table
-			'table' => 'sessions',
+			// The factor means how often should gc be executed.
+			// ca. every x request. You should scale this value 
+			// with the number of page views you got. When you plaan
+			// a massive system you should disable gc and delete old
+			// sessions using a background job.
+			'factor' => 25,
 		),
 	),
 );
