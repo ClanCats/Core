@@ -52,6 +52,8 @@ class CCCookie
 			}
 		}
 		
+		CCServer::$_instance->COOKIE[$key] = $value;
+		
 		/*
 		 * Finally set the cookie
 		 * @toDo: just at the cookie to an array an set the set cookie header from the CCResponse
@@ -75,11 +77,11 @@ class CCCookie
 	 */
 	public static function get( $key ) 
 	{
-		if ( !isset( CCServer::$_instance->$COOKIE[$key] ) ) 
+		if ( !isset( CCServer::$_instance->COOKIE[$key] ) ) 
 		{
 			return $default;
 		}
-		return CCServer::$_instance->$COOKIE[$key];
+		return CCServer::$_instance->COOKIE[$key];
 	}
 	
 	/**
@@ -105,7 +107,7 @@ class CCCookie
 	 * @return bool
 	 */
 	public static function has( $key ) {
-		return isset( CCServer::$_instance->$COOKIE[$key] );
+		return isset( CCServer::$_instance->COOKIE[$key] );
 	}
 	
 	
@@ -117,6 +119,7 @@ class CCCookie
 	 */
 	public static function delete( $key ) 
 	{
+		unset( CCServer::$_instance->COOKIE[$key] );
 		return setcookie( $key, "REMOVED BY CHUCK NORRIS!", time()-1000 );
 	}
 }
