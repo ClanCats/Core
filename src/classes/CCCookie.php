@@ -1,6 +1,8 @@
 <?php namespace Core;
 /**
  * Cookie handler
+ * @TODO: This is a simple port to CCF2.0 from v1. Cookies should be added
+ * as header to the CCResposne instead of unsing the php native functions.
  ** 
  *
  * @package		ClanCatsFramework
@@ -9,8 +11,8 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class CCCookie {
-	
+class CCCookie 
+{	
 	/*
 	 * Cookie Path
 	 */
@@ -71,21 +73,10 @@ class CCCookie {
 	 * @param string 	$key
 	 * @return mixed
 	 */
-	public static function get( $key ) {
-		if ( isset( CCServer::$_instance->$COOKIE[$key] ) ) {
-			return CCServer::$_instance->$COOKIE[$key];
-		}
-	}
-	
-	/**
-	 * read a cookie 
-	 * 
-	 * @param string 	$key
-	 * @param mixed		$default
-	 * @return mixed
-	 */
-	public static function read( $key, $default = null ) {
-		if ( !isset( CCServer::$_instance->$COOKIE[$key] ) ) {
+	public static function get( $key ) 
+	{
+		if ( !isset( CCServer::$_instance->$COOKIE[$key] ) ) 
+		{
 			return $default;
 		}
 		return CCServer::$_instance->$COOKIE[$key];
@@ -97,7 +88,7 @@ class CCCookie {
 	 * @param string 	$key
 	 * @return mixed
 	 */
-	public static function eat( $key ) {
+	public static function once( $key ) {
 		if ( !is_null( static::get( $key ) ) ) {
 				
 			$cookie = static::get( $key );
@@ -124,11 +115,8 @@ class CCCookie {
 	 * @param string 	$key
 	 * @return bool
 	 */
-	public static function delete( $key ) {
+	public static function delete( $key ) 
+	{
 		return setcookie( $key, "REMOVED BY CHUCK NORRIS!", time()-1000 );
 	}
-	
-	/*
-	 * Damn after writing so often the word cookie i've become hungry! SHOP ALL THE COOKIES!
-	 */
 }

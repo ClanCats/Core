@@ -143,6 +143,9 @@ class Manager extends \CCDataObject
 		// keep the configuration array
 		$this->_config = $config;
 		
+		// try to get the id from cookie
+		$this->id = $this->cookie_session_id();
+		
 		// Now get the inital data from our driver
 		$this->read();
 	}
@@ -185,7 +188,7 @@ class Manager extends \CCDataObject
 	 */
 	protected function cookie_name()
 	{
-		return $this->_name.CCArr::get( 'cookie_suffix', $this->_config, '-ccf-token' );
+		return $this->_name.\CCArr::get( 'cookie_suffix', $this->_config, '-ccf-token' );
 	}
 	
 	/**
@@ -195,7 +198,7 @@ class Manager extends \CCDataObject
 	 */
 	protected function cookie_session_id()
 	{
-		
+		return \CCCookie::get( $this->cookie_name, false );
 	}
 	
 	/**
