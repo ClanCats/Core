@@ -49,5 +49,15 @@ class Test_Session_Manager extends PHPUnit_Framework_TestCase
 	public function test_read()
 	{
 		$manager = Session\Manager::create();
+		
+		$this->assertTrue( is_string( $manager->id ) );
+		
+		$this->assertTrue( strlen( $manager->id ) === 32 );
+		
+		$this->assertTrue( is_string( $manager->fingerprint ) );
+		
+		$this->assertEquals( time(), $manager->last_active );
+		
+		$this->assert
 	}
 }

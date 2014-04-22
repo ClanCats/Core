@@ -61,11 +61,11 @@ class Manager extends \CCDataObject
 	{
 		return array(
 			'last_active'	=> time(),
-			'current_lang'	=> CCLang::current(),
-			'client_agent'	=> CCServer::client( 'agent' ),
-			'client_ip'		=> CCServer::client( 'ip' ),
-			'client_port'	=> CCServer::client( 'port' ),
-			'client_lang'	=> CCServer::client( 'port' ),
+			'current_lang'	=> \CCLang::current(),
+			'client_agent'	=> \CCServer::client( 'agent' ),
+			'client_ip'		=> \CCServer::client( 'ip' ),
+			'client_port'	=> \CCServer::client( 'port' ),
+			'client_lang'	=> \CCServer::client( 'port' ),
 		);
 	}
 	
@@ -75,6 +75,13 @@ class Manager extends \CCDataObject
 	 * @var string
 	 */
 	protected $_name = null;
+	
+	/**
+	 * The session config array
+	 *
+	 * @var string
+	 */
+	protected $_config = null;
 	
 	/**
 	 * The session driver
@@ -132,6 +139,12 @@ class Manager extends \CCDataObject
 		
 		// also don't forget to set the name manager name becaue we need him later.
 		$this->_name = $name;
+		
+		// keep the configuration array
+		$this->_config = $config;
+		
+		// Now get the inital data from our driver
+		$this->read();
 	}
 	
 	/**
@@ -162,7 +175,27 @@ class Manager extends \CCDataObject
 	 */
 	protected function default_data()
 	{
-		return call_user_func( ClanCats::$config->get( 'session.default_data_provider' ) );
+		return call_user_func( \ClanCats::$config->get( 'session.default_data_provider' ) );
+	}
+	
+	/**
+	 * Get the current cookie name
+	 *
+	 * @return string 
+	 */
+	protected function cookie_name()
+	{
+		return $this->_name.CCArr::get( 'cookie_suffix', $this->_config, '-ccf-token' );
+	}
+	
+	/**
+	 * Get the current session id from the cookie
+	 *
+	 * @return string
+	 */
+	protected function cookie_session_id()
+	{
+		
 	}
 	
 	/**
@@ -177,7 +210,7 @@ class Manager extends \CCDataObject
 		// the session and assign the default data.
 		if ( $this->id ) 
 		{
-			if ( !$this->_data = $this->driver->load( $this->id ) ) 
+			if ( !$this->_data = $this->_driver->load( $this->id ) ) 
 			{
 				$this->regenerate();
 				$this->_data = $this->default_data();
@@ -197,44 +230,41 @@ class Manager extends \CCDataObject
 	}
 	
 	/**
-	 * Write the session to driver
+	 * Write the session to the driver
 	 *
 	 * @return void
 	 */
 	public function write() 
 	{
-		$this->driver->save( $this->id, $this->_data );
+		$this->_driver->save( $this->id, $this->_data );
 	
 		// We also have to set the cookie again to keep it alive
 		\CCCookie::set( $this->name, $this->id, static::$config->get('cooike_lifetime') );
 	}
 	
 	/**
-	 * Generate a new session_id
+	 * Generate a new session id and checks the dirver for dublicates.
 	 *
 	 * @return string	The new generated session id.
 	 */
 	public function regenerate() 
 	{
-		// create a new session id and check the dirver for dublicates.
-		do {
-			$id = CCStr::random( 32 );
+		do 
+		{
+			$id = \CCStr::random( 32 );
 		}
-		while ( $this->driver->check( $id ) );
-	
+		while ( $this->_driver->has( $id ) );
+		
+		$this->fingerprint = sha1( $id );
 		return $this->id = $id;
 	}
 	
 	/**
-	 * Generate a new session_id
+	 * Destory the session an create a new one
 	 */
 	public function destroy() 
 	{	
-		// clean all arrays 
-		$this->data = array();
-		$this->static_data = array();
-	
-		// regenerate
+		$this->_data = $this->default_data();
 		return $this->regenerate();
 	}
 		
@@ -245,6 +275,6 @@ class Manager extends \CCDataObject
 	 */
 	public function gc() 
 	{
-		$this->driver->gc( static::$config->get( 'lifetime' ) );
+		$this->_driver->gc( static::$config->get( 'lifetime' ) );
 	}
 }
