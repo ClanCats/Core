@@ -1,22 +1,81 @@
-<?php namespace CC\Core;
+<?php namespace Core;
 /**
- * Clan Cats date functions
+ * Date helper
+ ** 
  *
- * @package 		ClanCats-Framework
- * @author     		Mario Döring <mariodoering@me.com>
- * @version 		0.5
- * @copyright 		2010 - 2013 ClanCats GmbH 
+ * @package		ClanCatsFramework
+ * @author		Mario Döring <mario@clancats.com>
+ * @version		2.0
+ * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
 class CCDate 
 {
+	/**
+	 * Get minutes in seconds
+	 *
+	 * @param int		$minutes
+	 * @return int 
+	 */
+	public static function minutes( $minutes )
+	{
+		return $minutes * 60;
+	}
 	
-	const Minute 	= 60;
-	const Hour		= 3600;
-	const Day		= 86400;
-	const Week		= 604800;
-	const Month		= 2628000;
-	const Year		= 31536000;
+	/**
+	 * Get hours in seconds
+	 *
+	 * @param int		$hours
+	 * @return int 
+	 */
+	public static function hours( $hours )
+	{
+		return $hours * 60 * 60;
+	}
+	
+	/**
+	 * Get days in seconds
+	 *
+	 * @param int		$days
+	 * @return int 
+	 */
+	public static function days( $days )
+	{
+		return $days * 60 * 60 * 24;
+	}
+	
+	/**
+	 * Get weeks in seconds
+	 *
+	 * @param int		$weeks
+	 * @return int 
+	 */
+	public static function weeks( $weeks )
+	{
+		return $weeks * 60 * 60 * 24 * 7;
+	}
+	
+	/**
+	 * Get months in seconds
+	 *
+	 * @param int		$months365
+	 * @return int 
+	 */
+	public static function months( $months )
+	{
+		return $months * 60 * 60 * 24 * 30.4368;
+	}
+	
+	/**
+	 * Get years in seconds
+	 *
+	 * @param int		$years
+	 * @return int 
+	 */
+	public static function years( $years )
+	{
+		return $years * 60 * 60 * 24 * 365;
+	}
 	
 	/**
 	 * format the date
@@ -30,13 +89,6 @@ class CCDate
 	 */
 	public static function format_date( $date, $format = 'j F Y' ) {
 		return date( $format, strtotime( $date ) ); 
-	}
-	
-	/**
-	 * returns a timestamp before some seconds
-	 */
-	public static function before( $sec ) {
-		return time() - $sec;
 	}
 	
 	/**
