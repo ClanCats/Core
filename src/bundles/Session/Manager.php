@@ -242,7 +242,7 @@ class Manager extends \CCDataObject
 		$this->_driver->save( $this->id, $this->_data );
 	
 		// We also have to set the cookie again to keep it alive
-		\CCCookie::set( $this->name, $this->id, static::$config->get('cooike_lifetime') );
+		\CCCookie::set( $this->cookie_name(), $this->id, \CCArr::get( 'lifetime', $this->_config, \CCDate::minutes( 5 ) ) );
 	}
 	
 	/**
@@ -278,6 +278,6 @@ class Manager extends \CCDataObject
 	 */
 	public function gc() 
 	{
-		$this->_driver->gc( static::$config->get( 'lifetime' ) );
+		$this->_driver->gc( \CCArr::get( 'lifetime', $this->_config, \CCDate::minutes( 5 ) ) );
 	}
 }
