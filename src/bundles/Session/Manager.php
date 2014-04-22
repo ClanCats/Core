@@ -223,7 +223,7 @@ class Manager extends \CCDataObject
 		// the session and assign the default data.
 		if ( $this->id ) 
 		{
-			if ( !$this->_data = $this->_driver->load( $this->id ) ) 
+			if ( !$this->_data = $this->_driver->read( $this->id ) ) 
 			{
 				$this->regenerate();
 				$this->_data = $this->default_data();
@@ -249,7 +249,7 @@ class Manager extends \CCDataObject
 	 */
 	public function write() 
 	{
-		$this->_driver->save( $this->id, $this->_data );
+		$this->_driver->write( $this->id, $this->_data );
 	
 		// We also have to set the cookie again to keep it alive
 		\CCCookie::set( $this->cookie_name(), $this->id, \CCArr::get( 'lifetime', $this->_config, \CCDate::minutes( 5 ) ) );
