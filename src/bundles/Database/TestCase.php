@@ -69,7 +69,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	 * @return void
 	 */
 	public static function setUpBeforeClass() 
-	{
+	{	
 		// lets make sure that we have an db configuration for phpunit
 		if ( CCConfig::create( 'database' )->has( 'phpunit' ) )
 		{

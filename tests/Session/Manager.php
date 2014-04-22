@@ -14,6 +14,16 @@
 class Test_Session_Manager extends PHPUnit_Framework_TestCase
 {
 	/**
+	 * prepare the configuration
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass() 
+	{
+		CCConfig::create( 'session' )->_data = CCConfig::create( 'Core::phpunit/session' )->_data;
+	}
+	
+	/**
 	 * test the handler instance
 	 */
 	public function test_create()
