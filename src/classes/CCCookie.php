@@ -75,7 +75,7 @@ class CCCookie
 	 * @param string 	$key
 	 * @return mixed
 	 */
-	public static function get( $key ) 
+	public static function get( $key, $default ) 
 	{
 		if ( !isset( CCServer::$_instance->COOKIE[$key] ) ) 
 		{

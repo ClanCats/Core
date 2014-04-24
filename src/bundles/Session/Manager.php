@@ -156,6 +156,9 @@ class Manager extends \CCDataObject
 			}
 		}
 		
+		// Register a shutdown event to write the session down
+		\CCEvent::mind( 'CCF.shutdown', array( $this, 'write' ) );
+		
 		// Now get the inital data from our driver
 		$this->read();
 	}
@@ -208,7 +211,7 @@ class Manager extends \CCDataObject
 	 */
 	protected function cookie_session_id()
 	{
-		return \CCCookie::get( $this->cookie_name, false );
+		return \CCCookie::get( $this->cookie_name(), false );
 	}
 	
 	/**

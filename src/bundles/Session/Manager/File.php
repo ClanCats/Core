@@ -19,7 +19,12 @@ class Manager_File implements Manager_Interface
 	 */
 	public function read( $id )
 	{
-	    
+	    if ( $this->has( $id ) )
+		{
+			return \CCJson::read( $this->file_path( $id ) );
+		}
+		
+		return array();
 	}
 	
 	/**
@@ -30,7 +35,7 @@ class Manager_File implements Manager_Interface
 	 */
 	public function has( $id )
 	{
-	    
+	    return file_exists( $this->file_path( $id ) );
 	}
 	
 	/**
@@ -42,7 +47,7 @@ class Manager_File implements Manager_Interface
 	 */
 	public function write( $id, $data )
 	{
-	    
+	    \CCJson::write( $this->file_path( $id ), $data, true );
 	}
 	
 	/**
@@ -55,5 +60,15 @@ class Manager_File implements Manager_Interface
 	{
 	    
 	}
-
+	
+	/**
+	 * Get the file path by id
+	 *
+	 * @param string			$id
+	 * @return string
+	 */
+	private function file_path( $id )
+	{
+		return \CCStorage::path( 'sessions/'.$id.'.json' );
+	}
 }
