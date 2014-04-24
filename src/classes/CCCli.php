@@ -240,7 +240,7 @@ class CCCli
 		while ( empty( $res ) );
 		
 		$positives = array(
-			'yes', 'y', 'ya', 'ye',
+			'yes', 'y', 'ya', 'ye', 'yeah', 'yup',
 			'jep', 'jap', 'ja', 
 			'si', 'sim',
 			'true',

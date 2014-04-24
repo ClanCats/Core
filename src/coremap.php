@@ -67,12 +67,6 @@ return array(
 	'CCTheme'		=> 'CCTheme'.EXT,
 	'CCAsset'		=> 'CCAsset'.EXT,
 			
-	// -- Session
-	'CCSession'						=> 'CCSession'.EXT,
-	'CCSession_Driver'				=> 'CCSession/Driver'.EXT,
-	'CCSession_CookieDriver'			=> 'CCSession/CookieDriver'.EXT,
-	'CCSession_DatabaseDriver'		=> 'CCSession/DatabaseDriver'.EXT,
-			
 	// -- Orbit
 	'CCOrbit'				=> 'CCOrbit'.EXT,
 	'CCOrbit_Ship'			=> 'CCOrbit/Ship'.EXT,

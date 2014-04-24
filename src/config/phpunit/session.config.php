@@ -18,11 +18,12 @@ return array(
 		//     * file
 		//     * database
 		'driver'	 => 'array',
-	),
-	
-	'gc' => array(
-		'enabled' => true,
-		'factor' => 1,
+		
+		'gc' => array(
+			'enabled' => true,
+			'factor' => 1,
+		),
+		
 	),
 	
 	/*
