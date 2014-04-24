@@ -58,7 +58,16 @@ class Manager_File implements Manager_Interface
 	 */
 	public function gc( $time )
 	{
-	    
+		foreach( \CCFile::ls( \CCStorage::path( 'sessions/*' ) ) as $file )
+		{
+			if ( ( filemtime( $file ) - ( time() - $time ) ) < 0 )
+			{
+				if ( !\CCFile::delete( $file ) )
+				{
+					throw new Exception( "Manager_File::gc - cannot delete session file." );
+				}
+			}
+		}
 	}
 	
 	/**
