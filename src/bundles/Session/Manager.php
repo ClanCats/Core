@@ -125,6 +125,11 @@ class Manager extends \CCDataObject
 			}
 		}
 		
+		if ( empty( $config ) )
+		{
+			throw new Exception( "Session\\Manager::create - Invalid session manager (".$name.")." );
+		}
+		
 		// Setup the driver class. We simply use name 
 		// from the confif file and make the first letter 
 		// capital. example: Handler_Mysql, Handler_Sqlite etc.
@@ -147,7 +152,7 @@ class Manager extends \CCDataObject
 		$this->id = $this->cookie_session_id();
 		
 		// Before reading we might have to kill old sessions using 
-		// the gabrage collector
+		// the Garbage collector
 		if ( \CCArr::get( 'gc.enabled', $this->_config, true ) )
 		{
 			if ( mt_rand( 1, \CCArr::get( 'gc.factor', $this->_config, 25 ) ) == 1 )
@@ -157,7 +162,11 @@ class Manager extends \CCDataObject
 		}
 		
 		// Register a shutdown event to write the session down
-		\CCEvent::mind( 'CCF.shutdown', array( $this, 'write' ) );
+		// This should not happen on shutdown if we using command line
+		if ( !\ClanCats::is_cli() )
+		{
+			\CCEvent::mind( 'CCF.shutdown', array( $this, 'write' ) );
+		}
 		
 		// Now get the inital data from our driver
 		$this->read();
