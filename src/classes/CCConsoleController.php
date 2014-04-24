@@ -159,7 +159,8 @@ class CCConsoleController
 		$class = new $class( $action, $params );
 		
 		// run wake function
-		if ( method_exists( $class, 'wake' ) ) {
+		if ( method_exists( $class, 'wake' ) )
+		{
 			call_user_func( array( $class, 'wake' ), $params );
 		}
 		
