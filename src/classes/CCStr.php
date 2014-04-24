@@ -366,9 +366,17 @@ class CCStr {
 	 * @param bool		$cut_key
 	 * @return string
  	 */
-	public static function cut( $string, $key, $cut_key = true ) 
+	public static function cut( $string, $key, $cut_key = true, $last = false ) 
 	{
-		$pos = strpos( $string, $key );
+		if ( $last )
+		{
+			$pos = strrpos( $string, $key );
+		}
+		else 
+		{
+			$pos = strpos( $string, $key );
+		}
+		
 		if ( $pos === false ) 
 		{
 			return $string;
