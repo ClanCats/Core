@@ -28,15 +28,19 @@ class CCCli
 		'dark_blue'		=> '1;34',
 		'light_blue'		=> '1;34',
 		'green'			=> '0;32',
+		'success'		=> '0;32',
 		'light_green'	=> '1;32',
 		'cyan'			=> '0;36',
+		'info'			=> '0;36',
 		'light_cyan'		=> '1;36',
 		'red'			=> '0;31',
+		'error'			=> '0;31',
 		'light_red'		=> '1;31',
 		'purple'			=> '0;35',
 		'light_purple'	=> '1;35',
 		'light_yellow'	=> '0;33',
 		'yellow'			=> '1;33',
+		'warning'		=> '1;33',
 		'light_gray'		=> '0;37',
 		'white'			=> '1;37',
 	);
@@ -97,6 +101,54 @@ class CCCli
 		}
 		
 		static::write( $str.PHP_EOL, $color, $background );
+	}
+	
+	/**
+	 * Display a success message
+	 *
+	 * @param string		$str
+	 * @param string		$prefix
+	 * @return void
+	 */ 
+	public static function success( $str, $prefix = 'success' )
+	{
+		static::line( static::color( $prefix, 'green' ).' '.$str );
+	}
+	
+	/**
+	 * Display an error message
+	 *
+	 * @param string		$str
+	 * @param string		$prefix
+	 * @return void
+	 */ 
+	public static function error( $str, $prefix = 'failure' )
+	{
+		static::line( static::color( $prefix, 'red' ).' '.$str );
+	}
+	
+	/**
+	 * Display a warning message
+	 *
+	 * @param string		$str
+	 * @param string		$prefix
+	 * @return void
+	 */ 
+	public static function warning( $str, $prefix = 'warning' )
+	{
+		static::line( static::color( $prefix, 'yellow' ).' '.$str );
+	}
+	
+	/**
+	 * Display an info message
+	 *
+	 * @param string		$str
+	 * @param string		$prefix
+	 * @return void
+	 */ 
+	public static function info( $str, $prefix = 'info' )
+	{
+		static::line( static::color( $prefix, 'cyan' ).' '.$str );
 	}
 	
 	/**
@@ -181,7 +233,11 @@ class CCCli
 			return ( $res == 'yes' ) ? true : false;
 		}
 		
-		$res = strtolower( static::read( $question ) );
+		do 
+		{
+			$res = strtolower( static::read( $question ) );
+		} 
+		while ( empty( $res ) );
 		
 		$positives = array(
 			'yes', 'y', 'ya', 'ye',
