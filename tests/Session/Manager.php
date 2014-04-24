@@ -24,7 +24,7 @@ class Test_Session_Manager extends PHPUnit_Framework_TestCase
 	}
 	
 	/**
-	 * test the handler instance
+	 * test Session\Manager::create 
 	 */
 	public function test_create()
 	{
@@ -44,7 +44,7 @@ class Test_Session_Manager extends PHPUnit_Framework_TestCase
 	}
 	
 	/**
-	 * test the handler instance
+	 * test Session\Manager::read 
 	 */
 	public function test_read()
 	{
@@ -100,5 +100,71 @@ class Test_Session_Manager extends PHPUnit_Framework_TestCase
 		$this->assertEquals( "c", $manager->get('a.b') );
 		$this->assertTrue( is_array( $manager->get('a') ) );
 		$this->assertTrue( is_array( $manager->a ) );
+	}
+	
+	/**
+	 * test Session\Manager::regenerate 
+	 */
+	public function test_regenerate()
+	{
+		$session_id = Session\Manager::create()->id;
+		$fingerprint = Session\Manager::create()->fingerprint;
+		
+		$this->assertEquals( $session_id, Session\Manager::create()->id );
+		
+		$this->assertEquals( $session_id, CCSession::manager()->id );
+		
+		CCSession::manager()->set( 'foo', 'bar' );
+		
+		CCSession::manager()->regenerate();
+		
+		$this->assertEquals( 'bar', CCSession::manager()->get( 'foo' ) );
+		
+		$this->assertTrue( $session_id != CCSession::manager()->id );
+		
+		$this->assertTrue( $fingerprint != CCSession::manager()->fingerprint );
+	}
+	
+	/**
+	 * test Session\Manager::destroy 
+	 */
+	public function test_destroy()
+	{
+		$session_id = Session\Manager::create()->id;
+		$fingerprint = Session\Manager::create()->fingerprint;
+		
+		$this->assertEquals( $session_id, Session\Manager::create()->id );
+		
+		$this->assertEquals( $session_id, CCSession::manager()->id );
+		
+		CCSession::manager()->set( 'foo', 'bar' );
+		
+		CCSession::manager()->destroy();
+		
+		$this->assertFalse( CCSession::manager()->has( 'foo' ) );
+		
+		$this->assertTrue( $session_id != CCSession::manager()->id );
+		
+		$this->assertTrue( $fingerprint != CCSession::manager()->fingerprint );
+	}
+	
+	/**
+	 * test Session\Manager::gc 
+	 */
+	public function test_gc()
+	{
+		$manager = Session\Manager::create();
+		
+		$manager->foo = "bar";
+		
+		$manager->write();
+		$manager->read();
+		
+		$this->assertEquals( "bar", $manager->foo );
+		
+		$manager->gc();
+		$manager->read();
+		
+		$this->assertFalse( CCSession::manager()->has( 'bar' ) );
 	}
 }

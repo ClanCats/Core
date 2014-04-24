@@ -20,6 +20,11 @@ return array(
 		'driver'	 => 'array',
 	),
 	
+	'gc' => array(
+		'enabled' => true,
+		'factor' => 1,
+	),
+	
 	/*
 	 * Test the file driver
 	 */
