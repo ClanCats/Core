@@ -151,6 +151,17 @@ class CCFile
 	}
 	
 	/**
+	 * Returns a simple list of files using glob
+	 *
+	 * @param string 		$path
+	 * @return array
+	 */
+	public static function ls( $path )
+	{
+		return glob( $path );
+	}
+	
+	/**
 	 * get the path of an uplaoded file
 	 *
 	 * @param string	$key
