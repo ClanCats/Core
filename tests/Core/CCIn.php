@@ -146,15 +146,15 @@ class CCIn_Test extends \PHPUnit_Framework_TestCase
 		// generate server data
 		$this->fakeServerData();
 		
-		$this->assertEquals( CCServer::method(), 'POST' );
+		$this->assertEquals( 'POST', CCIn::method() );
 		
 		$this->fakeServerData( array(), array(), array( 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'put' ) );
 		
-		$this->assertEquals( CCServer::method(), 'PUT' );
+		$this->assertEquals( CCIn::method(), 'PUT' );
 		
 		$this->fakeServerData( array(), array(), array( 'REQUEST_METHOD' => 'Get' ) );
 		
-		$this->assertEquals( CCServer::method(), 'GET' );
+		$this->assertEquals( CCIn::method(), 'GET' );
 	}
 	
 	/**
@@ -165,19 +165,19 @@ class CCIn_Test extends \PHPUnit_Framework_TestCase
 		// generate server data
 		$this->fakeServerData();
 		
-		$this->assertEquals( CCServer::protocol(), 'http' );
+		$this->assertEquals( CCIn::protocol(), 'http' );
 		
 		$this->fakeServerData( array(), array(), array( 'SERVER_PORT' => '443' ) );
 		
-		$this->assertEquals( CCServer::protocol(), 'https' );
+		$this->assertEquals( CCIn::protocol(), 'https' );
 		
 		$this->fakeServerData( array(), array(), array( 'HTTPS' => 'yes' ) );
 		
-		$this->assertEquals( CCServer::protocol(), 'https' );
+		$this->assertEquals( CCIn::protocol(), 'https' );
 		
 		$this->fakeServerData( array(), array(), array( 'HTTPS' => 'off' ) );
 		
-		$this->assertEquals( CCServer::protocol(), 'http' );
+		$this->assertEquals( CCIn::protocol(), 'http' );
 	}
 	
 	/**
@@ -188,11 +188,11 @@ class CCIn_Test extends \PHPUnit_Framework_TestCase
 		// generate server data
 		$this->fakeServerData();
 		
-		$this->assertEquals( CCServer::host(), 'local.ccf2.com' );
+		$this->assertEquals( CCIn::host(), 'local.ccf2.com' );
 		
 		$this->fakeServerData( array(), array(), array( 'HTTP_X_FORWARDED_HOST' => 'example.com' ) );
 		
-		$this->assertEquals( CCServer::host(), 'example.com' );
+		$this->assertEquals( CCIn::host(), 'example.com' );
 	}
 	
 	/**
@@ -229,7 +229,7 @@ class CCIn_Test extends \PHPUnit_Framework_TestCase
 		// generate server data
 		$this->fakeServerData();
 		
-		$this->assertEquals( CCIn::uri(), '' );
+		$this->assertEquals( '', CCIn::uri() );
 		
 		$this->fakeServerData( array(), array(), array( 'REQUEST_URI' => '//test/?Sdf' ) );
 		

@@ -100,7 +100,7 @@ return array(
 	'url'	=> array(
 		// If not in the root directory set the path offset. 
 		// Dont forget to set the "RewriteBase" in the .htaccess
-		'path'		=> null,
+		'path'		=> '/',
 	),
 	
 	/*
