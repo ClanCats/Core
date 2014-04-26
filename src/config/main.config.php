@@ -178,13 +178,12 @@ return array(
 			/*
 			 * The default theme
 			 */
-			'default' => 'CCFTheme',
+			'default' => 'Bootstrap',
 			
 			/*
 			 * The defualt layout file
 			 */
-			'default_layout' => 'layout',
-			
+			'default_layout' => 'layout',	
 		),
 	),
 	
