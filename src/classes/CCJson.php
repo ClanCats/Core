@@ -22,11 +22,24 @@ class CCJson {
 	 * @param bool		$beautify
 	 * @return string
 	 */
-	public static function encode( $array, $beautify = false ) {
-		if ( $beautify ) {
-			return static::beautify( json_encode( $array ) );
+	public static function encode( $array, $beautify = false ) 
+	{	
+		// php53 fix
+		if ( defined( 'JSON_UNESCAPED_SLASHES' ) )
+		{
+			$json =  json_encode( $array, JSON_UNESCAPED_SLASHES );
 		}
-		return json_encode( $array );
+		else 
+		{
+			$json =  json_encode( $array );
+		}
+		
+		if ( $beautify ) 
+		{
+			return static::beautify( $json );
+		}
+		
+		return $json;
 	}
 	
 	/**
