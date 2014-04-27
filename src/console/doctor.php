@@ -25,7 +25,39 @@ class doctor extends \CCConsoleController {
 			),
 		);
 	}
-
+	
+	/**
+	 * Try to generate a security key in the main config file
+	 *
+	 * @param array 		$params 
+	 */
+	public function action_security_key( $params )
+	{
+		$path = \CCPath::config( 'main.config'.EXT );
+		
+		// Check if the file exists
+		if ( !file_exists( $path ) )
+		{
+			$this->error( 'Could not find main configuration file.' ); return;
+		}
+		
+		// Now try to replace the placeholder with 
+		// an new generated key
+		$data = \CCFile::read( $path );
+		
+		if ( strpos( $data, '{{security salt here}}' ) === false )
+		{
+			$this->error( 'The key has already been generated or set.' ); return;
+		}
+		
+		$data = str_replace( '{{security salt here}}', \CCStr::random( 32, 'password' ), $data );
+		
+		// write the data back down
+		\CCFile::write( $path, $data );
+		
+		$this->success( 'The key has been generated.' );
+	}
+	
 	/**
 	 * install an orbit module
 	 *
