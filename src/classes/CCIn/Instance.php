@@ -219,10 +219,16 @@ class CCIn_Instance {
 	 * get the current requesting method
 	 * GET, POST, PUT, DELETE
 	 *
+	 * @param string			$is
 	 * @return string 
 	 */
-	public function method() 
+	public function method( $is = null ) 
 	{
+		if ( !is_null( $is ) )
+		{
+			return strtoupper( $is ) === $this->method();
+		}
+		
 		return strtoupper( $this->server( 'HTTP_X_HTTP_METHOD_OVERRIDE', $this->server( 'REQUEST_METHOD', 'GET' ) ) );
 	}
 	

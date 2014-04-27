@@ -148,6 +148,11 @@ class CCIn_Test extends \PHPUnit_Framework_TestCase
 		
 		$this->assertEquals( 'POST', CCIn::method() );
 		
+		$this->assertTrue( CCIn::method( 'POST' ) );
+		$this->assertTrue( CCIn::method( 'post' ) );
+		$this->assertTrue( CCIn::method( 'PosT' ) );
+		$this->assertFalse( CCIn::method( 'GET' ) );
+		
 		$this->fakeServerData( array(), array(), array( 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'put' ) );
 		
 		$this->assertEquals( CCIn::method(), 'PUT' );

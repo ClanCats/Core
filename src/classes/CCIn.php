@@ -139,11 +139,12 @@ class CCIn {
 	 * get the current requesting method
 	 * GET, POST, PUT, DELETE
 	 *
+	 * @param string			$is
 	 * @return string 
 	 */
-	public static function method() 
+	public static function method( $is = null ) 
 	{
-		return static::$_instance->method();
+		return static::$_instance->method( $is );
 	}
 	
 	/**
