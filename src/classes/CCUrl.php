@@ -191,7 +191,12 @@ class CCUrl
 		
 		if ( CCRequest::current() && ( $route = CCRequest::current()->route ) )
 		{
-			$uri =  substr( $route->uri, 0, strlen( $route->action ) * -1 );
+			$uri = $route->uri;
+			
+			if ( !is_null( $route->action ) )
+			{
+				$uri =  substr( $uri, 0, strlen( $route->action ) * -1 );
+			}
 			
 			if ( substr( $uri, -1 ) != '/' )
 			{
