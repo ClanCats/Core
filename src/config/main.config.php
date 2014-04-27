@@ -142,7 +142,7 @@ return array(
 	 */
 	'security' => array(
 		// it is really important that you choose your own one!
-		'salt' => 'Mp^VgX0g5Fw1cT',
+		'salt' => 'ThisAintGoodBro',
 		
 		// you can set a default hashing function like md5, sha1 whatever or define your own one
 		'hash' => function( $str ) {
