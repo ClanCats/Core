@@ -2,29 +2,32 @@
 /**
  * ClanCats Redirect
  *
- * @package 		ClanCats-Framework
+ * @package 			ClanCats-Framework
  * @author     		Mario Döring <mariodoering@me.com>
- * @version 		0.3
+ * @version 			0.3
  * @copyright 		2010 - 2013 ClanCats GmbH 
  *
  */
-class CCRedirect extends CCResponse {
-	
+class CCRedirect extends CCResponse 
+{	
 	/**
-	 * Redirect to
+	 * We forward all CCUrl functions
+	 *
+	 * @param string 	$name
+	 * @param array 		$arguments
 	 */
-	public static function to( $uri, $temp = true ) {
-	
-		if ( $uri == '/' ) {
-			$uri = '';
-		}
+	public static function __callStatic( $name, $arguments )
+	{
+		// create new response object
+		$response = static::create();
 		
-		$res = static::create();
+		// set the response status to 303
+		$response->status = 303;
 		
-		$res->status = ( $temp ) ? 303 : 301;		
-		$res->header( 'Location', CCUrl::to( $uri ) );
+		// add the location header
+		$response->header( 'Location', call_user_func_array( "\\CCUrl::".$name, $arguments ) );
 		
-		return $res;
+		// return the response object
+		return $response;
 	}
-	
 }
