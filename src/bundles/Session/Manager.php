@@ -65,7 +65,7 @@ class Manager extends \CCDataObject
 			'client_agent'	=> \CCServer::client( 'agent' ),
 			'client_ip'		=> \CCServer::client( 'ip' ),
 			'client_port'	=> \CCServer::client( 'port' ),
-			'client_lang'	=> \CCServer::client( 'port' ),
+			'client_lang'	=> \CCServer::client( 'language' ),
 		);
 	}
 	
@@ -238,14 +238,15 @@ class Manager extends \CCDataObject
 			if ( !$this->_data = $this->_driver->read( $this->id ) ) 
 			{
 				$this->regenerate();
-				$this->_data = $this->default_data();
+				$this->_data = array();
 			}
 	
 			if ( !is_array( $this->_data ) ) 
 			{
-				$this->_data = $this->default_data();
+				$this->_data = array();
 			}
-	
+			
+			$this->_data = array_merge( $this->_data, $this->default_data() );
 		} 
 		else 
 		{
