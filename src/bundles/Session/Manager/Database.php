@@ -147,6 +147,15 @@ class Manager_Database implements Manager_Interface
 	 */
 	public function gc( $time )
 	{
-		return false; // There is no garbage collection when using cookies
+		// if we don't have the last active key we cannot execute 
+		// the garbage collection
+		if ( !in_array( 'last_active', $this->index_fields ) )
+		{
+			return false;
+		}
+		
+		\DB::delete( $this->table )
+			->where( 'last_active', '<', time() - $time )
+			->run( $this->database );
 	}
 }
