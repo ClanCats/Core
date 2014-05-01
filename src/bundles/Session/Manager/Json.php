@@ -9,7 +9,7 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class Manager_File implements Manager_Interface
+class Manager_Json implements Manager_Interface
 {
 	/**
 	 * Read data from the session dirver
@@ -21,7 +21,7 @@ class Manager_File implements Manager_Interface
 	{
 	    if ( $this->has( $id ) )
 		{
-			return unserialize( \CCFile::read( $this->file_path( $id ) ) );
+			return \CCJson::read( $this->file_path( $id ) );
 		}
 		
 		return array();
@@ -47,7 +47,7 @@ class Manager_File implements Manager_Interface
 	 */
 	public function write( $id, $data )
 	{
-	    \CCFile::write( $this->file_path( $id ), serialize( $data ) );
+	    \CCJson::write( $this->file_path( $id ), $data, true );
 	}
 	
 	/**
@@ -78,6 +78,6 @@ class Manager_File implements Manager_Interface
 	 */
 	private function file_path( $id )
 	{
-		return \CCStorage::path( 'sessions/'.$id.'.session' );
+		return \CCStorage::path( 'sessions/'.$id.'.json' );
 	}
 }
