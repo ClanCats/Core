@@ -50,6 +50,8 @@ class CCError {
 		E_USER_NOTICE     	=> 'user notice',
 		E_STRICT 		  	=> 'runtime notice',
 		E_RECOVERABLE_ERROR 	=> 'recoverable error',
+		E_DEPRECATED			=> 'deprecated error',
+		
 	);
 
 	/**
@@ -108,7 +110,8 @@ class CCError {
 			E_CORE_ERROR,
 			E_CORE_WARNING,
 			E_COMPILE_ERROR,
-			E_COMPILE_WARNING
+			E_COMPILE_WARNING,
+			E_DEPRECATED,
 		);
 		
 		if ( is_object( ClanCats::$config ) && ClanCats::$config instanceof CCConfig ) 
