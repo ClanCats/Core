@@ -16,8 +16,9 @@ return array(
 		//     * array
 		//     * cookie
 		//     * file
+		//     * json
 		//     * database
-		'driver'	 => 'file',
+		'driver'	 => 'json',
 		
 		// The session lifetime. 0 means just during the browser session.
 		'lifetime'	=> 0,
