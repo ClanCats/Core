@@ -35,8 +35,10 @@ class CCArr
 	}
 	
 	/**
-	 * Adds an item to an array
-	 * at the moment this just wraps array push
+	 * Adds an item at the end of the array
+	 * 
+	 * Example:
+	 *     CCArr::push( 'foo', array( 'bar' ) );
 	 *
 	 * @param mixed		$item		The item you would like to add to the array
 	 * @param array 		$array

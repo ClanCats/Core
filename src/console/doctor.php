@@ -87,13 +87,13 @@ class doctor extends \CCConsoleController {
 			{
 				if ( !mkdir( $folder, 0755, true ) ) 
 				{
-					CCCli::line( "doctor - could not create folder at: {$display_folder}", 'red' );
+					$this->error( "doctor could not create folder at: {$display_folder}" );
 				}
 			}
 			
 			// check permissions
-			$perm = decoct( fileperms( $folder ) & 0755 );
-			
+			$perm = substr( decoct( fileperms( $folder ) ), 2 );
+		
 			if ( $perm < 755 )
 			{
 				CCCli::line( CCCli::color( $perm, 'red' ).
@@ -116,10 +116,7 @@ class doctor extends \CCConsoleController {
 			}
 			else 
 			{
-				CCCli::line( CCCli::color( $perm, 'green' ).
-					' - '.
-					$display_folder
-				 );
+				$this->success( '- '.$display_folder, $perm );
 			}
 		}
 	}
