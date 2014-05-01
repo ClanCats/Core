@@ -263,7 +263,7 @@ class Manager extends \CCDataObject
 	public function write() 
 	{
 		$this->_driver->write( $this->id, $this->_data );
-	
+		
 		// We also have to set the cookie again to keep it alive
 		\CCCookie::set( $this->cookie_name(), $this->id, \CCArr::get( 'lifetime', $this->_config, \CCDate::minutes( 5 ) ) );
 	}
