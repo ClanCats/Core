@@ -78,7 +78,15 @@ class CCRouter {
 			{
 				if ( is_array( $to ) )
 				{	
-					return preg_replace( "/\[\w+\]/e", 'array_shift($to)', static::$aliases[$key] );
+					// Workaround for HHVM: return preg_replace( "/\[\w+\]/e", 'array_shift($to)', static::$aliases[$key] );
+					$return = static::$aliases[$key];
+					
+					foreach( $to as $rpl )
+					{
+						$return = preg_replace( "/\[\w+\]/e", $rpl, $return, 1 );
+					}
+					
+					return $return;
 				}
 				return static::$aliases[$key];
 			}
