@@ -15,7 +15,6 @@ before_script:
 
 script:
  - php cli phpunit::build
- - phpunit --coverage-text
 
 matrix:
  allow_failures:
