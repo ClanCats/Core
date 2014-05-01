@@ -83,7 +83,7 @@ class CCRouter {
 					
 					foreach( $to as $rpl )
 					{
-						$return = preg_replace( "/\[\w+\]/e", $rpl, $return, 1 );
+						$return = preg_replace( "/\[\w+\]/", $rpl, $return, 1 );
 					}
 					
 					return $return;
