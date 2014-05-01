@@ -130,6 +130,12 @@ class Manager extends \CCDataObject
 			throw new Exception( "Session\\Manager::create - Invalid session manager (".$name.")." );
 		}
 		
+		// also don't forget to set the name manager name becaue we need him later.
+		$this->_name = $name;
+		
+		// keep the configuration array
+		$this->_config = $config;
+		
 		// Setup the driver class. We simply use name 
 		// from the confif file and make the first letter 
 		// capital. example: Handler_Mysql, Handler_Sqlite etc.
@@ -141,12 +147,6 @@ class Manager extends \CCDataObject
 		}
 		
 		$this->set_driver( $driver_class );
-		
-		// also don't forget to set the name manager name becaue we need him later.
-		$this->_name = $name;
-		
-		// keep the configuration array
-		$this->_config = $config;
 		
 		// try to get the id from cookie
 		$this->id = $this->cookie_session_id();
@@ -190,7 +190,7 @@ class Manager extends \CCDataObject
 	 */
 	private function set_driver( $driver )
 	{
-		$this->_driver = new $driver;
+		$this->_driver = new $driver( $this->_name, $this->_config );
 	}
 	
 	/**
