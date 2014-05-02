@@ -24,9 +24,21 @@ class CCModel
 	public static $_static_array = array();
 
 	/*
-	 * Defaults
+	 * The model defaults
 	 */
 	// protected static $_defaults = array();
+	
+	/*
+	 * Fields that should not be returned trough 
+	 * the as_array or as_json function
+	 */
+	// protected static $_hidden = array();
+	
+	/*
+	 * Fields that should be returned trough 
+	 * the as_array or as_json function even if they dont exist.
+	 */
+	// protected static $_visible = array();
 	
 	/**
 	 * Static init
@@ -54,6 +66,7 @@ class CCModel
 	protected static function _prepare( $setting, $class )
 	{
 		$settings['defaults'] = array();
+		$settings['types'] = array();
 		
 		// get the default's, fix them and clean them.
 		if ( property_exists( $class, '_defaults') ) 
@@ -66,11 +79,39 @@ class CCModel
 				}
 				else
 				{
-					$settings['defaults'][$key] = $value;
+					if ( is_array( $value ) && !empty( $value ) )
+					{
+						$settings['types'][$key] = array_shift( $value );
+						$settings['defaults'][$key] = array_shift( $value );
+					}
+					else
+					{
+						$settings['defaults'][$key] = $value;
+					}
 				}
 			}
 			
 			static::$_defaults = $settings['defaults'];
+		}
+		
+		// add also the hidden fields properties
+		if ( property_exists( $class, '_hidden') ) 
+		{
+			$settings['hidden'] = array_flip( static::$_hidden );
+		}
+		else
+		{
+			$settings['hidden'] = array();
+		}
+		
+		// and of course the visible ones
+		if ( property_exists( $class, '_visible') ) 
+		{
+			$settings['visible'] = array_flip( static::$_visible );
+		}
+		else
+		{
+			$settings['visible'] = array();
 		}
 		
 		return $settings;
@@ -164,16 +205,80 @@ class CCModel
 	public function _assign( $data ) 
 	{
 		$data = $this->_before_assign( $data );
+		
+		$types = static::_model( 'types' );
 
 		foreach( $data as $key => $value ) 
 		{
 			if ( array_key_exists( $key, $this->_data_store ) ) 
-			{
+			{	
+				// do we have to to something with the data type?
+				if ( array_key_exists( $key, $types ) )
+				{
+					$value = $this->_type_assignment_get( $value );
+				}
+				
 				$this->_data_store[$key] = $value;
 			}
 		}
 
 		return $this;
+	}
+	
+	/**
+	 * Assign the data type in a set operation
+	 *
+	 * @param string 	$type
+	 * @param mixed 		$value
+	 * @return mixed
+	 */
+	private function _type_assignment_set( $type, $value )
+	{
+		switch ( $types[$key] ) 
+		{
+			// integer types
+			case 'int':
+			case 'timestamp':
+				return (int) $value;
+			break;
+			
+			// json datatype simply encode
+			case 'json':
+				return json_encode( $value );
+			break;
+		}
+		
+		return $value;
+	}
+	
+	/**
+	 * Assign the data type in a get operation
+	 *
+	 * @param string 	$type
+	 * @param mixed 		$value
+	 * @return mixed
+	 */
+	private function _type_assignment_get( $type, $value )
+	{
+		switch ( $types[$key] ) 
+		{
+			// integer types
+			case 'int':
+			case 'timestamp':
+				return (int) $value;
+			break;
+			
+			// json datatype try to decode return array on failure
+			case 'json':
+				if ( is_array( $value = json_decode( $value, true ) ) )
+				{
+					return $value;
+				}
+				return array();
+			break;
+		}
+		
+		return $value;
 	}
 
 	/**
@@ -256,5 +361,57 @@ class CCModel
 	public function raw() 
 	{
 		return $this->_data_store;
+	}
+	
+	/**
+	 * Get the object as array
+	 * When $modifiers is true, then the data will be passed trough the modifiers
+	 *
+	 * @param bool		$modifiers
+	 * @return array
+	 */
+	public function as_array( $modifiers = true )
+	{
+		$settings = static::_model();
+		
+		// get the available keys
+		$keys = ( $this->_data_store );
+		
+		// remove the hidden ones
+		$keys = array_diff_key( $keys, $settings['hidden'] );
+		
+		// add this moment we can simply return when 
+		// we dont wish to execute the modifiers
+		if ( $modifiers === false )
+		{
+			return $keys;
+		}
+		
+		// add the visible keys
+		foreach( $settings['visible'] as $key => $value )
+		{
+			$keys[$key] = null;
+		}
+		
+		// run the modifiers
+		foreach( $keys as $key => $value )
+		{
+			$keys[$key] = $this->$key;
+		}
+		
+		return $keys;
+	}
+	
+	/**
+	 * Get the object as json
+	 * When $modifiers is true, then the data will be passed trough the modifiers
+	 *
+	 * @param bool		$modifiers
+	 * @param bool		$beautify
+	 * @return string
+	 */
+	public function as_json( $modifiers = true, $beautify = true )
+	{
+		return CCJson::encode( $this->as_array( $modifiers ), $beautify );
 	}
 }
