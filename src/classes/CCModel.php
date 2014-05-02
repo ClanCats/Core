@@ -114,6 +114,23 @@ class CCModel
 			$settings['visible'] = array();
 		}
 		
+		// check if the key property isset if not we generate one using
+		// the current class name
+		if ( property_exists( $class, '_name') ) 
+		{
+			$settings['name'] = static::$_name;
+		}
+		else
+		{
+			$settings['name'] = strtolower( str_replace( array( "\\", '_' ), '/', get_called_class() ) );
+			
+			// if it starts with model remove it
+			if ( substr( $settings['name'], $length = strlen( 'model/' ) ) == 'model/' )
+			{
+				$settings['name'] = substr( $settings['name'], $length );
+			}
+		}
+		
 		return $settings;
 	}
 
@@ -194,6 +211,18 @@ class CCModel
 		{
 			$this->_assign( $data );
 		}
+	}
+	
+	/**
+	 * Label translation helper 
+	 *
+	 * @param string 		$key
+	 * @param array 			$params
+	 * @return string
+	 */
+	public function __( $key, $params = array() )
+	{
+		return __( 'model/label.'.static::_model( 'name' ), $params );
 	}
 
 	/**
