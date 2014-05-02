@@ -59,7 +59,17 @@ class CCError_Handler
 	public function handle()
 	{
 		$this->log();
-		$this->respond();
+		
+		// when not in development we respond using a route
+		if ( !ClanCats::in_development() )
+		{
+			CCResponse::error(500)->send( true );
+		}
+		// when in development continue with the default responder
+		else
+		{
+			$this->respond();
+		}
 	}
 	
 	/**

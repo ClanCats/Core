@@ -60,7 +60,7 @@ class CCIn_Instance {
 	 */ 
 	public function __construct( $get, $post, $cookie, $files, $server ) 
 	{
-		// get behavior i simply don't understand
+		// fix behavior i simply don't understand
 		if ( array_key_exists( $server['REQUEST_URI'], $get ) )
 		{
 			unset( $get[ $server['REQUEST_URI'] ] );
