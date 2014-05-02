@@ -46,4 +46,4 @@
 \CCFinder::map( 'Auth', COREPATH.'bundles/Auth/' );
 
 // and the shdaow
-\CCFinder::shadow( 'Auth', 'Auth', COREPATH.'bundles/Auth/Auth'.EXT );
+\CCFinder::shadow( 'CCAuth', 'Auth', COREPATH.'bundles/Auth/CCAuth'.EXT );

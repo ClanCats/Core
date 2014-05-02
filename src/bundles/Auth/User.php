@@ -17,18 +17,13 @@ class User extends \DB\Model
 	protected static $_hidden = array( 'password' );
 	
 	/**
-	 * Visible fields
-	 */
-	protected static $_visible = array( 'fullname' );
-	
-	/**
 	 * The user model defaults
 	 *
 	 * @var array
 	 */
 	protected static $_defaults = array(
 		'id'	,
-		'active'			=> array( 'bool', 1 ),
+		'active'			=> array( 'bool', true ),
 		'username'		=> null,
 		'email'			=> null,
 		'password'		=> null,
@@ -37,17 +32,4 @@ class User extends \DB\Model
 		'created_at'		=> array( 'timestamp' ),
 		'modified_at'	=> array( 'timestamp' ),
 	);
-	
-	/**
-	 * Full name
-	 */
-	protected function _get_modifier_fullname()
-	{
-		if ( !isset( $this->storage['firstname'] ) )
-		{
-			return $this->username;
-		}
-		
-		return $this->storage['firstname'].' '.$this->storage['lastname'];
-	}
 }
