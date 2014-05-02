@@ -48,7 +48,7 @@ class Model extends \CCModel
 	 * @param string 	$class 		The class name.
 	 * @return array
 	 */
-	protected static function _prepare( $setting, $class )
+	protected static function _prepare( $settings, $class )
 	{
 		$settings = parent::_prepare( $settings, $class );
 		
