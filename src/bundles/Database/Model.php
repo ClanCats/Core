@@ -378,30 +378,6 @@ class Model extends \CCModel
 	}
 	
 	/**
-	 * returns an array of the current object
-	 *
-	 * @return array
-	 */
-	public function as_array() {
-		
-		$array = $this->_data_store;
-		$rels = array_keys( static::_cache( 'relationships' ) );
-		
-		foreach ( $rels as $rel ) {
-			if ( is_array( $array[$rel] ) ) {
-				
-				foreach( $array[$rel] as $key => $item ) {
-					$array[$rel][$key] = $array[$rel][$key]->as_array();
-				}
-				
-			} elseif ( is_object( $array[$rel] ) ) {
-				$array[$rel] = $array[$rel]->as_array();
-			}
-		}
-		return $array;
-	}
-	
-	/**
 	 * copy an self
 	 *
 	 * @return CCModel
