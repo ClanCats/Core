@@ -307,6 +307,10 @@ class CCModel
 			
 			// json datatype try to decode return array on failure
 			case 'json':
+				if ( is_array( $value ) )
+				{
+					return $value;
+				}
 				if ( is_array( $value = json_decode( $value, true ) ) )
 				{
 					return $value;

@@ -54,7 +54,7 @@ class Builder
 	 */
 	public function param( $value )
 	{
-		if ( !\DB::is_expression( $param ) )
+		if ( !\DB::is_expression( $value ) )
 		{
 			$this->add_parameter( $value ); return '?';
 		}
