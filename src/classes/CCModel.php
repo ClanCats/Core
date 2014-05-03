@@ -244,7 +244,7 @@ class CCModel
 				// do we have to to something with the data type?
 				if ( array_key_exists( $key, $types ) )
 				{
-					$value = $this->_type_assignment_get( $value );
+					$value = $this->_type_assignment_get( $types[$key], $value );
 				}
 				
 				$this->_data_store[$key] = $value;
@@ -261,14 +261,18 @@ class CCModel
 	 * @param mixed 		$value
 	 * @return mixed
 	 */
-	private function _type_assignment_set( $type, $value )
+	protected function _type_assignment_set( $type, $value )
 	{
-		switch ( $types[$key] ) 
+		switch ( $type ) 
 		{
 			// integer types
 			case 'int':
 			case 'timestamp':
 				return (int) $value;
+			break;
+			
+			case 'bool':
+				return (bool) $value;
 			break;
 			
 			// json datatype simply encode
@@ -287,14 +291,18 @@ class CCModel
 	 * @param mixed 		$value
 	 * @return mixed
 	 */
-	private function _type_assignment_get( $type, $value )
+	protected function _type_assignment_get( $type, $value )
 	{
-		switch ( $types[$key] ) 
+		switch ( $type ) 
 		{
 			// integer types
 			case 'int':
 			case 'timestamp':
 				return (int) $value;
+			break;
+			
+			case 'bool':
+				return (bool) $value;
 			break;
 			
 			// json datatype try to decode return array on failure

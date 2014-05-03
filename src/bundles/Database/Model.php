@@ -330,6 +330,34 @@ class Model extends \CCModel
 		// We pass the data trough the before save callback.
 		// This is a local callback for performence reasons.
 		$data = $this->_before_save( $data );
+		
+		// after the before save event,
+		// do we have to to something with the data type?
+		foreach( $data as $key => $value )
+		{
+			if ( array_key_exists( $key, $settings['types'] ) )
+			{
+				$data[$key] = $this->_type_assignment_set( $settings['types'][$key], $value );
+			}
+		}
+		
+		// check if we have to set the timestamps automatically
+		if ( $settings['timestamps'] === true )
+		{
+			if ( array_key_exists( 'created_at', $data ) )
+			{
+				// check if created_at should be set
+				if ( $data['created_at'] < 1 )
+				{
+					$this->_data_store['created_at'] = $data['created_at'] = time();
+				}
+			}
+			
+			if ( array_key_exists( 'modified_at', $data ) )
+			{
+				$this->_data_store['modified_at'] =$data['modified_at'] = time();
+			}
+		}
 	
 		// When we already have a primary key we are going to 
 		// update our record instead of inserting a new one.

@@ -16,6 +16,11 @@ class User extends \DB\Model
 	 */
 	protected static $_hidden = array( 'password' );
 	
+	/*
+	 * Let the model automatically set created_at and modified_at 
+	 */
+	protected static $_timestamps = true;
+	
 	/**
 	 * The user model defaults
 	 *
@@ -28,8 +33,19 @@ class User extends \DB\Model
 		'email'			=> null,
 		'password'		=> null,
 		'storage'		=> array( 'json', array() ),
-		'last_login'		=> array( 'timestamp' ),
+		'last_login'		=> array( 'timestamp', 0 ),
 		'created_at'		=> array( 'timestamp' ),
 		'modified_at'	=> array( 'timestamp' ),
 	);
+	
+	/**
+	 * Always hash the passwort 
+	 * 
+	 * @param string 		$password
+	 * @return string
+	 */
+	protected function _set_modifier_password( $password )
+	{
+		return \CCStr::hash( $password );
+	}
 }
