@@ -27,20 +27,6 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::$_fields
-	 */
-	public function test_fields() 
-	{
-		// assigned by defaults
-		$this->assertEquals( array( 
-			'id', 'name'	, 'age', 'library_id' 
-		), CCUnit\Model_DBPerson::_model( 'fields' ) );
-		
-		// custom assignment
-		$this->assertEquals( '*', CCUnit\Model_DBPerson_CustomFields::_model( 'fields' ) );
-	}
-	
-	/**
 	 * CCModel::$_table
 	 */
 	public function test_table() 

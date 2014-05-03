@@ -12,11 +12,6 @@
 class Model extends \CCModel
 {
 	/*
-	 * The fields
-	 */
-	// protected static $_fields = array();
-
-	/*
 	 * The table
 	 */
 	// public static $_table = null;
@@ -51,17 +46,6 @@ class Model extends \CCModel
 	protected static function _prepare( $settings, $class )
 	{
 		$settings = parent::_prepare( $settings, $class );
-		
-		// Set the select fields. If not set we simply use 
-		// the array keys of our defaults
-		if ( property_exists( $class, '_fields') ) 
-		{
-			$settings['fields'] = static::$_fields;
-		}
-		else 
-		{
-			$settings['fields'] = array_keys( $settings['defaults'] );
-		}
 		
 		// Next step the table name. If not set we use the 
 		// class name appending an 's' in the hope that it 
@@ -175,7 +159,7 @@ class Model extends \CCModel
 	{
 		$settings = static::_model();
 		
-		$query = DB::select( $settings['table'], $settings['fields'] );
+		$query = DB::select( $settings['table'] );
 		
 		// Do we have a find modifier?
 		if ( !is_null( $settings['find_modifier'] ) ) 
@@ -321,7 +305,7 @@ class Model extends \CCModel
 		// check if we should save just some fields
 		if ( is_null( $fields ) ) 
 		{
-			$fields = $settings['fields'];
+			$fields = array_keys( $settings['defaults'] );
 		}
 		elseif ( !is_array( $fields ) ) 
 		{
@@ -331,7 +315,7 @@ class Model extends \CCModel
 		$pkey = $this->_data_store[$settings['primary_key']];
 		$data = array();
 		
-		// Now we have to filter the data to the save fields
+		// Now we have to filter the data to the save g
 		foreach( $fields as $field )
 		{
 			$data[$field] = $this->_data_store[$field];
