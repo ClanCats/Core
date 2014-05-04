@@ -47,11 +47,25 @@ class Query_Select extends Query
 	public $group_result = false;
 	
 	/**
+	 * forward key
+	 *
+	 * @var false|string 
+	 */
+	public $forward_key = false;
+	
+	/**
 	 * the fetching arguments
 	 *
 	 * @var array
 	 */
 	public $fetch_arguments = array( 'obj' );
+	
+	/**
+	 * the fetching handler
+	 *
+	 * @var callback
+	 */
+	public $fetch_handler = null;
 
 	/**
 	 * Distinct select setter
@@ -72,7 +86,7 @@ class Query_Select extends Query
 	 */
 	public function fields( $fields )
 	{
-		if ( !is_array( $fields ) )
+		if ( !is_array( $fields ) && !is_null( $fields ) )
 		{
 			$fields = array( $fields );
 		}
@@ -160,21 +174,61 @@ class Query_Select extends Query
 		
 		return $this;
 	}
+	
 	/**
-	 * group the result's by a key
+	 * Forward a result value as array key
 	 *
 	 * @param string|bool		$key
 	 * @return self
 	 */
-	public function group_result( $key = true )
+	public function forward_key( $key = true )
+	{
+		if ( $key === false )
+		{
+			$this->forward_key = false;
+		}
+		elseif ( $key === true )
+		{
+			$this->forward_key = \ClanCats::$config->get( 'database.default_primary_key', 'id' );
+		}
+		else
+		{
+			$this->forward_key = $key;
+		}
+		
+		return $this;
+	}
+	
+	/**
+	 * Group results
+	 *
+	 * example:
+	 *     array(
+	 *         'name' => 'John', 'age' => 18,
+	 *     ),
+	 *     array(
+	 *         'name' => 'Jeff', 'age' => 32,
+	 *     ),
+	 *     array(
+	 *         'name' => 'Jenny', 'age' => 18,
+	 *     ),
+	 * To:
+	 *     '18' => array(
+	 *          array( 'name' => 'John', 'age' => 18 ),
+	 *          array( 'name' => 'Jenny', 'age' => 18 ),
+	 *     ),
+	 *     '32' => array(
+	 *          array( 'name' => 'Jeff', 'age' => 32 ),
+	 *     ),
+	 *
+	 * @param string|bool		$key
+	 * @return self
+	 */
+	public function group_result( $key )
 	{
 		if ( $key === false )
 		{
 			$this->group_result = false;
-		}
-		elseif ( $key === true )
-		{
-			$this->group_result = \ClanCats::$config->get( 'database.default_primary_key', 'id' );
 		}
 		else
 		{
@@ -182,6 +236,17 @@ class Query_Select extends Query
 		}
 		
 		return $this;
+	}
+	
+	/**
+	 * Set the fetch handler for this query
+	 *
+	 * @param callback 		$callback
+	 * @return self
+	 */
+	public function fetch_handler( $callback )
+	{
+		$this->fetch_handler = $callback; return $this;
 	}
 	
 	/**
@@ -214,10 +279,23 @@ class Query_Select extends Query
 			$this->handler( $handler );
 		}
 		
-		$results = $this->handler->fetch( $this->build(), $this->handler->builder()->parameters, $this->fetch_arguments );
+		// if there is a special fetch handler defined pass him all the 
+		// needed parameters and retrive the results
+		if ( !is_null( $this->fetch_handler ) )
+		{
+			$results = call_user_func_array( $this->fetch_handler, array(
+				&$this
+			));
+		}
+		// otherwise simply do the default select fetch
+		else 
+		{
+			$results = $this->handler->fetch( $this->build(), $this->handler->builder()->parameters, $this->fetch_arguments );
+		}
 		
-		// Should we group the result by a special key?
-		if ( $this->group_result !== false )
+		// In case we should forward a key means using a value
+		// from every result as array key.
+		if ( $this->forward_key !== false )
 		{
 			$raw_results = $results;
 			$results = array();
@@ -226,14 +304,36 @@ class Query_Select extends Query
 			{
 				foreach( $raw_results as $result )
 				{
-					$results[$result[$this->group_result]] = $result;
+					$results[$result[$this->forward_key]] = $result;
 				}
 			}
 			else
 			{
 				foreach( $raw_results as $result )
 				{
-					$results[$result->{$this->group_result}] = $result;
+					$results[$result->{$this->forward_key}] = $result;
+				}
+			}
+		}
+		
+		// Group the results by a value
+		if ( $this->group_result !== false )
+		{
+			$raw_results = $results;
+			$results = array();
+			
+			if ( in_array( 'assoc', $this->fetch_arguments ) )
+			{
+				foreach( $raw_results as $key => $result )
+				{
+					$results[$result[$this->group_result]][$key] = $result;
+				}
+			}
+			else
+			{
+				foreach( $raw_results as $key => $result )
+				{
+					$results[$result->{$this->group_result}][$key] = $result;
 				}
 			}
 		}

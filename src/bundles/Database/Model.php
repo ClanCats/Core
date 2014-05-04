@@ -86,6 +86,16 @@ class Model extends \CCModel
 			$settings['primary_key'] = \ClanCats::$config->get( 'database.default_primary_key', 'id' );
 		}
 		
+		// Do we should use a special DB handler?
+		if ( property_exists( $class, '_handler') ) 
+		{
+			$settings['handler'] = static::$_handler;
+		}
+		else 
+		{
+			$settings['handler'] = null;
+		}
+				
 		// The find modifier allows you hijack every find executed
 		// on your model an pass setting's to the query. This allows
 		// you for example to defaultly order by something etc.
@@ -135,6 +145,25 @@ class Model extends \CCModel
 		}*/
 		
 		return $settings;
+	}
+	
+	/**
+	 * Fetch from the databse and created models out of the reults
+	 * 
+	 * @param DB\Query_Select		$query
+	 * @return array
+	 */
+	public static function _fetch_handler( &$query )
+	{
+		// because the model is an object we force the fetch
+		// arguments to obj so that we can still make use of
+		// the group by and forward key functions
+		$query->fetch_arguments = array( 'obj' );
+		
+		// Run the query and assign the reults
+		// here we force the fetch arguments to assoc 
+		// without this step model::assign will fail
+		return static::assign( $query->handler->fetch( $query->build(), $query->handler->builder()->parameters, array( 'assoc' ) ) );
 	}
 	
 	/**
@@ -210,7 +239,7 @@ class Model extends \CCModel
 		}
 		
 		// alway group the result
-		$query->group_result( $settings['primary_key'] );
+		$query->forward_key( $settings['primary_key'] );
 		
 		// and we have to fetch assoc
 		$query->fetch_arguments = array( 'assoc' );
@@ -397,7 +426,7 @@ class Model extends \CCModel
 	public function copy() {
 	
 		$objB = clone $this;
-		$objB->{static::_cache('primary_key')} = null;
+		$objB->{static::_model('primary_key')} = null;
 	
 		return $objB;
 	}

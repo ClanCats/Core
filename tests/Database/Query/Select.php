@@ -531,11 +531,11 @@ class Test_Database_Query_Select extends \DB\TestCase
 	}
 	
 	/**
-	 * Test Query_Select::group_result
+	 * Test Query_Select::forward_key
 	 *
 	 * @dataProvider people_provider_bulk
 	 */
-	public function test_group_result( $people )
+	public function test_forward_key( $people )
 	{
 		// lets kill the db
 		DB::run( 'delete from people' );
@@ -543,7 +543,7 @@ class Test_Database_Query_Select extends \DB\TestCase
 		DB::insert( 'people', $people )->run();
 		
 		$people = DB::select( 'people' )
-			->group_result()
+			->forward_key()
 			->run();
 		
 		foreach( $people as $key => $person )
@@ -553,7 +553,7 @@ class Test_Database_Query_Select extends \DB\TestCase
 		
 		// diffrent key
 		$people = DB::select( 'people' )
-			->group_result( 'name' )
+			->forward_key( 'name' )
 			->run();
 			
 		foreach( $people as $key => $person )

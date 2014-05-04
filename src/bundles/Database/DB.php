@@ -111,6 +111,20 @@ class DB
 	{
 		return Query::select( $table, $fields, $handler );
 	}
+	
+	/**
+	 * Create a select query with an model assignment
+	 *
+	 * @param string		$table
+	 * @param array		$fields
+	 * @return mixed
+	 */
+	public static function model( $model, $handler = null ) 
+	{
+		$model_data = call_user_func( $model.'::_model' );
+		return Query::select( $model_data['table'], null, $model_data['handler'] )
+			->fetch_handler( $model.'::_fetch_handler' );
+	}
 
 	/**
 	 * Find something, means select one record by key
