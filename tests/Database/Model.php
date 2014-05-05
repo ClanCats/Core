@@ -60,7 +60,7 @@ class Test_Database_Model extends \DB\TestCase
 			CCUnit\Model_DBPerson::_model( 'primary_key' )
 		);
 		
-		$this->assertEquals( 'something', CCUnit\Model_DBPerson_Pkey::_model( 'primary_key' ) );
+		$this->assertEquals( 'something', CCUnit\Model_DBPerson_PKey::_model( 'primary_key' ) );
 	}
 	
 	/**
