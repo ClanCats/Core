@@ -119,31 +119,6 @@ class Model extends \CCModel
 			$settings['timestamps'] = false;
 		}
 		
-		// set relationships
-		/*if ( property_exists( $class, '_relationships') ) {
-			$cache['relationships'] = static::$_relationships;
-		}
-		foreach( $cache['relationships'] as $key => $relation ) {
-			// do we have an model name?
-			if ( !array_key_exists( 'model', $relation ) ) {
-				$relation['model'] = 'Model_'.ucfirst( $key );
-			}
-			// is the foreign key set?
-			if ( !array_key_exists( 'foreign_key', $relation ) ) {
-				if ( $relation['type'] == 'has_many' ) {
-					$relation['foreign_key'] = substr( $cache['table'], 0, -1 ).'_id';	
-				} else {
-					$relation['foreign_key'] = $key.'_id';
-				}
-			}
-			// is the current key set?
-			if ( !array_key_exists( 'key', $relation ) ) {
-				$relation['key'] = $cache['primary_key'];
-			}
-		
-			$cache['relationships'][$key] = $relation;
-		}*/
-		
 		return $settings;
 	}
 	
@@ -251,74 +226,9 @@ class Model extends \CCModel
 	/**
 	 * find with an relationship
 	 */
-	public static function with( $with, $params = null, $relcallback = null, $relwith = array() ) {
-	
-		if ( !is_array( $with ) ) {
-			$with = array( $with );
-		}
-	
-		if ( is_null( $params ) ) {
-			$params = array(
-				'limit'		=> null,
-			);
-		}
-	
-		$data = static::find( $params );
-		$cache = static::_cache();
-	
-		foreach( $with as $kkey => $rel_key ) {
-			// placeholder
-			$placeholer = $rel_key;
-			if ( is_string( $kkey ) ) {
-				 $rel_key = $kkey;
-			}
-			
-			extract( $cache['relationships'][$rel_key] );
-	
-			// switch the type
-			if ( $type == 'has_one' ) {
-	
-				$keys = array();
-				foreach( $data as $item ) {
-					$keys[] = $item->{$foreign_key};
-				}
-	
-				$rel_data = $model::find( function( $query ) use( $key, $keys ) {
-					$query->s_where( $key, 'in', $keys );
-					$query->limit = null;
-				});
-	
-				foreach( $data as $pkey => $item ) {
-					if ( $item->$foreign_key == 0 ) {
-						continue;
-					}
-	
-					$item->{$placeholer} = $rel_data[$item->$foreign_key];
-					$data[$pkey] = $item;
-				}
-			}
-			/*elseif ( $type == 'belongs_to' ) {
-				$item = $this->data[$key] = $model_name::find( $relation['foreign_key'], $this->{$relation['key']} );
-			}*/
-			elseif ( $type == 'has_many' ) {
-				$keys = array_keys( $data );
-				
-				$rel_data = $model::find( function( $query ) use( $foreign_key, $keys, $relcallback, $rel_key ) {
-					$query->s_where( $foreign_key, 'in', $keys );
-					$query->limit( null );
-					
-					if ( is_array( $relcallback ) && array_key_exists( $rel_key, $relcallback ) ) {
-						call_user_func_array( $relcallback[$rel_key], array( &$query ) );
-					}	
-				});
-			
-				foreach( $rel_data as $i_key => $item ) {
-					$data[$item->{$foreign_key}]->data[$placeholer][$i_key] = $item;
-				}
-			}
-		}
-	
-		return $data;
+	public static function with( $with, $params = null, $relcallback = null, $relwith = array() ) 
+	{	
+		// ToDo rewrite
 	}
 	
 	/**
@@ -453,50 +363,4 @@ class Model extends \CCModel
 	 * to modify your data before they get saved
 	 */
 	protected function _after_save() {}
-	
-	/**
-	 * get a value from the view
-	 *
-	 * @param $key 
-	 * @return mixed
-	 */
-	public function &__get( $key ) 
-	{
-		return parent::__get( $key );
-		$item = null;
-	
-		// try getting the item
-		if ( array_key_exists( $key, $this->_data_store ) )  
-		{
-			$item = $this->_data_store[$key];
-		}
-		// is there a relationship
-		elseif ( array_key_exists( $key, static::_cache( 'relationships' ) ) ) {
-	
-			$cache = static::_cache();
-			$relation = $cache['relationships'][$key];
-			$model_name = $relation['model'];
-	
-			// switch the type
-			if ( $relation['type'] == 'has_one' ) {
-				$item = $this->_data_store[$key] = $model_name::find( $relation['key'], $this->{$relation['foreign_key']} );
-			}
-			elseif ( $relation['type'] == 'belongs_to' ) {
-				$item = $this->_data_store[$key] = $model_name::find( $relation['foreign_key'], $this->{$relation['key']} );
-			}
-			elseif ( $relation['type'] == 'has_many' ) {
-				$item = $this->_data_store[$key] = $model_name::find( array(
-					's_where' 	=> array( $relation['foreign_key'], $this->{$relation['key']} ),
-					'limit'		=> null,
-				));
-			}
-		}
-	
-		// let the modifiers modify
-		if ( method_exists( $this, '_get_modifier_'.$key ) ) {
-			$item = $this->{'_get_modifier_'.$key}( $item );
-		}
-	
-		return $item;
-	}
 }
