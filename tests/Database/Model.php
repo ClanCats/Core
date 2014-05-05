@@ -104,7 +104,7 @@ class Test_Database_Model extends \DB\TestCase
 		// assigned by defaults
 		$this->assertTrue( CCUnit\Model_DBPerson::select() instanceof \DB\Query_Select );
 		
-		$this->assertTrue( CCUnit\Model_DBPerson::select() instanceof \DB\Query_Select );
+		$this->assertEquals( 'people', CCUnit\Model_DBPerson::select()->table );
 	}
 	
 	/**
