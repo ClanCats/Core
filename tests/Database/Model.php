@@ -14,7 +14,7 @@
 class Test_Database_Model extends \DB\TestCase
 {	
 	/**
-	 * CCModel::$defaults
+	 * DB\Model::$defaults
 	 */
 	public function test_defaults() 
 	{
@@ -27,7 +27,7 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::$types
+	 * DB\Model::$types
 	 */
 	public function test_types() 
 	{
@@ -38,7 +38,7 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::$_table
+	 * DB\Model::$_table
 	 */
 	public function test_table() 
 	{
@@ -50,7 +50,7 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::$_primary_key
+	 * DB\Model::$_primary_key
 	 */
 	public function test_primary_key() 
 	{
@@ -64,7 +64,7 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::$_handler
+	 * DB\Model::$_handler
 	 */
 	public function test_handler() 
 	{
@@ -75,7 +75,7 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::$_find_mofifier
+	 * DB\Model::$_find_mofifier
 	 *
 	 * @expectedException        DB\Exception
 	 */
@@ -101,7 +101,7 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::$_timestamps
+	 * DB\Model::$_timestamps
 	 */
 	public function test_timestamps() 
 	{
@@ -112,7 +112,7 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::select
+	 * DB\Model::select
 	 */
 	public function test_select() 
 	{
@@ -123,7 +123,7 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::save
+	 * DB\Model::save
 	 *
 	 * @dataProvider people_provider
 	 */
@@ -141,7 +141,52 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::find after save
+	 * DB\Model::save book
+	 *
+	 */
+	public function test_save_book( ) 
+	{
+		// Book test
+		$book = new CCUnit\Model_Book;
+		
+		$book->name = "The Swarm";
+		
+		$book->pages = array(
+			1 => 'Vorwort',
+			219 => 'Ende'
+		);
+		
+		$this->assertTrue( $book->save() > 0 );
+		
+		$this->assertTrue( $book->created_at > 0 );
+		$this->assertTrue( $book->modified_at > 0 );
+		$this->assertInternalType( 'array', $book->pages );
+		
+		$book->name = "Der Schwarm";
+		
+		$id = $book->id;
+		
+		$book->modified_at -= 1;
+		
+		$last_modified = $book->modified_at;
+		
+		$book->save( array( 'name', 'modified_at' ) );
+		$book->save( 'name' );
+		
+		$this->assertTrue( $last_modified !== $book->modified_at );
+		
+		$this->assertEquals( $id, $book->id );
+		
+		$this->assertInternalType( 'array', $book->pages );
+		
+		// get the book again
+		$book = CCUnit\Model_Book::find( $id );
+		
+		$this->assertInternalType( 'array', $book->pages );
+	}
+	
+	/**
+	 * DB\Model::find after save
 	 */
 	public function after_save_find_test( $person ) 
 	{
@@ -154,7 +199,7 @@ class Test_Database_Model extends \DB\TestCase
 	}
 	
 	/**
-	 * CCModel::find
+	 * DB\Model::find
 	 */
 	public function test_find() 
 	{
@@ -201,4 +246,55 @@ class Test_Database_Model extends \DB\TestCase
 		}
 	}
 	
+	/**
+	 * DB\Model::copy
+	 */
+	public function test_copy() 
+	{
+		$book = new CCUnit\Model_Book;
+		
+		$book->name = "The Swarm";
+		
+		$book->pages = array(
+			1 => 'Vorwort',
+			219 => 'Ende'
+		);
+		
+		$book->save();
+		
+		$book_2 = $book->copy();
+		
+		$book_2->name .= ' 2';
+		
+		$this->assertTrue( $book_2->id == null );
+		
+		$book_2->save();
+		
+		$this->assertFalse( $book->id == $book_2->id );
+	}
+	
+	/**
+	 * DB\Model::delete
+	 */
+	public function test_delete() 
+	{
+		$book = new CCUnit\Model_Book;
+		
+		$book->name = "The Swarm";
+		
+		$book->pages = array(
+			1 => 'Vorwort',
+			219 => 'Ende'
+		);
+		
+		$book->save();
+		
+		$this->assertTrue( CCUnit\Model_Book::find( $book->id ) instanceof CCUnit\Model_Book );
+		
+		$id = $book->id;
+		
+		$book->delete();
+		
+		$this->assertFalse( CCUnit\Model_Book::find( $id ) instanceof CCUnit\Model_Book );
+	}
 }

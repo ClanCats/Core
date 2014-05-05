@@ -226,10 +226,10 @@ class Model extends \CCModel
 	/**
 	 * find with an relationship
 	 */
-	public static function with( $with, $params = null, $relcallback = null, $relwith = array() ) 
+	/*public static function with( $with, $params = null, $relcallback = null, $relwith = array() ) 
 	{	
 		// ToDo rewrite
-	}
+	}*/
 	
 	/**
 	 * save an model
@@ -329,27 +329,32 @@ class Model extends \CCModel
 	}
 	
 	/**
-	 * copy an self
+	 * Create a copy of the current model
 	 *
-	 * @return CCModel
+	 * @return DB\Model
 	 */
-	public function copy() {
-	
-		$objB = clone $this;
-		$objB->{static::_model('primary_key')} = null;
-	
-		return $objB;
+	public function copy() 
+	{
+		$clone = clone $this; $clone->_data_store[static::_model('primary_key')] = null; return $clone;
 	}
 	
 	/**
-	 * delete the object
+	 * Delete the current model from the database
+	 *
+	 * @return DB\Model
 	 */
-	public function delete() {
-		$cache = static::_cache();
+	public function delete() 
+	{
+		$settings = static::_model();
 	
-		return DB::delete( $cache['table'] )
-			->where( $cache['primary_key'], $this->$cache['primary_key'] )
-			->run();
+		$result = DB::delete( $settings['table'] )
+			->where( $settings['primary_key'], $this->_data_store[$settings['primary_key']] )
+			->limit(1)
+			->run( $settings['handler'] );
+			
+		$this->_data_store[$cache['primary_key']] = null;
+		
+		return $result;
 	}
 	
 	/**

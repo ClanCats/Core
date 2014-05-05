@@ -169,7 +169,7 @@ class CCModel
 	public static function assign( $data ) 
 	{
 		// return null if we have no data
-		if ( $data === null ) 
+		if ( $data === null || empty( $data ) ) 
 		{
 			return null;
 		}
