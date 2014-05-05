@@ -8,7 +8,7 @@
  * @copyright     2010 - 2014 ClanCats GmbH
  */
 class Model_DBPerson extends \DB\Model
-{
+{	
 	/*
 	 * Current Table 
 	 */
@@ -20,7 +20,7 @@ class Model_DBPerson extends \DB\Model
 	protected static $_defaults = array(
 		'id'	,
 		'name'			=> '',
-		'age'			=> 0,
-		'library_id'	
+		'age'			=> array( 'int', 0 ),
+		'library_id'		=> array( 'int'  )
 	);
 }

@@ -12,7 +12,7 @@
  * @group Database_Model
  */
 class Test_Database_Model extends \DB\TestCase
-{
+{	
 	/**
 	 * CCModel::$defaults
 	 */
@@ -24,6 +24,17 @@ class Test_Database_Model extends \DB\TestCase
 			'age'			=> 0,
 			'library_id'		=> null,
 		), CCUnit\Model_DBPerson::_model( 'defaults' ) );
+	}
+	
+	/**
+	 * CCModel::$types
+	 */
+	public function test_types() 
+	{
+		$this->assertEquals( array(
+			'age' 			=> 'int',
+			'library_id' 	=> 'int',
+		), CCUnit\Model_DBPerson::_model( 'types' ) );
 	}
 	
 	/**
@@ -48,6 +59,19 @@ class Test_Database_Model extends \DB\TestCase
 			\ClanCats::$config->get( 'database.default_primary_key', 'id' ), 
 			CCUnit\Model_DBPerson::_model( 'primary_key' )
 		);
+		
+		$this->assertEquals( 'something', CCUnit\Model_DBPerson_Pkey::_model( 'primary_key' ) );
+	}
+	
+	/**
+	 * CCModel::$_handler
+	 */
+	public function test_handler() 
+	{
+		// assigned by defaults
+		$this->assertEquals( null, CCUnit\Model_DBPerson::_model( 'handler' ) );
+		
+		$this->assertEquals( 'other', CCUnit\Model_DBPerson_Handler::_model( 'handler' ) );
 	}
 	
 	/**
@@ -57,6 +81,8 @@ class Test_Database_Model extends \DB\TestCase
 	{
 		// assigned by defaults
 		$this->assertEquals( null, CCUnit\Model_DBPerson::_model( 'find_modifier' ) );
+		
+		$this->assertInternalType( 'array', CCUnit\Model_DBPerson_FindModifier::_model( 'find_modifier' ) );
 	}
 	
 	/**
@@ -66,6 +92,19 @@ class Test_Database_Model extends \DB\TestCase
 	{
 		// assigned by defaults
 		$this->assertEquals( false, CCUnit\Model_DBPerson::_model( 'timestamps' ) );
+		
+		$this->assertEquals( true, CCUnit\Model_DBPerson_Timestamps::_model( 'timestamps' ) );
+	}
+	
+	/**
+	 * CCModel::select
+	 */
+	public function test_select() 
+	{
+		// assigned by defaults
+		$this->assertTrue( CCUnit\Model_DBPerson::select() instanceof \DB\Query_Select );
+		
+		$this->assertTrue( CCUnit\Model_DBPerson::select() instanceof \DB\Query_Select );
 	}
 	
 	/**

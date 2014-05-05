@@ -142,13 +142,13 @@ class Model extends \CCModel
 	}
 	
 	/**
-	 * return all 
+	 * Returns a query and assign's the current model to it
 	 *
-	 * @return array
+	 * @return DB\Query_Select
 	 */
-	public static function all() 
+	public static function select() 
 	{
-		return static::find( array( 'limit' => null ) );
+		return DB::model( get_called_class() );
 	}
 	
 	/**
