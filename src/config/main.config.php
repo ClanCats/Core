@@ -105,6 +105,14 @@ return array(
 	),
 	
 	/*
+	 * User Interface helper configuration
+	 */
+	'ui' => array(
+		// Builder class is by default Twitter's Bootstrap
+		'builder' => "\\UI\\Builder_Bootstrap",
+	),
+	
+	/*
 	 * storage file managment 
 	 */
 	'storage' => array(
