@@ -76,6 +76,8 @@ class Test_Database_Model extends \DB\TestCase
 	
 	/**
 	 * CCModel::$_find_mofifier
+	 *
+	 * @expectedException        DB\Exception
 	 */
 	public function test_find_modifier() 
 	{
@@ -83,6 +85,19 @@ class Test_Database_Model extends \DB\TestCase
 		$this->assertEquals( null, CCUnit\Model_DBPerson::_model( 'find_modifier' ) );
 		
 		$this->assertInternalType( 'array', CCUnit\Model_DBPerson_FindModifier::_model( 'find_modifier' ) );
+		
+		$orders = null;
+		
+		$results = CCUnit\Model_DBPerson_FindModifier::find( function( $q ) use( &$orders ) {
+			$orders = reset( reset( $q->orders ) );
+		});
+		
+		$this->assertEquals( 'age', $orders );
+	
+		
+		CCUnit\Model_DBPerson_FindModifier::$_static_array["CCUnit\\Model_DBPerson_FindModifier"]['find_modifier'][] = array( 'nope not going to work' );
+
+		CCUnit\Model_DBPerson_FindModifier::find( function( $q ) {});
 	}
 	
 	/**

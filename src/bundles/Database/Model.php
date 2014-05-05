@@ -170,7 +170,7 @@ class Model extends \CCModel
 		{
 			$callbacks = $settings['find_modifier'];
 			
-			if ( !CCArr::is_collection( $callbacks ) )
+			if ( !\CCArr::is_collection( $callbacks ) )
 			{
 				$callbacks = array( $callbacks );
 			}

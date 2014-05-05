@@ -9,9 +9,9 @@
  */
 class Model_DBPerson_FindModifier extends \DB\Model
 {
-    protected static $_find_modifier = array( 
-       array( 'Model_DBPerson_FindModifier' => 'order_age' ),
-    );
+    protected static $_find_modifier = array( "CCUnit\\Model_DBPerson_FindModifier", 'order_age' );
+    
+    protected static $_table = 'people';
 
     /**
      * Order by age
