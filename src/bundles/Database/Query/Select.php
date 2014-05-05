@@ -200,7 +200,7 @@ class Query_Select extends Query
 	}
 	
 	/**
-	 * Group results
+	 * Group results by a column
 	 *
 	 * example:
 	 *     array(

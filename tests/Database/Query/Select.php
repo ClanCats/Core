@@ -561,4 +561,30 @@ class Test_Database_Query_Select extends \DB\TestCase
 			$this->assertEquals( $person->name, $key );
 		}
 	}
+	
+	/**
+	 * Test Query_Select::group_result
+	 *
+	 * @dataProvider people_provider_bulk
+	 */
+	public function test_group_result( $people )
+	{
+		$people_array = $people;
+		
+		// lets kill the db
+		DB::run( 'delete from people' );
+		
+		DB::insert( 'people', $people )->run();
+		
+		$people = DB::select( 'people' )
+			->group_result( 'age' )
+			->forward_key( 'name' )
+			->run();
+			
+			
+		foreach( $people_array as $key => $person )
+		{
+			$this->assertEquals( $person['name'], $people[$person['age']][$person['name']]->name );
+		}
+	}
 }

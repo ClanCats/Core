@@ -40,6 +40,22 @@ class Test_Database_Handler_Mysql extends \DB\TestCase
 	{
 		$this->assertTrue( DB::connect( 'phpunit' ) );
 	}
+	
+	/**
+	 * DB\Handler_Driver::connect test fail
+	 *
+	 * @expectedException PDOException
+	 */
+	public function test_connect_fail()
+	{
+		$driver = new DB\Handler_Mysql;
+		$this->assertFalse( $driver->connect( array(
+			'host'		=> '127.0.0.1',
+			'user' 		=> 'not',
+			'pass'		=> 'existing',
+			'charset'	=> 'utf8'
+		)) );
+	}
 
 	/**
 	 * test the handler instance

@@ -36,6 +36,8 @@ class Handler
 	 * Static init
 	 * When we are in development then we append the qurey log to body
 	 *
+	 * @codeCoverageIgnore
+	 *
 	 * @return void
 	 */
 	public static function _init() 

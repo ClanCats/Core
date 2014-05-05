@@ -45,12 +45,14 @@ class Handler_Driver
 		
 		$connection_string = \CCStr::replace( $this->connection_string, $connection_params );
 		
-		$this->connection = new \PDO( $connection_string, $conf['user'], $conf['pass'], $this->pdo_attributes( $conf ) );
+		$this->connection = new \PDO( $connection_string, $conf['user'], $conf['pass'], $this->connection_attributes( $conf ) );
 		
-		if ( !$this->connection )
+		// At the moment this will never happen because pdo is going to 
+		// trhow an exception when the connection fails
+		/*if ( !$this->connection )
 		{
 			return false;
-		}
+		}*/
 		
 		// let pdo throw exceptions
 		$this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
@@ -74,7 +76,7 @@ class Handler_Driver
 	 * @param array 		$conf
 	 * @return array
 	 */
-	protected function pdo_attributes( $conf ) 
+	protected function connection_attributes( $conf ) 
 	{
 		return array();
 	}
