@@ -36,6 +36,19 @@ class CCSession
 	}
 	
 	/**
+	 * Get a value from the session and remove it afterwards
+	 *
+	 * @param string				$key
+	 * @param string 			$default
+	 * @param string				$manager
+	 * @return Session\Manager
+	 */
+	public static function once( $key, $default, $manager = null )
+	{
+		return Manager::create( $manager )->once( $key, $default );
+	}
+	
+	/**
 	 * Set a value on the session
 	 *
 	 * @param string				$key
@@ -46,6 +59,20 @@ class CCSession
 	public static function set( $key, $value, $manager = null )
 	{
 		return Manager::create( $manager )->set( $key, $value );
+	}
+	
+	/**
+	 * Similar to add but forces the element to be an array
+	 * and appends an item.
+	 *
+	 * @param string				$key
+	 * @param string 			$value
+	 * @param string				$manager
+	 * @return Session\Manager
+	 */
+	public static function add( $key, $value, $manager = null )
+	{
+		return Manager::create( $manager )->add( $key, $value );
 	}
 	
 	/**

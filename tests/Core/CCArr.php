@@ -76,6 +76,23 @@ class Test_CCArr extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( 5, count( $array ) );
 	}
 	
+	
+	/**
+	 * test array add
+	 */
+	public function testArrayAdd() 
+	{	
+		$array = array( 'foo' => array( 'bar' => array( 'test' => 'woo' ) ) );
+		
+		$array = CCArr::add( 'foo.bar.test', 'jep', $array );
+		
+		$this->assertEquals( array( 'jep' ), CCArr::get( 'foo.bar.test', $array ) );
+		
+		$array = CCArr::add( 'foo.bar.test', 'jepp', $array );
+		
+		$this->assertEquals( array( 'jep', 'jepp' ), CCArr::get( 'foo.bar.test', $array ) );
+	}
+	
 	/**
 	 * test array push
 	 *

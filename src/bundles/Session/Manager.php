@@ -224,6 +224,20 @@ class Manager extends \CCDataObject
 	}
 	
 	/**
+	 * Get a value from data and remove it afterwards
+	 *
+	 * @param string 	$key
+	 * @param mixed		$default
+	 * @return mixed
+	 */
+	public function once( $key, $default = null ) 
+	{
+		$value = \CCArr::get( $key, $this->_data, $default );
+		\CCArr::delete( $key, $this->_data );
+		return $value;
+	}
+	
+	/**
 	 * Read data from the session driver. This overwrite's 
 	 * any changes made on runtime.
 	 *

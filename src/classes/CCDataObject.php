@@ -46,6 +46,19 @@ class CCDataObject
 	}
 	
 	/**
+	 * Add data to the object
+	 *
+	 * @param string 	$key
+	 * @param mixed		$value
+	 *
+	 * @return void
+	 */
+	public function add( $key, $value ) 
+	{
+		CCArr::add( $key, $value, $this->_data );
+	}
+	
+	/**
 	 * gets data, use a default if not set.
 	 *
 	 * @param string 	$key

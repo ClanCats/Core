@@ -64,6 +64,35 @@ class CCArr
 	}
 	
 	/**
+	 * Adds an item to an element in the array
+	 * 
+	 * Example:
+	 *     CCArr::add( 'foo.bar', 'test' );
+	 * 
+	 * Results: 
+	 *     array( 'foo' => array( 'bar' => array( 'test' ) ) )
+	 *
+	 * @param string		$key 
+	 * @param mixed		$item		The item you would like to add to the array
+	 * @param array 		$array
+	 * @return array
+ 	 */
+	public static function add( $key, $item, &$arr ) 
+	{	
+		if( !is_array( $arr ) ) 
+		{
+			throw new \InvalidArgumentException('CCArr::add - second argument has to be an array.');
+		}
+		
+		if ( !is_array( static::get( $key, $arr ) ) )
+		{
+			return static::set( $key, array( $item ), $arr );
+		}
+		
+		return static::set( $key, static::push( $item, static::get( $key, $arr ) ), $arr );
+	}
+	
+	/**
 	 * get a special item from every array
 	 *
 	 * @param mixed			$key
@@ -339,7 +368,7 @@ class CCArr
 	 * @param string	$key 
 	 * @param mixed		$value
 	 * @param array		$arr
-	 * @return void
+	 * @return array
 	 */
 	public static function set( $key, $value, &$arr ) 
 	{	
@@ -375,6 +404,7 @@ class CCArr
 				break;
 			}
 		}
+		return $arr;
 	}
 	
 	/**
