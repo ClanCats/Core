@@ -78,7 +78,7 @@ class Alert
 	 */
 	public static function flash( $type, $message ) 
 	{	
-		CCSession::add( 'ui.alerts.'.$type, static::prepare( $type, $message ) );
+		\CCSession::add( 'ui.alerts.'.$type, static::prepare( $type, $message ) );
 	}
 	
 	/**
