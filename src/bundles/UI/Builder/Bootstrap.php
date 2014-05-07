@@ -10,6 +10,27 @@
  */
 class Builder_Bootstrap implements Builder_Interface
 {
+	/**
+	 * Build an input form
+	 *
+	 * @param UI\HTML		$element
+	 * @return UI\HTML
+	 */
+	public function build_form_input( $element )
+	{
+		return $element->class( 'form-control' );
+	}
+	
+	/**
+	 * Build an input label
+	 *
+	 * @param UI\HTML		$element
+	 * @return UI\HTML
+	 */
+	public function build_form_label( $element )
+	{
+		return $element->class( 'control-label' );
+	}
 	
 	/**
 	 * Build the UI alerts
@@ -30,14 +51,13 @@ class Builder_Bootstrap implements Builder_Interface
 					
 					// close button
 					$close = HTML::tag( 'button', '&times;' )
-						->add_class('close')
-						->type('button')
+						->add_class( 'close' )
+						->type( 'button' )
 						->data( 'dismiss', 'alert' );
 					
 					// alert div
 					echo HTML::tag( 'div', $close.$alert )
-						->add_class( 'alert' )
-						->add_class( 'fade in' )
+						->add_class( 'alert fade in' )
 						->add_class( 'alert-'.$type );
 				}
 			}

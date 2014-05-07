@@ -11,6 +11,22 @@
 interface Builder_Interface
 {
 	/**
+	 * Build an input form
+	 *
+	 * @param UI\HTML		$element
+	 * @return UI\HTML
+	 */
+	public function build_form_input( $element );
+	
+	/**
+	 * Build an input label
+	 *
+	 * @param UI\HTML		$element
+	 * @return UI\HTML
+	 */
+	public function build_form_label( $element );
+	
+	/**
 	 * Build the UI alerts
 	 *
 	 * @param array 		$alerts

@@ -25,11 +25,20 @@ class Form
 	private static $macros = array();
 	
 	/**
+	 * Is the builder enabled
+	 *
+	 * @var bool
+	 */
+	private static $builder_enabled = false;
+	
+	/**
 	 * Static init
 	 * Here we register all inital macros
 	 */
 	public static function _init()
 	{
+		static::$builder_enabled = Builder::$config->get( 'form.builder_enabled' );
+		
 		// we register the internal macros to make them overwritable
 		static::macro( 'input', "\\UI\\Form::make_input" );
 		static::macro( 'label', "\\UI\\Form::make_label" );
@@ -193,11 +202,18 @@ class Form
 	 */
 	public static function make_input( $id, $key, $type = 'text', $attr = array() ) 
 	{
-		return HTML::tag( 'input', array_merge( array( 
+		$element = HTML::tag( 'input', array_merge( array( 
 			'id' => $id, 
 			'name' => $key, 
 			'type' => $type 
 		), $attr ));
+		
+		if ( !static::$builder_enabled )
+		{
+			 return $element;
+		}
+		
+		return Builder::handle( 'form_input', $element );
 	}
 	
 	/**
@@ -215,10 +231,17 @@ class Form
 			$text = $key;
 		}
 		
-		return HTML::tag( 'label', $text, array_merge( array( 
+		$element = HTML::tag( 'label', $text, array_merge( array( 
 			'id' => $id, 
 			'for' => static::build_id( 'input', $key ) 
 		), $attr ));
+		
+		if ( !static::$builder_enabled )
+		{
+			 return $element;
+		}
+		
+		return Builder::handle( 'form_label', $element );
 	}
 	
 	/**
