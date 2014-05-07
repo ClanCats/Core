@@ -11,11 +11,42 @@
 class Form 
 {	
 	/**
-	 * Current form object
+	 * Current prefix
 	 *
-	 * @var UI\Form
+	 * @var string
 	 */
-	private static $current = null;
+	private static $id_prefix = null;
+	
+	/**
+	 * Registerd patterns
+	 *
+	 * @var array[callbacks]
+	 */
+	private static $macros = array();
+	
+	/**
+	 * Static init
+	 * Here we register all inital macros
+	 */
+	public static function _init()
+	{
+		// we register the internal macros to make them overwritable
+		static::macro( 'input', "\\UI\\Form::make_input" );
+		
+	}
+	
+	/**
+	 * Create a new static pattern for the form generator.
+	 * I found this Macro idea in the wonderfull laravel framework thanks.
+	 *
+	 * @param string			$key
+	 * @param callback		$callback
+	 * @return void
+	 */
+	public static function macro( $key, $callback )
+	{
+		static::$macros[$key] = $callback;
+	}
 	
 	/**
 	 * Open a new form
@@ -27,8 +58,19 @@ class Form
 	 */
 	public static function start( $key, $attr = array() )
 	{
-		$form = static::create( $key, $attr );
-		return '<form'.HTML::attr( $form->attr ).'>';
+		$attributes = array();
+		
+		// force the form role
+		$attributes['role'] = 'form';
+		
+		if ( !is_null( $key ) )
+		{
+			 static::$id_prefix = $attributes['id'] = static::form_id( 'form', $key );
+		}
+		
+		$attributes = array_merge( $attributes, $attr );
+		
+		return '<form'.HTML::attr( $attributes ).'>';
 	}
 	
 	/**
@@ -40,96 +82,53 @@ class Form
 	 */
 	public static function end()
 	{
-		static::$current = null; return "</form>";
+		static::$id_prefix = null; return '</form>';
 	}
 	
 	/**
 	 * Create a new from instance
 	 *
+	 * @param callback		$callback	
 	 * @param string			$key			The form key used for identification.
 	 * @param array 			$attr		The form dom attributes.
-	 * @param callback		$callback	
 	 * @return UI\Form
 	 */
-	public static function create( $key, $attr = array(), $callback = null ) 
+	public static function capture( $callback = null, $key = null, $attr = null ) 
 	{	
-		$form = new static( $attr );
-		
-		if ( !is_null( $callback ) )
+		// we got some dynamics in the parameters here so in case
+		// of this shift stuff
+		if ( is_callable( $attr ) && !is_callable( $callback ) )
 		{
-			return $form->capture( $callback );
+			$new_attr = $key;
+			$key = $callback;
+			$callback = $attr;
+			$attr = $new_attr;
 		}
 		
-		return $form;	
-	}
-	
-	/**
-	 * Forward intance functions to static using the current instance
-	 *
-	 * @param string 		$method
-	 * @param array 			$args
-	 * @return mixed
-	 */
-	public static function __callStatic( $method, $args ) 
-	{
-		if ( is_null( static::$current ) ) 
+		$form = new static;
+		
+		if ( is_null( $callback ) )
 		{
-			static::$current = static::create( 'ui' );
+			throw new Exception( 'Cannot use capture without a callback or string given.' );
 		}
 		
-		return call_user_func_array( array( static::$current, $method ), $args );
-	}
-	
-	/**
-	 * Form attribute holder
-	 *
-	 * @var array
-	 */
-	public $attr = array();
-	
-	/**
-	 * Form constructor
-	 *
-	 * @param array 	$attr
-	 */
-	public function __construct( $attr = array() ) 
-	{
-		$this->attr = array_merge( array(
-			'role' => 'form',
-			'id' => $this->_get_id( 'form' , $key ),
-		), $attr );
+		// fix no array given
+		if ( !is_array( $attr ) )
+		{
+			$attr = array();
+		} 
 		
-		// set this instance as the current unsed form
-		static::$current = $this;
-	}
-	
-	/**
-	 * Capture data from callback and return the output
-	 *
-	 * @param callback 		$callback
-	 * @return string
-	 */
-	public function capture( $callback, $key = null ) 
-	{
-		ob_start();
-		call_user_func( $callback, $this );
-		if ( !is_null( $key ) ) {
-			$this->buffer[$key] = ob_get_clean();
-		} else {
-			$this->buffer[] = ob_get_clean();
-		}
-		
-		return $this;
+		return static::start( $key, $attr ).\CCStr::capture( $callback, array( $form ) ).static::end();
 	}
 	
 	/**
 	 * Format an id by configartion
 	 *
 	 * @param string 		$type 	element, form etc..
-	 * @param strgin			$name
+	 * @param string			$name
 	 * @return string
 	 */
-	protected function _get_id( $type, $name )
+	protected static function form_id( $type, $name )
 	{
 		return sprintf( Builder::$config->get( 'form.'.$type.'_id_format' ), $name );
 	}
@@ -141,40 +140,49 @@ class Form
 	 * @param strgin			$name
 	 * @return string
 	 */
-	protected function _build_id( $type, $name )
+	public static function build_id( $type, $name )
 	{
-		return $this->attr['id'].'-'.$this->_get_id( $type, $name );
-	}
-
-	/**
-	 * magic to string
-	 */
-	public function __toString() {
-		return $this->render();
-	}
-
-	/**
-	 * generate the output
-	 */
-	public function render() {
-
-		$buffer = '<form'.HTML::attr( $this->attr ).'>';
-
-		foreach( $this->buffer as $item ) 
+		if ( !is_null( static::$id_prefix ) )
 		{
-			$buffer .= $item;
+			return static::$id_prefix.'-'.static::form_id( $type, $name );
 		}
-
-		return $buffer.'</form>';
+		return static::form_id( $type, $name );
 	}
 	
 	/**
-	 * damn calling conflicts this is my fix
+	 * Forward intance functions to static using the current instance
+	 *
+	 * @param string 		$method
+	 * @param array 			$args
+	 * @return mixed
 	 */
-	public function __call( $method, $args ){
-		return call_user_func_array( array( $this, '_'.$method ), $args );
+	public static function __callStatic( $method, $args ) 
+	{
+		if ( !array_key_exists( $method , static::$macros ) )
+		{
+			throw new Exception( "UI\\Form - Unknown macro '".$method."'." );
+		}
+		
+		// take the first argument and add it again as the id
+		array_unshift( $args, static::build_id( $method, reset( $args ) ) );
+		
+		// execute the macro
+		return call_user_func_array( static::$macros[$method], $args );
 	}
 	
+	/**
+	 * Simply forward to call static to allow execution from 
+	 * object context
+	 *
+	 * @param string 		$method
+	 * @param array 			$args
+	 * @return mixed
+	 */
+	public function __call( $method, $args )
+	{
+		return static::__callStatic( $method, $args );
+	}
+		
 	/**
 	 * generate an input
 	 *
@@ -200,12 +208,18 @@ class Form
 	/**
 	 * generate an input
 	 *
-	 * @param string 	$key | This is the name 
-	 * @param string	$type
-	 * @param array 	$attr
+	 * @param string		$id			The id that has been generated for us.
+	 * @param string 	$key			This is the name 
+	 * @param string		$type
+	 * @param array 		$attr
 	 */
-	public function _input( $key, $type = 'text', $attr = array() ) {
-		return HTML::tag('input', array_merge( array( 'id' => $this->id_prefix.$key, 'name' => $key, 'type' => $type ), $attr ));
+	public static function make_input( $id, $key, $type = 'text', $attr = array() ) 
+	{
+		return HTML::tag( 'input', array_merge( array( 
+			'id' => $id, 
+			'name' => $key, 
+			'type' => $type 
+		), $attr ));
 	}
 	
 	/**

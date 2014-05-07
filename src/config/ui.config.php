@@ -14,7 +14,10 @@ return array(
 		// form id formatter
 		'form_id_format' => '%s-form',
 		
-		// element id  formatter
-		'element_id_format' => '%s-input',
+		// input id  formatter
+		'input_id_format' => '%s-input',
+		
+		// label id  formatter
+		'label_id_format' => '%s-label',
 	),
 );
