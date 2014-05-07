@@ -42,6 +42,7 @@ class Form
 		// we register the internal macros to make them overwritable
 		static::macro( 'input', "\\UI\\Form::make_input" );
 		static::macro( 'label', "\\UI\\Form::make_label" );
+		static::macro( 'checkbox', "\\UI\\Form::make_checkbox" );
 	}
 	
 	/**
@@ -242,6 +243,35 @@ class Form
 		}
 		
 		return Builder::handle( 'form_label', $element );
+	}
+	
+	/**
+	 * make a checkbox
+	 *
+	 * @param string		$id			The id that has been generated for us.
+	 * @param string 	$key			This is the name 
+	 * @param string		$text
+	 * @param bool		$active		Is the checkbox cheked
+	 * @param array 		$attr
+	 */
+	public static function make_checkbox( $id, $key, $text = '', $active = false, $attr = array() ) 
+	{
+		$element = HTML::tag( 'input', array_merge( array( 
+			'id' => $id,
+			'name' => $key, 
+			'type' => 'checkbox' 
+		), $attr ));
+		
+		$element->checked( $active );
+		
+		$element = HTML::tag( 'label', $element->render().' '.$text );
+		
+		if ( !static::$builder_enabled )
+		{
+			 return $element;
+		}
+		
+		return Builder::handle( 'form_checkbox', $element );
 	}
 	
 	/**

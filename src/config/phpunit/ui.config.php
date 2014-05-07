@@ -26,5 +26,8 @@ return array(
 
 		// label id  formatter
 		'label_id_format' => '%s-label',
+		
+		// label id  formatter
+		'checkbox_id_format' => '%s-check',
 	),
 );

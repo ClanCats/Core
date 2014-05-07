@@ -33,6 +33,17 @@ class Builder_Bootstrap implements Builder_Interface
 	}
 	
 	/**
+	 * Build an input label
+	 *
+	 * @param UI\HTML		$element
+	 * @return UI\HTML
+	 */
+	public function build_form_checkbox( $element )
+	{
+		return HTML::tag( 'div', $element->render() )->class( 'checkbox' );
+	}
+	
+	/**
 	 * Build the UI alerts
 	 *
 	 * @param array 		$alerts

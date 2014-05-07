@@ -193,4 +193,24 @@ class Test_UI_Form extends PHPUnit_Framework_TestCase
 		// test again after closing
 		\UI\Form::end();
 	}
+	
+	/** 
+	 * Form::checkbox tests
+	 */
+	public function test_checkbox()
+	{
+		// simple
+		$form = (string) \UI\Form::checkbox( 'active', 'Active' );
+		
+		$expected = '<label><input id="active-check" name="active" type="checkbox" /> Active</label>';
+			
+		$this->assertEquals( $expected, $form );	
+		
+		// checked test
+		$form = (string) \UI\Form::checkbox( 'active', 'Active', true );
+			
+		$expected = '<label><input id="active-check" name="active" type="checkbox" checked="checked" /> Active</label>';
+				
+		$this->assertEquals( $expected, $form );		
+	}
 }

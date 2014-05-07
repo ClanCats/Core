@@ -27,6 +27,14 @@ interface Builder_Interface
 	public function build_form_label( $element );
 	
 	/**
+	 * Build an input label
+	 *
+	 * @param UI\HTML		$element
+	 * @return UI\HTML
+	 */
+	public function build_form_checkbox( $element );
+	
+	/**
 	 * Build the UI alerts
 	 *
 	 * @param array 		$alerts
