@@ -18,14 +18,25 @@ class Builder
 	protected static $builder = null;
 	
 	/**
+	 * The user interface configuration
+	 *
+	 * @var UI\Builder_Interface
+	 */
+	public static $config = null;
+	
+	/**
 	 * Static init
 	 *
 	 * @return void
 	 */
 	public static function _init()
 	{
+		// select the current builder
 		$builder_class = \ClanCats::$config->get( 'ui.builder', "\\UI\\Builder_Bootstrap" );
 		static::$builder = new $builder_class;
+		
+		// load the ui configuration
+		static::$config = \CCConfig::create( 'ui' );
 	}
 	
 	/** 

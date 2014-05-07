@@ -8,82 +8,109 @@
  * @copyright 	2013 ClanCats GmbH
  *
  */
-class Form {
-	
-	/*
-	 * input id prefix
-	 * by default the id is <id_prefix><formkey><name>
+class Form 
+{	
+	/**
+	 * Current form object
+	 *
+	 * @var UI\Form
 	 */
-	protected static $_id_prefix = 'input_';
-	private static $_default_instance = null;
+	private static $current = null;
 	
 	/**
-	 * get an table instance
+	 * Open a new form
+	 * This will set the current form to this one
+	 * 
+	 * @param string			$key
+	 * @param array 			$attr
+	 * @return string
 	 */
-	public static function create( $key = 'defaultform', $action = null, $method = 'post', $attr = array() ) {
-		return new static( array_merge( array( 'id' => $key, 'action' => $action, 'method' => $method ), $attr ) );	
+	public static function start( $key, $attr = array() )
+	{
+		$form = static::create( $key, $attr );
+		return '<form'.HTML::attr( $form->attr ).'>';
 	}
 	
 	/**
-	 * to call our defult instance
+	 * Closes the form and resest the current form
+	 * 
+	 * @param string			$key
+	 * @param array 			$attr
+	 * @return string
 	 */
-	public static function __callStatic( $method, $args ) {
-		if ( !is_object( static::$_default_instance ) ) {
-			static::$_default_instance = static::create( 'defaultform' );
+	public static function end()
+	{
+		static::$current = null; return "</form>";
+	}
+	
+	/**
+	 * Create a new from instance
+	 *
+	 * @param string			$key			The form key used for identification.
+	 * @param array 			$attr		The form dom attributes.
+	 * @param callback		$callback	
+	 * @return UI\Form
+	 */
+	public static function create( $key, $attr = array(), $callback = null ) 
+	{	
+		$form = new static( $attr );
+		
+		if ( !is_null( $callback ) )
+		{
+			return $form->capture( $callback );
 		}
 		
-		return call_user_func_array( array( static::$_default_instance, $method ), $args );
+		return $form;	
 	}
 	
-	/*
-	 * input id prefix
-	 * by default the id is <id_prefix><name>
+	/**
+	 * Forward intance functions to static using the current instance
+	 *
+	 * @param string 		$method
+	 * @param array 			$args
+	 * @return mixed
 	 */
-	protected $id_prefix;
+	public static function __callStatic( $method, $args ) 
+	{
+		if ( is_null( static::$current ) ) 
+		{
+			static::$current = static::create( 'ui' );
+		}
+		
+		return call_user_func_array( array( static::$current, $method ), $args );
+	}
 	
-	/*
+	/**
 	 * Form attribute holder
+	 *
+	 * @var array
 	 */
-	public $attr = array(
-		'class' => array( 'form' ),	
-	);
-
-	/*
-	 * the table header
-	 */
-	public $buffer = array();
+	public $attr = array();
 	
 	/**
 	 * Form constructor
 	 *
 	 * @param array 	$attr
 	 */
-	public function __construct( $attr = array() ) {
-		$this->attr = array_merge( $this->attr, $attr );
-		$this->id_prefix = $this->attr['id'].'_'.static::$_id_prefix;
-	}
-	
-	/**
-	 * add something to the form 
-	 *
-	 * @param string 	$buff 
-	 */
-	public function add( $buff, $key = null ) {
-		if ( !is_null( $key ) ) {
-			$this->buffer[$key] = $buff;
-		} else {
-			$this->buffer[] = $buff;
-		}
+	public function __construct( $attr = array() ) 
+	{
+		$this->attr = array_merge( array(
+			'role' => 'form',
+			'id' => $this->_get_id( 'form' , $key ),
+		), $attr );
 		
-		return $this;
+		// set this instance as the current unsed form
+		static::$current = $this;
 	}
 	
 	/**
-	 * capture content and add it to the form
+	 * Capture data from callback and return the output
 	 *
-	 * @param callback 	$callback
+	 * @param callback 		$callback
+	 * @return string
 	 */
-	public function capture( $callback, $key = null ) {
+	public function capture( $callback, $key = null ) 
+	{
 		ob_start();
 		call_user_func( $callback, $this );
 		if ( !is_null( $key ) ) {
@@ -95,17 +122,28 @@ class Form {
 		return $this;
 	}
 	
-	/** 
-	 * remove something from the buffer by key
+	/**
+	 * Format an id by configartion
 	 *
-	 * @param string	$key
+	 * @param string 		$type 	element, form etc..
+	 * @param strgin			$name
+	 * @return string
 	 */
-	public function remove( $key ) {
-		if ( array_key_exists( $key, $this->buffer ) ) {
-			unset( $this->buffer[$key] );
-		}
-		
-		return $this;
+	protected function _get_id( $type, $name )
+	{
+		return sprintf( Builder::$config->get( 'form.'.$type.'_id_format' ), $name );
+	}
+	
+	/**
+	 * Format an id by configartion with the current form prefix
+	 *
+	 * @param string 		$type 	element, form etc..
+	 * @param strgin			$name
+	 * @return string
+	 */
+	protected function _build_id( $type, $name )
+	{
+		return $this->attr['id'].'-'.$this->_get_id( $type, $name );
 	}
 
 	/**
@@ -122,7 +160,8 @@ class Form {
 
 		$buffer = '<form'.HTML::attr( $this->attr ).'>';
 
-		foreach( $this->buffer as $item ) {
+		foreach( $this->buffer as $item ) 
+		{
 			$buffer .= $item;
 		}
 
