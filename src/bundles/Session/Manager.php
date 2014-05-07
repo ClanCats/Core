@@ -30,7 +30,7 @@ class Manager extends \CCDataObject
 	 *
 	 * @param string			$name
 	 * @param array 			$conf	You can pass optionally a configuration directly. This will overwrite.
-	 * @return DB_Handler
+	 * @return Session\Manager
 	 */
 	public static function create( $name = null, $conf = null ) 
 	{
