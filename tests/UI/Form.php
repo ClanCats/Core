@@ -160,6 +160,37 @@ class Test_UI_Form extends PHPUnit_Framework_TestCase
 		$expected = '<input id="count-input" name="count" type="number" data-min="5" />';
 			
 		$this->assertEquals( $expected, $form );
+	}
+	
+	/** 
+	 * Form::label tests
+	 */
+	public function test_label()
+	{
+		// simple
+		$form = (string) \UI\Form::label( 'username', 'Benutzername' );
 		
+		$expected = '<label id="username-label" for="username-input">Benutzername</label>';
+			
+		$this->assertEquals( $expected, $form );
+		
+		// without text
+		$form = (string) \UI\Form::label( 'username' );
+	
+		$expected = '<label id="username-label" for="username-input">username</label>';
+			
+		$this->assertEquals( $expected, $form );
+		
+		// inside of a form
+		\UI\Form::start( 'foo' );
+		
+		$form = (string) \UI\Form::label( 'username' );
+		
+		$expected = '<label id="foo-form-username-label" for="foo-form-username-input">username</label>';
+			
+		$this->assertEquals( $expected, $form );
+		
+		// test again after closing
+		\UI\Form::end();
 	}
 }

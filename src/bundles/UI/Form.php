@@ -32,7 +32,7 @@ class Form
 	{
 		// we register the internal macros to make them overwritable
 		static::macro( 'input', "\\UI\\Form::make_input" );
-		
+		static::macro( 'label', "\\UI\\Form::make_label" );
 	}
 	
 	/**
@@ -182,31 +182,9 @@ class Form
 	{
 		return static::__callStatic( $method, $args );
 	}
-		
-	/**
-	 * generate an input
-	 *
-	 * @param string 	$key | This is the name 
-	 * @param string	$type
-	 * @param array 	$attr
-	 */
-	public function _button( $type, $text, $attr = array() ) {
-		return HTML::tag('button', $text, array_merge( array( 'id' => $this->id_prefix.$type.'_button', 'type' => $type ), $attr ) );
-	}
 	
 	/**
-	 * generate an input
-	 *
-	 * @param string 	$key | This is the name 
-	 * @param string	$type
-	 * @param array 	$attr
-	 */
-	public function _label( $key, $text, $attr = array() ) {
-		return HTML::tag('label', $text, array_merge( array( 'id' => $this->id_prefix.$key.'_label', 'for' => $this->id_prefix.$key ), $attr ));
-	}
-	
-	/**
-	 * generate an input
+	 * make an input
 	 *
 	 * @param string		$id			The id that has been generated for us.
 	 * @param string 	$key			This is the name 
@@ -221,6 +199,42 @@ class Form
 			'type' => $type 
 		), $attr ));
 	}
+	
+	/**
+	 * make a label
+	 *
+	 * @param string		$id			The id that has been generated for us.
+	 * @param string 	$key			This is the name 
+	 * @param string		$text
+	 * @param array 		$attr
+	 */
+	public static function make_label( $id, $key, $text = null, $attr = array() ) 
+	{
+		if ( is_null( $text ) )
+		{
+			$text = $key;
+		}
+		
+		return HTML::tag( 'label', $text, array_merge( array( 
+			'id' => $id, 
+			'for' => static::build_id( 'input', $key ) 
+		), $attr ));
+	}
+	
+	/**
+	 * generate an input
+	 *
+	 * @param string 	$key | This is the name 
+	 * @param string	$type
+	 * @param array 	$attr
+	 */
+	public function _button( $type, $text, $attr = array() ) {
+		return HTML::tag('button', $text, array_merge( array( 'id' => $this->id_prefix.$type.'_button', 'type' => $type ), $attr ) );
+	}
+	
+	
+	
+
 	
 	/**
 	 * generate a textarea
