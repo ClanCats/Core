@@ -8,7 +8,31 @@
  * @copyright 	2013 ClanCats GmbH
  *
  */
-class HTML extends E {
+class HTML extends E 
+{
+	/**
+	 * The maker is like a development shortcut to create
+	 * html elements on the go
+	 *
+	 * If param2 is set it wil be used as the content otherwise
+	 * the the first parameter will be splittet by the first space.
+	 *
+	 * @param string			$param
+	 * @param string			$param2
+	 */
+	public static function maker( $param, $param2 = null )
+	{
+		if ( !is_null( $param2 ) )
+		{
+			return static::create( $param, $param2 );
+		}
+		
+		$param = explode( ' ', $param );
+		
+		$element = array_shift( $param );
+		
+		return static::create( $element, implode( ' ', $param ) );
+	}
 	
 	/**
 	 * generates html attribute string

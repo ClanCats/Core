@@ -37,6 +37,17 @@ if ( !function_exists( 'to' ) ) {
 }
 
 /*
+ * ui maker shortcut
+ */
+if ( !function_exists( 'ui' ) ) 
+{
+    function ui() 
+    {
+        return call_user_func_array( "\\UI\\HTML::maker", func_get_args() );
+    }
+}
+
+/*
  * translate
  */
 if ( !function_exists( '__' ) ) {
