@@ -52,16 +52,15 @@ class Handler
 		return static::$_instances[$name];
 	}
 	
+	/*
+	 * the user object
+	 */
+	public $user = null;
 	
 	/*
 	 * is the instance authenticated
 	 */
 	public $authenticated = false;
-	
-	/*
-	 * the user object
-	 */
-	public $user = NULL;
 	
 	/**
 	 * The auth handler name
@@ -76,6 +75,13 @@ class Handler
 	 * @var string
 	 */
 	protected $config = null;
+	
+	/**
+	 * The used session manager
+	 *
+	 * @var string
+	 */
+	protected $session = null;
 	
 	/**
 	 * Auth instance constructor
@@ -109,14 +115,19 @@ class Handler
 		
 		// keep the configuration array
 		$this->config = $config;
+		
+		// set the session handler
+		$this->session = CCSession::manager( $config['session_manager	'] );
+		
+		$user_model = $this->config['user_model'];
 	
-		// load user
-		$this->user = $this->user();
-	
-		// do we have user_id
-		if ( $this->user_id() > 0 ) {
-			return $this->authenticated = true;
+		// do we already have a user id means are we
+		// logged in?
+		if ( ( $session_key = $this->session_key() ) > 0 )
+		{
+			if ( $user = $user_model::find( $this->config['user_key'], $session_key ) )
 		}
+		
 		/*
 		 * try to restore the login
 		 */
@@ -153,6 +164,16 @@ class Handler
 		}
 	
 		return $this->authenticated = false;
+	}
+	
+	/**
+	 * Get the current user session key 
+	 * 
+	 * @return mixed
+	 */
+	public function session_key() 
+	{
+		return $this->session->get( CCArr::get( 'session_key', $this->config, 'user_id' ) );
 	}
 	
 	/**
@@ -210,14 +231,7 @@ class Handler
 		return static::instance( $name )->authenticated;
 	}
 	
-	/**
-	 * get the current user_id 
-	 * 
-	 * @return int
-	 */
-	public function user_id() {
-		return CCSession::instance( $this->name )->user_id;
-	}
+	
 	
 	/**
 	 * generate the current restore key
@@ -327,10 +341,11 @@ class Handler
 	/**
 	 * get the user object
 	 *
-	 * @param string 	$name
+	 * @param mixed 			$user_key
 	 * @return void
 	 */
-	public function user() {
+	protected function find_user( $user_key ) 
+	{
 		if ( $id = CCSession::instance( $this->name )->user_id ) {
 			return \Model_User::find( $id );
 		}
