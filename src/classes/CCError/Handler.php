@@ -61,7 +61,7 @@ class CCError_Handler
 		$this->log();
 		
 		// when not in development we respond using a route
-		if ( !ClanCats::in_development() )
+		if ( !ClanCats::in_development() && !ClanCats::is_cli() )
 		{
 			CCResponse::error(500)->send( true );
 		}
