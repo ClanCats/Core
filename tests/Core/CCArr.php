@@ -13,7 +13,6 @@
  */
 class Test_CCArr extends \PHPUnit_Framework_TestCase
 {
-	
 	/*
 	 * an testing array
 	 */

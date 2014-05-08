@@ -9,6 +9,9 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
+ 
+use Core\CCCookie;
+ 
 class Handler
 {
 	/**
@@ -52,15 +55,19 @@ class Handler
 		return static::$_instances[$name];
 	}
 	
-	/*
+	/**
 	 * the user object
+	 *
+	 * @var DB\Model
 	 */
 	public $user = null;
 	
-	/*
+	/**
 	 * is the instance authenticated
+	 *
+	 * @var bool
 	 */
-	public $authenticated = false;
+	protected $authenticated = false;
 	
 	/**
 	 * The auth handler name
@@ -117,53 +124,89 @@ class Handler
 		$this->config = $config;
 		
 		// set the session handler
-		$this->session = CCSession::manager( $config['session_manager	'] );
+		$this->session = \CCSession::manager( $config['session_manager'] );
 		
 		$user_model = $this->config['user_model'];
-	
+		
+		// set a empty default user object to avoid
+		// on a non object errors
+		$this->user = new $user_model;
+		
 		// do we already have a user id means are we
 		// logged in?
 		if ( ( $session_key = $this->session_key() ) > 0 )
 		{
 			if ( $user = $user_model::find( $this->config['user_key'], $session_key ) )
+			{
+				$this->user = $user; return $this->authenticated = true;
+			}
 		}
 		
-		/*
-		 * try to restore the login
-		 */
-		else {
-			if ( CCCookie::has( static::$config->read( 'keep_login_id_cookie' ) ) ) {
-	
-				// get restore cookies
-				$restore_id = CCCookie::get( static::$config->read( 'keep_login_id_cookie' ) );
-				$restore_key = CCCookie::get( static::$config->read( 'keep_login_cookie' ) );
+		// When no session key / user id is given try to restore 
+		// the login using the login keepers
+		else 
+		{
+			$restore_id_cookie = \CCArr::get( 'restore_id_cookie', $this->config, 'ccauth-restore-id' );
+			$restore_token_cookie = \CCArr::get( 'restore_token_cookie', $this->config, 'ccauth-restore-token' );
+			
+			if 
+			(
+				CCCookie::has( $restore_id_cookie ) &&
+				CCCookie::has( $restore_token_cookie )
+			) 
+			{
+				// get the restore cookies
+				$restore_id = CCCookie::get( $restore_id_cookie );
+				$restore_token = CCCookie::get( $restore_token_cookie );
 	
 				// get the restore login
-				$login = DB::select( 'logins' )
-					->s_where( 'user_id', $restore_id )
-					->s_where( 'restore_key', $restore_key );
+				$login = $this->select_logins()
+					->where( 'restore_id', $restore_id )
+					->where( 'restore_token', $restore_token )
+					->limit( 1 );
 	
-				// check if its exists
-				if ( !$login = $login->run() ) {
-					CCCookie::delete( static::$config->read( 'keep_login_id_cookie' ) );
-					CCCookie::delete( static::$config->read( 'keep_login_cookie' ) );
+				// if no login found kill the cookies and return
+				if ( !$login = $login->run() ) 
+				{
+					CCCookie::delete( $restore_id_cookie );
+					CCCookie::delete( $restore_token_cookie );
 					return $this->authenticated = false;
 				}
 	
-				// get the user
-				$user = \Model_User::find( $restore_id );
-	
-				// does the old restore key match the old one?
-				if ( $login['restore_key'] != $this->restore_key( $user ) ) {
+				// Invalid user? kill the cookies and return
+				if ( !$user = $user_model::find( $this->config['user_key'], $restore_id ) )
+				{
+					CCCookie::delete( $restore_id_cookie );
+					CCCookie::delete( $restore_token_cookie );
 					return $this->authenticated = false;
 				}
 	
-				// sign in
-				return $this->sign_in( $restore_id, true );
+				// validate the restore key if invalid 
+				// once again kill the cookies and return
+				if ( $login->restore_token != $this->restore_key( $user ) ) 
+				{
+					CCCookie::delete( $restore_id_cookie );
+					CCCookie::delete( $restore_token_cookie );
+					return $this->authenticated = false;
+				}
+	
+				// If everything is fine sign the user in and 
+				// update the restore keys
+				return $this->sign_in( $user, true );
 			}
 		}
 	
 		return $this->authenticated = false;
+	}
+	
+	/**
+	 * Is this login valid?
+	 *
+	 * @return bool
+	 */
+	public function valid()
+	{
+		return $this->authenticated;
 	}
 	
 	/**
@@ -173,7 +216,21 @@ class Handler
 	 */
 	public function session_key() 
 	{
-		return $this->session->get( CCArr::get( 'session_key', $this->config, 'user_id' ) );
+		return $this->session->get( \CCArr::get( 'session_key', $this->config, 'user_id' ) );
+	}
+	
+	/**
+	 * Select from logins
+	 *
+	 * @return DB\Query_Select
+	 */
+	private function select_logins()
+	{
+		return \DB::select( 
+			\CCArr::get( 'logins.table', $this->config, 'logins' ), 
+			array(),
+			\CCArr::get( 'logins.table', $this->config, 'handler' )
+		);
 	}
 	
 	/**
@@ -218,17 +275,6 @@ class Handler
 		}
 	
 		return false;
-	}
-	
-	
-	/**
-	 * check if the user is authenticated
-	 *
-	 * @param string 	$name
-	 * @return bool
-	 */
-	public function valid( $name = NULL ) {
-		return static::instance( $name )->authenticated;
 	}
 	
 	

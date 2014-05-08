@@ -180,9 +180,17 @@ class CCController
 				$return = call_user_func( array( $this, static::$_action_handler ), $action, $params );
 			} 
 			// normal action
-			else 
+			else
 			{
-				$return = call_user_func_array( array( $this, static::$_action_prefix.$action ), $params );
+				// check if the action exists
+				if ( method_exists( $this, static::$_action_prefix.$action ) )
+				{
+					$return = call_user_func_array( array( $this, static::$_action_prefix.$action ), $params );
+				}
+				else 
+				{
+					$return = CCResponse::error( 404 );
+				}
 			}
 		}
 		

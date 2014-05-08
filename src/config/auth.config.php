@@ -23,7 +23,18 @@ return array(
 		// the authentification
 		'user_key' => 'id',
 		
-		// The default user model
+		// The User model
 		'user_model' => "\\Auth\\User",
+		
+		// Where to store the active logins
+		// how long do they stay active etc.
+		'logins' => array(
+			
+			// the logins db handler
+			'handler' => null,
+			
+			// the logins db table
+			'table' => 'logins',
+		),
 	),
 );
