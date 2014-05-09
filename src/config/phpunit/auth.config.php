@@ -38,6 +38,11 @@ return array(
 		),
 	),
 	
+	'diffrent_selector_keys' => array(
+		'session_key' => 'user_email',
+		'user_key' => 'email',
+	),
+	
 	'other' => array(
 	
 		// Wich session manager should be used?

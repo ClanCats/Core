@@ -110,7 +110,7 @@ class Handler
 	 * @param array 			$config
 	 * @return void
 	 */
-	public function __construct( $name ) 
+	public function __construct( $name, $config ) 
 	{	
 		if ( is_null( $config ) )
 		{
@@ -147,7 +147,7 @@ class Handler
 		
 		// do we already have a user id means are we
 		// logged in?
-		if ( ( $session_key = $this->session_key() ) > 0 )
+		if ( !is_null( $session_key = $this->session_key() ) )
 		{
 			if ( $user = $user_model::find( $this->config['user_key'], $session_key ) )
 			{

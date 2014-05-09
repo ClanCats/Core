@@ -63,6 +63,15 @@ class Test_Auth_Handler extends DB\TestCase
 		$this->assertTrue( $auth->user instanceof CCModel );
 		$this->assertTrue( $auth->valid() );
 		
+		
+		// diffrent keys
+		CCSession::set( 'user_email', static::$current_user->email );
+		
+		$auth = Auth\Handler::create( 'diffrent_selector_keys' );
+		
+		$this->assertTrue( $auth->user instanceof CCModel );
+		$this->assertTrue( $auth->valid() );
+		
 	}
 	
 	/**
