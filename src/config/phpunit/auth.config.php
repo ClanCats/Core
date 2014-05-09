@@ -43,11 +43,5 @@ return array(
 		'user_key' => 'email',
 	),
 	
-	'other' => array(
-	
-		// Wich session manager should be used?
-		// null = default session manager
-		'session_manager' => 'main',
-		
-	),
+	'other' => array(),
 );

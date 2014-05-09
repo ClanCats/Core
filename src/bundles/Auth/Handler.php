@@ -125,7 +125,7 @@ class Handler
 			}
 		}
 		
-		if ( empty( $config ) )
+		if ( !is_array( $config ) )
 		{
 			throw new Exception( "Auth\\Handler::create - Invalid auth handler (".$name.")." );
 		}
@@ -149,7 +149,7 @@ class Handler
 		// logged in?
 		if ( !is_null( $session_key = $this->session_key() ) )
 		{
-			if ( $user = $user_model::find( $this->config['user_key'], $session_key ) )
+			if ( $user = $user_model::find( $this->user_key(), $session_key ) )
 			{
 				$this->user = $user; return $this->authenticated = true;
 			}
@@ -187,7 +187,7 @@ class Handler
 				}
 	
 				// Invalid user? kill the cookies and return
-				if ( !$user = $user_model::find( $this->config['user_key'], $restore_id ) )
+				if ( !$user = $user_model::find( $this->user_key(), $restore_id ) )
 				{
 					CCCookie::delete( $restore_id_cookie );
 					CCCookie::delete( $restore_token_cookie );
@@ -230,6 +230,16 @@ class Handler
 	public function session_key() 
 	{
 		return $this->session->get( \CCArr::get( 'session_key', $this->config, 'user_id' ) );
+	}
+	
+	/**
+	 * Get the current user session key 
+	 * 
+	 * @return mixed
+	 */
+	public function user_key() 
+	{
+		return \CCArr::get( 'user_key', $this->config, 'id' );
 	}
 	
 	/**
