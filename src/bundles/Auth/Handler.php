@@ -139,7 +139,7 @@ class Handler
 		// set the session handler
 		$this->session = \CCSession::manager( $config['session_manager'] );
 		
-		$user_model =\CCArr::get( 'user_model', $this->config, "\\Auth\\User" );
+		$user_model = $this->user_model();
 		
 		// set a empty default user object to avoid
 		// on a non object errors
@@ -243,6 +243,16 @@ class Handler
 	}
 	
 	/**
+	 * Get the current user session key 
+	 * 
+	 * @return mixed
+	 */
+	public function user_model() 
+	{
+		return \CCArr::get( 'user_model', $this->config, "\\Auth\\User" );
+	}
+	
+	/**
 	 * Select from logins
 	 *
 	 * @return DB\Query_Select
@@ -266,38 +276,33 @@ class Handler
 	 */
 	public function validate( $identifier, $password ) 
 	{
-		// our user
 		$user = null;
+		$user_model = $this->user_model();
 	
 		// get the identifiers
-		$identifiers = static::$config->read( 'identifiers' );
-	
+		$identifiers = \CCArr::get( 'identifiers', $this->config, array( 'email' ) );
+		
 		foreach( $identifiers as $property ) 
 		{
-			if ( !$user ) 
+			if ( $user = $user_model::find( $property, $identifier ) ) 
 			{
-				$user = \Model_User::find( $property, $identifier );
+				break;
 			} 
 		}
 	
-		// still no result ?
+		// when could not find a user matching the identifiers return false
 		if ( !$user ) 
 		{
 			return false;
 		}
-		//var_dump( CCStr::hash( $password ), $user->password ); die;
-		// does the password match
-		if ( CCStr::hash( $password ) === $user->password ) 
+		
+		// when the passwords match return the user object
+		if ( \CCStr::hash( $password ) === $user->password ) 
 		{
 			return $user;
 		}
 	
-		// does the password in md5
-		if ( md5( $password ) === $user->password ) 
-		{
-			return $user;
-		}
-	
+		// otherwise return false
 		return false;
 	}
 	
@@ -309,7 +314,8 @@ class Handler
 	 * @param User	$user
 	 * @return string
 	 */
-	public function restore_key( $user ) {
+	public function restore_key( $user ) 
+	{
 		return CCStr::hash( $user->username.'@'.$user->id.'%'.CCRequest::$clientAgent );
 	}
 	
@@ -406,23 +412,5 @@ class Handler
 		$this->user = $this->user();
 	
 		return $this->authenticated = false;
-	}
-	
-	/**
-	 * get the user object
-	 *
-	 * @param mixed 			$user_key
-	 * @return void
-	 */
-	protected function find_user( $user_key ) 
-	{
-		if ( $id = CCSession::instance( $this->name )->user_id ) {
-			return \Model_User::find( $id );
-		}
-		else {
-			return \Model_User::assign( array(
-				'id'		=> 0,
-			));
-		}
 	}
 }

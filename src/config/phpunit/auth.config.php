@@ -6,6 +6,8 @@
  */
 return array(
 
+	'alias' => 'main',
+	
 	/*
 	 * This is the default configuration for the main session
 	 */
@@ -25,12 +27,18 @@ return array(
 
 		// The User model
 		'user_model' => "\\Auth\\User",
+		
+		// the identifiers wich fields should be allowed 
+		// to select the user object on validation.
+		'identifiers' => array(
+			'email'
+		),
 
 		// Where to store the active logins
 		// how long do they stay active etc.
 		'logins' => array(
 
-			// the logins db handler
+			// the logins db handlerw
 			'handler' => null,
 
 			// the logins db table
@@ -44,15 +52,24 @@ return array(
 	),
 	
 	'diffrent_session_manager' => array(
-		// Wich session manager should be used?
-		// null = default session manager
 		'session_manager' => 'array',
 	),
 	
 	'same_session_manager' => array(
-		// Wich session manager should be used?
-		// null = default session manager
 		'session_manager' => null,
+	),
+	
+	'diffrent_identifiers' => array(
+		'identifiers' => array(
+			'id'
+		),
+	),
+	
+	'multiple_identifiers' => array(
+		'identifiers' => array(
+			'id',
+			'email'
+		),
 	),
 	
 	'other' => array(),
