@@ -11,8 +11,10 @@
  * @group Auth
  * @group Auth_Handler
  */
-class Test_Auth_Handler extends \PHPUnit_Framework_TestCase
+class Test_Auth_Handler extends DB\TestCase
 {
+	protected static $current_user = null;
+	
 	/**
 	 * prepare the configuration
 	 *
@@ -20,7 +22,16 @@ class Test_Auth_Handler extends \PHPUnit_Framework_TestCase
 	 */
 	public static function setUpBeforeClass() 
 	{
+		parent::setUpBeforeClass();
+		
 		CCConfig::create( 'auth' )->_data = CCConfig::create( 'Core::phpunit/auth' )->_data;
+		
+		$user = new Auth\User;
+		$user->email = "test@example.com";
+		$user->password = "phpunit";
+		$user->save();
+		
+		static::$current_user = $user;
 	}
 	
 	/**
@@ -39,6 +50,19 @@ class Test_Auth_Handler extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $auth2, Auth\Handler::create( 'other' ) );
 		
 		$this->assertNotEquals( $auth, $auth2 );
+		
+		// create with existing one
+		CCSession::set( 'user_id', static::$current_user->id );
+		
+		// kill the old instance
+		$auth = Auth\Handler::kill_instance( 'main' );
+		
+		// redo
+		$auth = Auth\Handler::create();
+		
+		$this->assertTrue( $auth->user instanceof CCModel );
+		$this->assertTrue( $auth->valid() );
+		
 	}
 	
 	/**

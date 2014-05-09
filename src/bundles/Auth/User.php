@@ -29,7 +29,6 @@ class User extends \DB\Model
 	protected static $_defaults = array(
 		'id'	,
 		'active'			=> array( 'bool', true ),
-		'username'		=> null,
 		'email'			=> null,
 		'password'		=> null,
 		'storage'		=> array( 'json', array() ),

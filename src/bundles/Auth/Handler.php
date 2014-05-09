@@ -56,6 +56,19 @@ class Handler
 	}
 	
 	/**
+	 * Kill an instance to force the handler to redo the construction
+	 *
+	 * @return void
+	 */
+	public static function kill_instance( $name )
+	{
+		if ( array_key_exists( $name, static::$_instances ) )
+		{
+			unset( static::$_instances[$name] );
+		}
+	}
+	
+	/**
 	 * the user object
 	 *
 	 * @var DB\Model
