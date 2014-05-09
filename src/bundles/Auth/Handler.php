@@ -147,7 +147,7 @@ class Handler
 		
 		// do we already have a user id means are we
 		// logged in?
-		if ( !is_null( $session_key = $this->session_key() ) )
+		if ( !is_null( $session_key = $this->session_user_id() ) )
 		{
 			if ( $user = $user_model::find( $this->user_key(), $session_key ) )
 			{
@@ -223,13 +223,23 @@ class Handler
 	}
 	
 	/**
-	 * Get the current user session key 
+	 * Get the current user session user id 
 	 * 
 	 * @return mixed
 	 */
-	public function session_key() 
+	public function session_user_id() 
 	{
-		return $this->session->get( \CCArr::get( 'session_key', $this->config, 'user_id' ) );
+		return $this->session->get( $this->session_key() );
+	}
+	
+	/**
+	 * The session key used to store the user id
+	 *
+	 * @return string
+	 */
+	public function session_key()
+	{
+		return \CCArr::get( 'session_key', $this->config, 'user_id' );
 	}
 	
 	/**
@@ -250,6 +260,17 @@ class Handler
 	public function user_model() 
 	{
 		return \CCArr::get( 'user_model', $this->config, "\\Auth\\User" );
+	}
+	
+	/**
+	 * generate the current restore key
+	 *
+	 * @param User	$user
+	 * @return string
+	 */
+	public function restore_key( $user ) 
+	{
+		return CCStr::hash( $user->username.'@'.$user->id.'%'.CCRequest::$clientAgent );
 	}
 	
 	/**
@@ -306,30 +327,21 @@ class Handler
 		return false;
 	}
 	
-	
-	
 	/**
-	 * generate the current restore key
+	 * Sign the user and optinal also set the resore keys
 	 *
-	 * @param User	$user
-	 * @return string
-	 */
-	public function restore_key( $user ) 
-	{
-		return CCStr::hash( $user->username.'@'.$user->id.'%'.CCRequest::$clientAgent );
-	}
-	
-	/**
-	 * sign in a as user at instance
-	 *
-	 * @param id  		$user_id	
-	 * @param string	$name
+	 * @param Auth\User  	$user	
+	 * @param bool			$keep_login
 	 * @return bool
 	 */
-	public function sign_in( $user_id, $set_restore_key = true ) {
-	
-		if ( \Model_User::find( $user_id ) ) {
-	
+	public function sign_in( Auth\User $user, $keep_login = true ) 
+	{
+		// set the session key so the session knows we are logged in
+		$this->session->set( $this->session_key(), $user->{$this->user_key()} );
+		
+				
+		if ( \Model_User::find( $user_id ) ) 
+		{
 			// set user id int the session
 			CCSession::instance( $this->name )->user_id = $user_id; 
 	
