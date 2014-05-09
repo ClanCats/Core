@@ -257,14 +257,15 @@ class Handler
 	}
 	
 	/**
-	 * validate auth 
+	 * Validate an identifier with the password 
+	 * In other words is the login correct?
 	 *
 	 * @param string 	$identifier
 	 * @param string 	$password
-	 * @return mixed  	false if it fails user object on success
+	 * @return mixed  	false on failure, user object on success
 	 */
-	public function validate( $identifier, $password ) {
-	
+	public function validate( $identifier, $password ) 
+	{
 		// our user
 		$user = null;
 	
