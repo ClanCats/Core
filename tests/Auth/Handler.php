@@ -72,6 +72,17 @@ class Test_Auth_Handler extends DB\TestCase
 		$this->assertTrue( $auth->user instanceof CCModel );
 		$this->assertTrue( $auth->valid() );
 		
+		// another auth same session manager
+		$auth = Auth\Handler::create( 'same_session_manager' );
+		
+		$this->assertTrue( $auth->user instanceof CCModel );
+		$this->assertTrue( $auth->valid() );
+		
+		// another auth diffrent session manager
+		$auth = Auth\Handler::create( 'diffrent_session_manager' );
+		
+		$this->assertTrue( $auth->user instanceof CCModel );
+		$this->assertFalse( $auth->valid() );
 	}
 	
 	/**

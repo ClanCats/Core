@@ -43,5 +43,17 @@ return array(
 		'user_key' => 'email',
 	),
 	
+	'diffrent_session_manager' => array(
+		// Wich session manager should be used?
+		// null = default session manager
+		'session_manager' => 'array',
+	),
+	
+	'same_session_manager' => array(
+		// Wich session manager should be used?
+		// null = default session manager
+		'session_manager' => null,
+	),
+	
 	'other' => array(),
 );

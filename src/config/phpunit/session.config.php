@@ -32,4 +32,11 @@ return array(
 	'file' => array(
 		'driver'	 => 'file',
 	),
+	
+	/*
+	 * Test the file driver
+	 */
+	'array' => array(
+		'driver'	 => 'array',
+	),
 );
