@@ -20,7 +20,7 @@ class Test_Auth_Handler extends \PHPUnit_Framework_TestCase
 	 */
 	public static function setUpBeforeClass() 
 	{
-		CCConfig::create( 'auth' )->_data = CCConfig::create( 'Core::auth' )->_data;
+		CCConfig::create( 'auth' )->_data = CCConfig::create( 'Core::phpunit/auth' )->_data;
 	}
 	
 	/**
@@ -33,13 +33,21 @@ class Test_Auth_Handler extends \PHPUnit_Framework_TestCase
 		$this->assertTrue( $auth->user instanceof CCModel );
 		$this->assertFalse( $auth->valid() );
 		
-		$auth2 = Auth\Handler::create( 'other', array(
-			''
-		));
+		$auth2 = Auth\Handler::create( 'other' );
 		
-		$this->assertEqals( $auth, Auth\Handler::create() );
-		$this->assertEqals( $auth2, Auth\Handler::create( 'other' ) );
-		$this->assertEqals( $auth, $auth2 );
-		//_dd( $auth );
+		$this->assertEquals( $auth, Auth\Handler::create() );
+		$this->assertEquals( $auth2, Auth\Handler::create( 'other' ) );
+		
+		$this->assertNotEquals( $auth, $auth2 );
+	}
+	
+	/**
+	 * Handler::create not existing tests
+	 *
+	 * @expectedException        Auth\Exception
+	 */
+	public function test_create_unknown()
+	{
+		Auth\Handler::create( 'nopenotinghere' );
 	}
 }

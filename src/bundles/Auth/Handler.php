@@ -126,7 +126,7 @@ class Handler
 		// set the session handler
 		$this->session = \CCSession::manager( $config['session_manager'] );
 		
-		$user_model = $this->config['user_model'];
+		$user_model =\CCArr::get( 'user_model', $this->config, "\\Auth\\User" );
 		
 		// set a empty default user object to avoid
 		// on a non object errors
