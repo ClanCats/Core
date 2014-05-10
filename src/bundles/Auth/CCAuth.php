@@ -11,5 +11,25 @@
  */
 class CCAuth 
 {
+	/** 
+	 * Get an auth handler
+	 *
+	 * @param string		$name	The auth instance
+	 * @return bool
+	 */
+	public static function handler( $name = null )
+	{
+		return Handler::create( $name );
+	}
 	
+	/** 
+	 * Check if the login is valid
+	 *
+	 * @param string		$name	The auth instance
+	 * @return bool
+	 */
+	public static function valid( $name = null )
+	{
+		return Handler::create( $name )->valid();
+	}
 }

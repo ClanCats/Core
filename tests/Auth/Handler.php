@@ -281,6 +281,25 @@ class Test_Auth_Handler extends DB\TestCase
 	/**
 	 * Handler::sign_in keep login tests
 	 */
+	public function test_sign_out()
+	{
+		$this->create_keeper_login();
+		
+		$this->keeper_login_true();
+		
+		$auth = Auth\Handler::create();
+		$auth->sign_out();
+		
+		$this->keeper_login_false();
+		
+		$this->assertEquals( null, $auth->user->email );
+		
+		$this->assertFalse( $auth->sign_out() );
+	}
+	
+	/**
+	 * Handler::sign_in keep login tests
+	 */
 	public function test_sign_in_keeper()
 	{
 		Auth\Handler::kill_instance( 'main' );
@@ -370,5 +389,4 @@ class Test_Auth_Handler extends DB\TestCase
 		// create him again
 		static::$current_user->save();
 	}
-
 }

@@ -441,10 +441,10 @@ class Handler
 	}
 	
 	/**
-	 * sign in a as user at instance
+	 * Sign a user out
 	 *
-	 * @param id  		$user_id	
-	 * @param string	$name
+	 * @param id  				$user_id	
+	 * @param string				$name
 	 * @return bool
 	 */
 	public function sign_out() {
@@ -455,15 +455,21 @@ class Handler
 		}
 	
 		// remove the restore login
-		DB::delete( 'logins', $this->restore_key( $this->user ), 'restore_key' )->run();
+		\DB::delete( $this->config->get( 'logins.table' ) )
+			->where( 'restore_token', $this->restore_key( $this->user ) )
+			->run();
 	
 		// logout the user
-		CCSession::instance( $this->name )->user_id = 0;
-	
+		$this->session->delete( $this->config->session_key );
+
 		// pass the user object through all user hooks
-		$this->user = CCEvent::pass( 'auth.signout', $this->user );
+		$this->user = \CCEvent::pass( 'auth.sign_out', $this->user );
+		$this->user->save();
 	
-		$this->user = $this->user();
+		$user_model = $this->config->user_model;
+		
+		// create new empty user
+		$this->user = new $user_model;
 	
 		return $this->authenticated = false;
 	}
