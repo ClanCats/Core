@@ -110,7 +110,7 @@ class Handler
 	 * @param array 			$config
 	 * @return void
 	 */
-	public function __construct( $name, $config ) 
+	public function __construct( $name, $config = null ) 
 	{	
 		if ( is_null( $config ) )
 		{
@@ -372,7 +372,7 @@ class Handler
 	 * @param bool			$keep_login
 	 * @return bool
 	 */
-	public function sign_in( Auth\User $user, $keep_login = true ) 
+	public function sign_in( \Auth\User $user, $keep_login = true ) 
 	{
 		// set the session key so the session knows we are logged in
 		$this->session->set( $this->config->session_key, $user->{$this->config->user_key} );

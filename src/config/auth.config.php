@@ -23,18 +23,37 @@ return array(
 		// the authentification
 		'user_key' => 'id',
 		
-		// The User model
+		// The User model class
 		'user_model' => "\\Auth\\User",
+		
+		// the identifiers wich fields should be allowed 
+		// to select the user object on validation.
+		'identifiers' => array(
+			'email'
+		),
 		
 		// Where to store the active logins
 		// how long do they stay active etc.
 		'logins' => array(
-			
-			// the logins db handler
+		
+			// the logins db handlerw
 			'handler' => null,
-			
+		
 			// the logins db table
-			'table' => 'logins',
+			'table' => 'auth_logins',
+		),
+		
+		// login restoring settings
+		'restore' => array(
+			
+			// the user id key cookie name
+			'id_cookie' => 'ccauth-restore-id',
+			
+			// the user restore token cookie name
+			'token_cookie' => 'ccauth-restore-token',
+			
+			// the restore key lifetime
+			'lifetime' => \CCDate::months(1),
 		),
 	),
 );
