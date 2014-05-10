@@ -166,7 +166,7 @@ class Handler
 				'handler' => null,
 			
 				// the logins db table
-				'table' => 'logins',
+				'table' => 'auth_logins',
 			),
 			
 			// login restoring settings
@@ -445,7 +445,7 @@ class Handler
 	 *
 	 * @param id  				$user_id	
 	 * @param string				$name
-	 * @return bool
+	 * @return false
 	 */
 	public function sign_out() {
 	

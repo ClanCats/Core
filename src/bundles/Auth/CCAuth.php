@@ -32,4 +32,41 @@ class CCAuth
 	{
 		return Handler::create( $name )->valid();
 	}
+	
+	/** 
+	 * Validate user credentials
+	 *
+	 * @param mixed		$identifier
+	 * @param string		$password
+	 * @param string		$name			The auth instance
+	 * @return bool
+	 */
+	public static function validate( $identifier, $password, $name = null )
+	{
+		return Handler::create( $name )->validate( $identifier, $password );
+	}
+	
+	/** 
+	 * Sign in a user
+	 *
+	 * @param Auth\User		$user
+	 * @param string			$keep_loggedin
+	 * @param string			$name				The auth instance
+	 * @return bool
+	 */
+	public static function sign_in( \Auth\User $user, $keep_loggedin = true, $name = null )
+	{
+		return Handler::create( $name )->sign_in( $user, $keep_loggedin );
+	}
+	
+	/** 
+	 * Sign out a user
+	 *
+	 * @param string			$name				The auth instance
+	 * @return false
+	 */
+	public static function sign_out( $name = null )
+	{
+		return Handler::create( $name )->sign_out();
+	}
 }

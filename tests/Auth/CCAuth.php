@@ -51,4 +51,27 @@ class Test_Auth_CCAuth extends DB\TestCase
 		$this->assertFalse( CCAuth::valid() );
 		$this->assertFalse( CCAuth::valid( 'other' ) );
 	}
+	
+	/**
+	 * CCAuth::validate tests
+	 */
+	public function test_validate()
+	{
+		$this->assertFalse( CCAuth::validate() );
+		$this->assertFalse( CCAuth::validate( 'somthing', 'wrong' ) );
+		$this->assertFalse( CCAuth::validate( 'test@example.com', 'wrongpass' ) );
+		
+		$this->assertTrue( CCAuth::validate( 'test@example.com', 'phpunit' ) instanceof DB\Model );
+	}
+	
+	/**
+	 * CCAuth::sign_in and sign_out tests
+	 */
+	public function test_sign()
+	{
+		$this->assertFalse( CCAuth::valid() );
+		$this->assertTrue( CCAuth::sign_in( static::$current_user ) );
+		$this->assertTrue( CCAuth::valid() );
+		$this->assertFalse( CCAuth::sign_out() );
+	}
 }
