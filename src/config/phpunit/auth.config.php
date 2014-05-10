@@ -42,7 +42,7 @@ return array(
 			'handler' => null,
 
 			// the logins db table
-			'table' => 'logins',
+			'table' => 'auth_logins',
 		),
 	),
 	

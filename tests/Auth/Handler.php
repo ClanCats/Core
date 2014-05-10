@@ -55,7 +55,7 @@ class Test_Auth_Handler extends DB\TestCase
 		CCSession::set( 'user_id', static::$current_user->id );
 		
 		// kill the old instance
-		$auth = Auth\Handler::kill_instance( 'main' );
+		Auth\Handler::kill_instance( 'main' );
 		
 		// redo
 		$auth = Auth\Handler::create();
@@ -92,6 +92,20 @@ class Test_Auth_Handler extends DB\TestCase
 		
 		// overwrite config
 		$auth = Auth\Handler::create( 'main', array( 'session_manager' => 'array' ) );
+		
+		$this->assertTrue( $auth->user instanceof CCModel );
+		$this->assertFalse( $auth->valid() );
+		
+		// test user_id but user dont exists
+		Auth\Handler::kill_instance( 'main' );
+		
+		$auth = Auth\Handler::create( 'main' );
+		
+		$auth->session->set( 'user_id', 21 );
+		
+		Auth\Handler::kill_instance( 'main' );
+		
+		$auth = Auth\Handler::create( 'main' );
 		
 		$this->assertTrue( $auth->user instanceof CCModel );
 		$this->assertFalse( $auth->valid() );
@@ -157,4 +171,204 @@ class Test_Auth_Handler extends DB\TestCase
 		
 		$this->assertTrue( $user !== false );
 	}
+	
+	/**
+	 * Handler::sign_in tests
+	 */
+	public function test_sign_in()
+	{
+		$example_user = clone static::$current_user;
+		
+		Auth\Handler::kill_instance( 'main' );
+		Auth\Handler::kill_instance( 'same_session_manager' );
+		Auth\Handler::kill_instance( 'diffrent_session_manager' );
+		
+		$auth = Auth\Handler::create();
+		
+		$auth->sign_in( $example_user, false );
+		
+		$this->assertTrue( $auth->user instanceof DB\Model );
+		$this->assertEquals( static::$current_user->email, $auth->user->email );
+		
+		// this auth instance should be now also logged in
+		$auth = Auth\Handler::create( 'same_session_manager' );
+		
+		$this->assertEquals( static::$current_user->email, $auth->user->email );
+		
+		// this not:
+		$auth = Auth\Handler::create( 'diffrent_session_manager' );
+		
+		$this->assertNotEquals( static::$current_user->email, $auth->user->email );
+		
+		// test an event
+		Auth\Handler::kill_instance( 'main' );
+		
+		$auth = Auth\Handler::create();
+		
+		$this->assertEquals( static::$current_user->email, $auth->user->email );
+		
+		CCEvent::mind( 'auth.sign_in', function( $user ) {
+			$user->email = 'changed@example.com';
+			return $user;
+		});
+		
+		Auth\Handler::kill_instance( 'main' );
+		
+		$auth = Auth\Handler::create();
+		
+		$auth->sign_in( $example_user, false );
+		
+		$this->assertNotEquals( static::$current_user->email, $auth->user->email );
+	}
+	
+	public function create_keeper_login()
+	{
+		$example_user = clone static::$current_user;
+		
+		$auth = Auth\Handler::create();
+		
+		// test now invalid because of sessions kill
+		$auth->session->destroy();
+		
+		Auth\Handler::kill_instance( 'main' );
+		
+		$auth = Auth\Handler::create();
+		
+		$this->assertFalse( $auth->valid() );
+		
+		// now login with keeper
+		$auth->sign_in( $example_user, true );
+		
+		$this->assertTrue( $auth->user instanceof DB\Model );
+		$this->assertEquals( static::$current_user->id, $auth->user->id );
+		
+		// destroy again this time we should be able to restore the login
+		$auth->session->destroy();
+		
+		Auth\Handler::kill_instance( 'main' );
+		
+		$auth = Auth\Handler::create();
+		
+		$this->assertTrue( $auth->valid() );
+	}
+	
+	public function keeper_login_true()
+	{
+		$auth = Auth\Handler::create();
+		
+		$auth->session->destroy();
+		
+		Auth\Handler::kill_instance( 'main' );
+		
+		$auth = Auth\Handler::create();
+		
+		$this->assertTrue( $auth->valid() );
+	}
+	
+	public function keeper_login_false()
+	{
+		$auth = Auth\Handler::create();
+		
+		$auth->session->destroy();
+		
+		Auth\Handler::kill_instance( 'main' );
+		
+		$auth = Auth\Handler::create();
+		
+		$this->assertFalse( $auth->valid() );
+	}
+	
+	/**
+	 * Handler::sign_in keep login tests
+	 */
+	public function test_sign_in_keeper()
+	{
+		Auth\Handler::kill_instance( 'main' );
+		
+		$example_user = clone static::$current_user;
+		
+		$auth = Auth\Handler::create();
+		
+		$auth->sign_in( $example_user, false );
+		
+		$this->assertTrue( $auth->user instanceof DB\Model );
+		$this->assertEquals( static::$current_user->id, $auth->user->id );
+		
+		// test valid 
+		Auth\Handler::kill_instance( 'main' );
+		
+		$auth = Auth\Handler::create();
+		
+		$this->assertTrue( $auth->valid() );
+		
+		// lets create an keeper login now
+		$this->create_keeper_login();
+		
+		// lets test the login store event
+		$this->assertEquals( null, $auth->login()->client_ip );
+		
+		$auth->session->destroy();
+		
+		CCEvent::mind( 'auth.store_login', function( $data ) 
+		{
+			$data['client_ip'] = '127.0.0.1';
+			return $data;
+		});
+		
+		Auth\Handler::kill_instance( 'main' );
+		
+		$auth = Auth\Handler::create();
+		
+		$this->assertTrue( $auth->valid() );
+		
+		$this->assertEquals( '127.0.0.1', $auth->login()->client_ip );
+		
+		// now lets modify some data to force restore failure
+		
+		// changing the the current client ip will force failure
+		CCIn::instance( new CCIn_Instance( array(), array(), array(), array(), array( 'REMOTE_ADDR' => '192.168.1.42' ) ) );
+		
+		$this->keeper_login_false();
+		
+		// next lets modify the users password wich will force a failure
+		$this->create_keeper_login();
+		
+		$this->keeper_login_true();
+		
+		static::$current_user->password = "anotherpassword";
+		static::$current_user->save();
+		
+		$this->keeper_login_false();
+		
+		// modifiy the restore_id
+		$this->create_keeper_login();
+		
+		$this->keeper_login_true();
+		
+		CCCookie::set( 'ccauth-restore-id', '34' );
+		
+		$this->keeper_login_false();
+		
+		// modifiy the restore_token
+		$this->create_keeper_login();
+		
+		$this->keeper_login_true();
+		
+		CCCookie::set( 'ccauth-restore-token', 'wrong' );
+		
+		$this->keeper_login_false();
+		
+		// delete the user 
+		$this->create_keeper_login();
+		
+		$this->keeper_login_true();
+		
+		static::$current_user->delete();
+		
+		$this->keeper_login_false();
+		
+		// create him again
+		static::$current_user->save();
+	}
+
 }
