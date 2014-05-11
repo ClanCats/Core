@@ -1,92 +1,254 @@
-<?php namespace CC\Core;
+<?php namespace Core;
 /**
- * ClanCats Validator
+ * Validator
+ * Input validation engine
+ ** 
  *
- * @package 		ClanCats-Framework
- * @author     		Mario Döring <mariodoering@me.com>
- * @version 		0.5
- * @copyright 		2010 - 2013 ClanCats GmbH 
+ * @package		ClanCatsFramework
+ * @author		Mario Döring <mario@clancats.com>
+ * @version		2.0
+ * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class CCValidator {
+class CCValidator 
+{
+	/**
+	 * Rule extensions
+	 *
+	 * @var array[callbacks]
+	 */
+	protected static $rules = array();
 	
 	/**
-	 * validator factory
+	 * Add new rule to the validator
 	 *
-	 * @param array 	$data
+	 * @param string			$name
+	 * @param callback		$callback
+	 * @return void
+	 */
+	public static function rule( $name, $callback ) 
+	{
+		static::$rules[$name] = $callback;
+	}
+	
+	/**
+	 * Create a new validator object
+	 *
+	 * @param array 				$data
 	 * @return CCValidator
 	 */
-	public static function factory( $data = array() ) {
+	public static function create( $data = array() ) 
+	{
 		return new static( $data );
 	}
 	
-	/*
-	 * data holder
+	/**
+	 * Create a new validator from post data
+	 *
+	 * @param array 				$data
+	 * @return CCValidator
 	 */
-	public $data = null;
-
-	/*
-	 * validation success
-	 */
-	public $success = null;
+	public static function post( $data = array() ) 
+	{
+		return new static( array_merge( CCIn::$_instance->POST, $data ) );
+	}
 	
 	/**
-	 * validator constructor
+	 * Data container
 	 *
-	 * @param array 	$data
+	 * @var array
+	 */
+	private $data = null;
+	
+	/**
+	 * Failed tests container
+	 *
+	 * @var array
+	 */
+	private $failed = array();
+
+	/**
+	 * validation success
+	 *
+	 * @var bool
+	 */
+	private $success = true;
+	
+	/**
+	 * Validator constructor
+	 *
+	 * @param array 			$data
 	 * @return void
 	 */
-	public function __construct( $data = array() ) {
+	public function __construct( $data = array() ) 
+	{
 		$this->data = $data;
 	}
 	
 	/**
-	 * get the string from data or param?
+	 * Did the input pass the validation
 	 *
-	 * @param string 	$key
-	 * @return string
+	 * @return bool
 	 */
-	protected function data( $key ) {
-		if ( is_string( $key ) && substr( $key, 0, 1 ) == '@' ) {
-			return $this->data[substr( $key, 1 )];
-		}
-		return $key;
+	public function success()
+	{
+		return $this->success;
 	}
 	
 	/**
-	 * did the check fail?
+	 * Did the input not pass the validation
+	 *
+	 * @return bool
 	 */
-	protected function success( $bool ) {
-		
-		if ( $this->success === null || $this->success === true ) {
-			$this->success = (bool) $bool;
-		}
-		
-		return $bool;
+	public function failure()
+	{
+		return !$this->success;
 	}
 	
 	/**
-	 * check in our data array if some properties
-	 * are set and not empty
+	 * Return the failed tests
 	 *
-	 * @param string|array 	$data
-	 * @return bool 
+	 * @return array
 	 */
-	public function required( $data ) {
+	public function failed()
+	{
+		return $this->failed;
+	}
+	
+	/** 
+	 * Get the current validator's data
+	 * Wehn the key is not set this will simply return all data
+	 *
+	 * @param string 		$key
+	 * @return array
+	 */
+	public function data( $key = null )
+	{
+		if ( !is_null( $key ) )
+		{
+			return $this->data[$key];
+		}
+		return $this->data;
+	}
+	
+	/**
+	 * Apply multiple rules to one attribute
+	 *
+	 * @param ...string
+	 * @return bool
+	 */
+	public function rules()
+	{
+		$args = func_get_args();
 		
-		if ( is_string( $data ) ) {
-			$data = array( $data );
+		$key = array_shift( $args );
+		
+		if ( !is_array( reset( $args ) ) )
+		{
+			$rules = $args;
+		}
+		else 
+		{
+			$rules = array_shift( $args );
 		}
 		
-		foreach( $data as $item ) {
+		$success = true;
+		
+		foreach( $rules as $rule )
+		{
+			$rule = explode( ':', $rule );
+			$params = array();
 			
-			if ( $this->is_empty( '@'.$item ) ) {
-				return $this->success( false );
+			if ( array_key_exists( 1, $rule ) )
+			{
+				$params = explode( ',', $rule[1] );
+			}
+			
+			$rule = reset( $rule );
+			
+			if ( !call_user_func_array( array( $this, $rule ), $params ) )
+			{
+				$success = false;
 			}
 		}
-		return $this->success( true );
+		
+		return $success;
 	}
 	
+	public function __call( $method, $params )
+	{
+		if ( array_key_exists( $method, static::$rules ) )
+		{
+			return $this->apply_rule( $method, static::$rules[$method], $params );
+		}
+		
+		if ( method_exists( $this, 'rule_'.$method ) )
+		{
+			return $this->apply_rule( $method, array( $this, 'rule_'.$method ), $params );
+		}
+		
+		throw new \BadMethodCallException( "CCValidator - Invalid rule or method '".$method."'." );
+	}
+	
+	protected function proof_result( $rule, $key, $result )
+	{	
+		if ( $result === false )
+		{
+			$this->failed[$key][] = $rule;
+		}
+		
+		if ( $this->success === true )
+		{
+			return $this->success = $result;
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 * Apply an rule executes the rule and runs the result proof
+	 *
+	 * @param string 		$rule
+	 * @param callback		$callback
+	 * @param array 			$params
+	 * @return bool
+	 */
+	protected function apply_rule( $rule, $callback, $params )
+	{
+		$data_key = array_shift( $params );
+		
+		// In case of that the requested data set does not exist
+		// we always set the test as failure.
+		if ( !array_key_exists( $data_key, $this->data ) )
+		{
+			return $this->proof_result( $rule, $data_key, false );
+		}
+		
+		$call_arguments = array( $data_key, $this->data[$data_key] );
+		
+		// add the other params to our call parameters
+		$call_arguments = array_merge( $call_arguments, $params );
+		
+		return $this->proof_result( $rule, $data_key, call_user_func_array( $callback, $call_arguments ) );
+	}
+	
+	/** 
+	 * Check if the field is set an not empty
+	 *
+	 * @param string
+	 */
+	public function rule_required( $key, $value )
+	{
+		if ( is_null( $value ) )
+		{
+			return false;
+		}
+		elseif ( is_string( $value ) && trim( $value ) == '' )
+		{
+			return false;
+		}
+		return true;
+	}
 	
 	/*
 	 ** --- ALL THE IS FUNCTIONS DOWN HERE
