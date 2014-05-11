@@ -419,6 +419,67 @@ class CCValidator
 		return $value === $this->data( $other_value );
 	}
 	
+	/**
+	 * Is the given value true
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_true( $key, $value )
+	{
+		return $value === true;
+	}
+	
+	/**
+	 * Is the given value false
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_false( $key, $value )
+	{
+		return $value === false;
+	}
+	
+	/**
+	 * Is the given value positive
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_positive( $key, $value )
+	{
+		return ( ( (bool) $value ) ? true : false );
+	}
+	
+	/**
+	 * Is the given value negative
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_negative( $key, $value )
+	{
+		return ( ( (bool) $value ) ? false : true );
+	}
+	
+	/**
+	 * Does the parameter equal the value
+	 *
+	 * @param string			$key
+	 * @param mixed 			$value
+	 * @param mixed			$other_value
+	 * @return bool
+	 */
+	public function rule_equal( $key, $value, $other_value )
+	{
+		return $value === $other_value;
+	}
+	
 	/** 
 	 * Check if the value is a valid email address
 	 *
@@ -456,7 +517,7 @@ class CCValidator
 	}
 	
 	/**
-	 * check if the regex matches
+	 * Check if the regex matches
 	 * 
 	 * @param mixed		$data
 	 * @param string	$regex
@@ -465,88 +526,15 @@ class CCValidator
 	{
 		return preg_match( $regex, $value );
 	}
-		
-	/**
-	 * check if an array contains a string
-	 *
-	 * @param string	$string
-	 */
-	public function is_in_array( $string, $array ) {
-		return $this->success( in_array( $this->data( $string ), $array ) );
-	}
 	
 	/**
-	 * reverse of is in array
-	 *
-	 * @param string	$string
-	 */
-	public function is_not_in_array( $string, $array ) {
-		return $this->success( !in_array( $this->data( $string ), $array ) );
-	}
-	
-	/**
-	 * check if something is true
-	 *
-	 * @param string	$string
-	 */
-	public function is_true( $string ) {
-		return $this->success( ( $this->data( $string ) === true ) ? true : false );
-	}
-	
-	/**
-	 * check if something is false
-	 *
-	 * @param string	$string
-	 */
-	public function is_false( $string ) {
-		return $this->success( ( $this->data( $string ) === false ) ? true : false );
-	}
-	
-	/**
-	 * check if something is positive
-	 *
-	 * @param string	$string
-	 */
-	public function is_positive( $string ) {
-		return $this->success( ( $this->data( $string ) ) ? true : false );
-	}
-	
-	/**
-	 * check if something is negative
-	 *
-	 * @param string	$string
-	 */
-	public function is_negative( $string ) {
-		return $this->success( ( $this->data( $string ) ) ? false : true );
-	}
-	
-	/**
-	 * are the parameters equal?
-	 *
-	 * @param string	$string
-	 * @param mixed		$item
-	 */
-	public function is_equal( $string, $item ) {
-		return $this->success( $this->data( $string ) == $item );
-	}
-	
-	/**
-	 * are the parameters equal?
-	 *
-	 * @param string	$string
-	 * @param mixed		$item
-	 */
-	public function is_not_equal( $string, $item ) {
-		return $this->success( $this->data( $string ) != $item );
-	}
-	
-	/**
-	 * check if valid date format
+	 * Check if valid date format
 	 *
 	 * @param string	$string
 	 * @param string	$format
 	 */
-	public function is_valid_date( $string, $format = 'd-m-Y' ) {
+	public function rule_valid_date( $string, $format = 'd-m-Y' ) 
+	{
 		$date = strtotime( trim( $this->data( $string ) ) );
 		return $this->success( date( $format, $date ) == trim( $this->data( $string ) ) );
 	}

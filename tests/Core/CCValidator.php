@@ -295,4 +295,90 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		$this->assertFalse( $validator->match( 'password', 'password_3' ) );
 		$this->assertFalse( $validator->match( 'password', 'notexisting' ) );
 	}
+	
+	/**
+	 * CCValidator::true
+	 */
+	public function test_true()
+	{
+		$validator = new CCValidator( array( 
+			'1' => 'true',
+			'2' => '1',
+			'3' => true,
+		));
+		
+		$this->assertFalse( $validator->true( '1' ) );
+		$this->assertTrue( $validator->not_true( '1' ) );
+		$this->assertFalse( $validator->true( '2' ) );
+		$this->assertTrue( $validator->true( '3' ) );
+	}
+	
+	/**
+	 * CCValidator::false
+	 */
+	public function test_false()
+	{
+		$validator = new CCValidator( array( 
+			'1' => 'false',
+			'2' => '0',
+			'3' => false,
+		));
+		
+		$this->assertFalse( $validator->false( '1' ) );
+		$this->assertTrue( $validator->not_false( '1' ) );
+		$this->assertFalse( $validator->false( '2' ) );
+		$this->assertTrue( $validator->false( '3' ) );
+	}
+	
+	/**
+	 * CCValidator::negative
+	 */
+	public function test_negative()
+	{
+		$validator = new CCValidator( array( 
+			'1' => '',
+			'2' => 0,
+			'3' => false,
+			'4' => 'true',
+		));
+		
+		$this->assertTrue( $validator->negative( '1' ) );
+		$this->assertTrue( $validator->negative( '2' ) );
+		$this->assertTrue( $validator->negative( '3' ) );
+		$this->assertFalse( $validator->negative( '4' ) );
+	}
+	
+	/**
+	 * CCValidator::positive
+	 */
+	public function test_positive()
+	{
+		$validator = new CCValidator( array( 
+			'1' => '',
+			'3' => 'true',
+			'4' => '1',
+			'4' => false,
+		));
+		
+		$this->assertFalse( $validator->positive( '1' ) );
+		$this->assertFalse( $validator->positive( '2' ) );
+		$this->assertTrue( $validator->positive( '3' ) );
+		$this->assertFalse( $validator->positive( '4' ) );
+	}
+	
+	/**
+	 * CCValidator::positive
+	 */
+	public function test_equal()
+	{
+		$validator = new CCValidator( array( 
+			'1' => 'foo',
+			'2' => 123,
+		));
+		
+		$this->assertTrue( $validator->equal( '1', 'foo' ) );
+		$this->assertTrue( $validator->equal( '2', 123 ) );
+		$this->assertFalse( $validator->equal( '2', 0 ) );
+		$this->assertFalse( $validator->equal( '2', '0' ) );
+	}
 }
