@@ -273,6 +273,106 @@ class CCValidator
 		return true;
 	}
 	
+	/**
+	 * Is the given value numeric?
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_numeric( $key, $value )
+	{
+		return is_numeric( $value );
+	}
+	
+	/**
+	 * Is the given number at least some size
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_min_num( $key, $value, $min )
+	{
+		if ( is_numeric( $value ) )
+		{
+			return $value >= $min;
+		}
+		return false;
+	}
+	
+	/**
+	 * Is the given number max some size
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_max_num( $key, $value, $max )
+	{
+		if ( is_numeric( $value ) )
+		{
+			return $value <= $max;
+		}
+		return false;
+	}
+	
+	/**
+	 * Is the given number between min and max
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_between_num( $key, $value, $min, $max )
+	{
+		if ( !$this->rule_min_num( $key, $value, $min ) )
+		{
+			return false;
+		}
+		if ( !$this->rule_max_num( $key, $value, $max ) )
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Is the given string at least some size
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_min( $key, $value, $min )
+	{
+		return $this->rule_min_num( $key, strlen( $value ), $min );
+	}
+	
+	/**
+	 * Is the given string max some size
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_max( $key, $value, $max )
+	{
+		return $this->rule_max_num( $key, strlen( $value ), $max );
+	}
+	
+	/**
+	 * Is the given string between min and max
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_between( $key, $value, $min, $max )
+	{
+		return $this->rule_between_num( $key, strlen( $value ), $min, $max );
+	}
+	
 	/** 
 	 * Check if the value is a valid email address
 	 *
