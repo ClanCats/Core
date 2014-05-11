@@ -166,6 +166,8 @@ class CCValidator
 			
 			$rule = reset( $rule );
 			
+			array_unshift( $params, $key );
+			
 			if ( !call_user_func_array( array( $this, $rule ), $params ) )
 			{
 				$success = false;
@@ -175,6 +177,13 @@ class CCValidator
 		return $success;
 	}
 	
+	/**
+	 * Dynamic function calls 
+	 *
+	 * @param string 	$method
+	 * @param array 		$params
+	 * @return mixed
+	 */
 	public function __call( $method, $params )
 	{
 		if ( array_key_exists( $method, static::$rules ) )
@@ -190,6 +199,14 @@ class CCValidator
 		throw new \BadMethodCallException( "CCValidator - Invalid rule or method '".$method."'." );
 	}
 	
+	/**
+	 * Proof a single result and update the success property
+	 *
+	 * @param string		$rule
+	 * @param string 	$key
+	 * @param array 		$result
+	 * @return bool
+	 */ 
 	protected function proof_result( $rule, $key, $result )
 	{	
 		if ( $result === false )
@@ -229,13 +246,19 @@ class CCValidator
 		// add the other params to our call parameters
 		$call_arguments = array_merge( $call_arguments, $params );
 		
-		return $this->proof_result( $rule, $data_key, call_user_func_array( $callback, $call_arguments ) );
+		return $this->proof_result( $rule, $data_key, (bool) call_user_func_array( $callback, $call_arguments ) );
 	}
+	
+	/*
+	 ** --- RULES BELOW HERE
+	 */
 	
 	/** 
 	 * Check if the field is set an not empty
 	 *
-	 * @param string
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
 	 */
 	public function rule_required( $key, $value )
 	{
@@ -250,17 +273,40 @@ class CCValidator
 		return true;
 	}
 	
-	/*
-	 ** --- ALL THE IS FUNCTIONS DOWN HERE
-	 */
-	 
-	/**
-	 * is an email address?
+	/** 
+	 * Check if the value is a valid email address
 	 *
-	 * @param string 	$email
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
 	 */
-	public function is_email( $email ) {
-		return $this->is_valid( $email, "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$^" );
+	public function rule_email( $key, $value ) 
+	{
+		return preg_match( "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$^", $value );
+	}
+	
+	/** 
+	 * Check if the value is a valid ip address
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_ip( $key, $value ) 
+	{
+		return filter_var( $value, FILTER_VALIDATE_IP ) !== false;
+	}
+	
+	/** 
+	 * Check if the value is a valid ip address
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @return bool
+	 */
+	public function rule_url( $key, $value ) 
+	{
+		return filter_var( $value, FILTER_VALIDATE_URL ) !== false;
 	}
 	
 	/**
@@ -269,8 +315,9 @@ class CCValidator
 	 * @param mixed		$data
 	 * @param string	$regex
 	 */ 
-	public function is_valid( $data, $regex ) {
-		return $this->success( preg_match( $regex, $this->data( $data ) ) );
+	public function rule_regex( $key, $value, $regex ) 
+	{
+		return preg_match( $regex, $value );
 	}
 	
 	/**

@@ -58,6 +58,9 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		$this->assertTrue( $validator->failure() );
 		$this->assertFalse( $validator->success() );
 		
+		// test rules syntax
+		$this->assertTrue( $validator->rules( 'username', 'required' ) );
+		
 		// test spaces breaks etc.
 		$validator = new CCValidator( array( 'name' => '     ' ) );
 		
@@ -68,5 +71,51 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		
 		// test numbers
 		$validator = new CCValidator( array( 'count' => '0' ) );
+		
+		$this->assertTrue( $validator->required( 'count' ) );
+		
+		$validator = new CCValidator( array( 'count' => 0 ) );
+		
+		$this->assertTrue( $validator->required( 'count' ) );
+	}
+	
+	/**
+	 * CCValidator::email tests
+	 */
+	public function test_email()
+	{
+		$validator = new CCValidator( array( 
+			'email1' => 'info@example.com',
+			'email2' => 'info@example',
+			'email3' => 'info@@example.com',
+			'email4' => 'info..sdf4323fsd@ex-ample.cm',
+			'email5' => '',
+		));
+		
+		$this->assertTrue( $validator->email( 'email1' ) );
+		$this->assertFalse( $validator->email( 'email2' ) );
+		$this->assertFalse( $validator->email( 'email3' ) );
+		$this->assertTrue( $validator->email( 'email4' ) );
+		$this->assertFalse( $validator->email( 'email5' ) );
+	}
+	
+	/**
+	 * CCValidator::ip tests
+	 */
+	public function test_ip()
+	{
+		$validator = new CCValidator( array( 
+			'ip1' => '127.0.0.1',
+			'ip2' => '127.0000.0.1',
+			'ip3' => '127.0.0.1.1',
+			'ip4' => '266.0.0.2',
+			'ip5' => '255.255.255.255',
+		));
+		
+		$this->assertTrue( $validator->ip( 'ip1' ) );
+		$this->assertFalse( $validator->ip( 'ip2' ) );
+		$this->assertFalse( $validator->ip( 'ip3' ) );
+		$this->assertFalse( $validator->ip( 'ip4' ) );
+		$this->assertTrue( $validator->ip( 'ip5' ) );
 	}
 }
