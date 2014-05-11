@@ -46,7 +46,7 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 	 */
 	public function test_required()
 	{
-		$validator = new CCValidator( array( 'username' => 'mario', 'password' => '' ) );
+		$validator = new CCValidator( array( 'username' => 'mario', 'password' => '', 'field' => null ) );
 		
 		$this->assertTrue( $validator->required( 'username' ) );
 		$this->assertTrue( $validator->not_required( 'firstname' ) );
@@ -59,6 +59,10 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		
 		$this->assertTrue( $validator->failure() );
 		$this->assertFalse( $validator->success() );
+		
+		$this->assertInternalType( 'array', $validator->failed() );
+		
+		$this->assertFalse( $validator->required( 'field' ) );
 		
 		// test rules syntax
 		$this->assertTrue( $validator->rules( 'username', 'required' ) );
@@ -124,6 +128,38 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		$this->assertFalse( $validator->ip( 'ip3' ) );
 		$this->assertFalse( $validator->ip( 'ip4' ) );
 		$this->assertTrue( $validator->ip( 'ip5' ) );
+	}
+	
+	/**
+	 * CCValidator::url tests
+	 */
+	public function test_url()
+	{
+		$validator = new CCValidator( array( 
+			'1' => 'http://clancats.io',
+			'2' => 'http//clancats.io',
+			'3' => 'clancats.com',
+			'4' => 'ftp://cc.io',
+		));
+		
+		$this->assertTrue( $validator->url( '1' ) );
+		$this->assertFalse( $validator->url( '2' ) );
+		$this->assertFalse( $validator->url( '3' ) );
+		$this->assertTrue( $validator->url( '4' ) );
+	}
+	
+	/**
+	 * CCValidator::regex tests
+	 */
+	public function test_regex()
+	{
+		$validator = new CCValidator( array( 
+			'1' => 'foo',
+			'2' => 'bbo',
+		));
+		
+		$this->assertTrue( $validator->regex( '1', "/^foo$/" ) );
+		$this->assertFalse( $validator->regex( '2', "/^foo$/" ) );
 	}
 	
 	/**
@@ -395,5 +431,67 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		$this->assertTrue( $validator->date_format( '1', 'Y/m/d' ) );
 		$this->assertFalse( $validator->date_format( '1', 'Y/d/m' ) );
 		$this->assertTrue( $validator->date_format( '2', 'j-n-Y' ) );
+	}
+	
+	/**
+	 * CCValidator::rule
+	 */
+	public function test_rule()
+	{
+		CCValidator::rule( 'test', function( $key, $value ) 
+		{
+			return true;
+		});
+		
+		CCValidator::rule( 'testfalse', function( $key, $value ) 
+		{
+			return false;
+		});
+		
+		$validator = new CCValidator( array( 
+			'1' => 'blabla',
+		));
+		
+		$this->assertTrue( $validator->test( '1' ) );
+		$this->assertFalse( $validator->testfalse( '1' ) );
+	}
+	
+	/**
+	 * CCValidator::data
+	 */
+	public function test_all_data()
+	{		
+		$validator = new CCValidator( array( 
+			'1' => 'blabla',
+		));
+		
+		$this->assertInternalType( 'array', $validator->data() );
+	}
+	
+	/**
+	 * CCValidator:: bad method
+	 *
+	 * @expectedException        \BadMethodCallException
+	 */
+	public function test_bad_method()
+	{		
+		$validator = new CCValidator( array( 
+			'1' => 'not_important',
+		));
+		
+		$validator->doesntexists( '1' );
+	}
+	
+	/**
+	 * CCValidator::rules
+	 */
+	public function test_rules()
+	{		
+		$validator = new CCValidator( array( 
+			'1' => '155',
+		));
+		
+		$this->assertTrue( $validator->rules( '1', array( 'min_num:150', 'max_num:250' ) ) );
+		$this->assertTrue( $validator->rules( '1', 'min_num:150', 'max_num:250' ) );
 	}
 }
