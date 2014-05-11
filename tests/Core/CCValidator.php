@@ -49,11 +49,13 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		$validator = new CCValidator( array( 'username' => 'mario', 'password' => '' ) );
 		
 		$this->assertTrue( $validator->required( 'username' ) );
+		$this->assertTrue( $validator->not_required( 'firstname' ) );
 		
 		$this->assertTrue( $validator->success() );
 		$this->assertFalse( $validator->failure() );
 		
 		$this->assertFalse( $validator->required( 'passord' ) );
+		$this->assertFalse( $validator->not_required( 'username' ) );
 		
 		$this->assertTrue( $validator->failure() );
 		$this->assertFalse( $validator->success() );
@@ -93,6 +95,7 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		));
 		
 		$this->assertTrue( $validator->email( 'email1' ) );
+		$this->assertFalse( $validator->not_email( 'email1' ) );
 		$this->assertFalse( $validator->email( 'email2' ) );
 		$this->assertFalse( $validator->email( 'email3' ) );
 		$this->assertTrue( $validator->email( 'email4' ) );
@@ -116,6 +119,7 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		));
 		
 		$this->assertTrue( $validator->ip( 'ip1' ) );
+		$this->assertFalse( $validator->not_ip( 'ip1' ) );
 		$this->assertFalse( $validator->ip( 'ip2' ) );
 		$this->assertFalse( $validator->ip( 'ip3' ) );
 		$this->assertFalse( $validator->ip( 'ip4' ) );
@@ -137,6 +141,7 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		));
 		
 		$this->assertTrue( $validator->numeric( '1' ) );
+		$this->assertFalse( $validator->not_numeric( '1' ) );
 		$this->assertTrue( $validator->numeric( '2' ) );
 		$this->assertTrue( $validator->numeric( '3' ) );
 		$this->assertFalse( $validator->numeric( '4' ) );

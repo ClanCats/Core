@@ -190,14 +190,23 @@ class CCValidator
 	 */
 	public function __call( $method, $params )
 	{
+		$reverse = false;
+		
+		// when the method starts with not we assume that we 
+		// have to reverse the validation means only accepting the opposite
+		if ( substr( $method, 0, 4 ) === 'not_' )
+		{
+			$reverse = true; $method = substr( $method, 4 );
+		}
+		
 		if ( array_key_exists( $method, static::$rules ) )
 		{
-			return $this->apply_rule( $method, static::$rules[$method], $params );
+			return $this->apply_rule( $method, static::$rules[$method], $params, $reverse );
 		}
 		
 		if ( method_exists( $this, 'rule_'.$method ) )
 		{
-			return $this->apply_rule( $method, array( $this, 'rule_'.$method ), $params );
+			return $this->apply_rule( $method, array( $this, 'rule_'.$method ), $params, $reverse );
 		}
 		
 		throw new \BadMethodCallException( "CCValidator - Invalid rule or method '".$method."'." );
@@ -234,7 +243,7 @@ class CCValidator
 	 * @param array 			$params
 	 * @return bool
 	 */
-	protected function apply_rule( $rule, $callback, $params )
+	protected function apply_rule( $rule, $callback, $params, $reverse )
 	{
 		$data_key = array_shift( $params );
 		
@@ -242,7 +251,7 @@ class CCValidator
 		// we always set the test as failure.
 		if ( !array_key_exists( $data_key, $this->data ) )
 		{
-			return $this->proof_result( $rule, $data_key, false );
+			return $this->proof_result( $rule, $data_key, ( $reverse ? true : false ) );
 		}
 		
 		$call_arguments = array( $data_key, $this->data[$data_key] );
@@ -250,7 +259,14 @@ class CCValidator
 		// add the other params to our call parameters
 		$call_arguments = array_merge( $call_arguments, $params );
 		
-		return $this->proof_result( $rule, $data_key, (bool) call_user_func_array( $callback, $call_arguments ) );
+		$result = (bool) call_user_func_array( $callback, $call_arguments );
+		
+		if ( $reverse )
+		{
+			$result = !$result;
+		}
+		
+		return $this->proof_result( $rule, $data_key, $result );
 	}
 	
 	/*
