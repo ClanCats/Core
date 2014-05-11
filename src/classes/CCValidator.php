@@ -126,7 +126,11 @@ class CCValidator
 	{
 		if ( !is_null( $key ) )
 		{
-			return $this->data[$key];
+			if ( array_key_exists( $key, $this->data ) )
+			{
+				return $this->data[$key];
+			}
+			return null;
 		}
 		return $this->data;
 	}
@@ -373,6 +377,32 @@ class CCValidator
 		return $this->rule_between_num( $key, strlen( $value ), $min, $max );
 	}
 	
+	/**
+	 * Is the given value in the given array
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @param array 			$array
+	 * @return bool
+	 */
+	public function rule_in( $key, $value, $array )
+	{
+		return in_array( $value, $array );
+	}
+	
+	/**
+	 * Does the given value match another one
+	 *
+	 * @param string			$key
+	 * @param string 		$value
+	 * @param mixed 			$other_value
+	 * @return bool
+	 */
+	public function rule_match( $key, $value, $other_value )
+	{
+		return $value === $this->data( $other_value );
+	}
+	
 	/** 
 	 * Check if the value is a valid email address
 	 *
@@ -419,77 +449,7 @@ class CCValidator
 	{
 		return preg_match( $regex, $value );
 	}
-	
-	/**
-	 * check if the something is not empty
-	 */
-	public function is_empty( $data ) {
-		$data = trim( $this->data( $data ) ); 
-		return $this->success( empty( $data ) );
-	}
-	/**
-	 * just a reverse of is_empty
-	 */
-	public function is_not_empty( $data ) { 
-		$data = trim( $this->data( $data ) ); 
-		return $this->success( !empty( $data ) );
-	}
-	
-	/**
-	 * is a string bigger then
-	 *
-	 * @param string	$string
-	 * @param int		$min
-	 */
-	public function is_bigger( $string, $min ) {
-		if ( strlen( $this->data( $string ) ) > $min ) {
-			return $this->success( true );
-		}
-		return $this->success( false );
-	}
-	
-	/**
-	 * is a string bigger then
-	 *
-	 * @param string	$string
-	 * @param int		$min
-	 */
-	public function is_smaller( $string, $min ) {
-		if ( strlen( $this->data( $string ) ) < $min ) {
-			return $this->success( true );
-		}
-		return $this->success( false );
-	}
-	
-	/**
-	 * is the string length between
-	 *
-	 * @param string 	$string
-	 * @param int 		$min
-	 * @param int 		$max
-	 */
-	public function is_between( $string, $min, $max ) {
-		$len = strlen( $this->data( $string ) );
-	
-		if ( $len < $min ) {
-			return $this->success( false );
-		}
-		if ( $len > $max ) {
-			return $this->success( false );
-		}
-	
-		return $this->success( true );
-	}
-	
-	/**
-	 * check if the string is numeric
-	 *
-	 * @param string	$string
-	 */
-	public function is_numeric( $string ) {
-		return $this->success( is_numeric( $this->data( $string ) ) );
-	}
-	
+		
 	/**
 	 * check if an array contains a string
 	 *

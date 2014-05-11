@@ -257,6 +257,37 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		
 		$this->assertTrue( $validator->rules( '2', 'min:2', 'max:6' ) );
 		$this->assertFalse( $validator->rules( '2', 'min:4', 'max:6' ) );
+	}
+	
+	/**
+	 * CCValidator::in
+	 */
+	public function test_in()
+	{
+		$validator = new CCValidator( array( 
+			'salutation' => 'mr.',
+			'salutation_2' => 'nope',
+		));
 		
+		$salutations = array( 'mr.', 'mrs.' );
+		
+		$this->assertTrue( $validator->in( 'salutation', $salutations ) );
+		$this->assertFalse( $validator->in( 'salutation_2', $salutations ) );
+	}
+	
+	/**
+	 * CCValidator::match
+	 */
+	public function test_match()
+	{
+		$validator = new CCValidator( array( 
+			'password' => 'test',
+			'password_2' => 'test',
+			'password_3' => 'wrong',
+		));
+		
+		$this->assertTrue( $validator->match( 'password', 'password_2' ) );
+		$this->assertFalse( $validator->match( 'password', 'password_3' ) );
+		$this->assertFalse( $validator->match( 'password', 'notexisting' ) );
 	}
 }
