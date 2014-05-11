@@ -519,8 +519,10 @@ class CCValidator
 	/**
 	 * Check if the regex matches
 	 * 
-	 * @param mixed		$data
-	 * @param string	$regex
+	 * @param string			$key
+	 * @param string 		$value
+	 * @param string			$regex
+	 * @return bool
 	 */ 
 	public function rule_regex( $key, $value, $regex ) 
 	{
@@ -530,12 +532,13 @@ class CCValidator
 	/**
 	 * Check if valid date format
 	 *
-	 * @param string	$string
-	 * @param string	$format
+	 * @param string			$key
+	 * @param string 		$value
+	 * @param string			$format
+	 * @param bool
 	 */
-	public function rule_valid_date( $string, $format = 'd-m-Y' ) 
+	public function rule_date_format( $key, $value, $format = 'd-m-Y' ) 
 	{
-		$date = strtotime( trim( $this->data( $string ) ) );
-		return $this->success( date( $format, $date ) == trim( $this->data( $string ) ) );
+		return date( $format, strtotime( trim( $value ) ) ) == trim( $value );
 	}
 }

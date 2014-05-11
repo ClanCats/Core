@@ -381,4 +381,19 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 		$this->assertFalse( $validator->equal( '2', 0 ) );
 		$this->assertFalse( $validator->equal( '2', '0' ) );
 	}
+	
+	/**
+	 * CCValidator::valid_date
+	 */
+	public function test_valid_date()
+	{
+		$validator = new CCValidator( array( 
+			'1' => '2014/05/12',
+			'2' => '1-2-2014',
+		));
+		
+		$this->assertTrue( $validator->date_format( '1', 'Y/m/d' ) );
+		$this->assertFalse( $validator->date_format( '1', 'Y/d/m' ) );
+		$this->assertTrue( $validator->date_format( '2', 'j-n-Y' ) );
+	}
 }
