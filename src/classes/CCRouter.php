@@ -203,8 +203,8 @@ class CCRouter {
 			$routes = static::flatten( $routes ); 
 		}
 		
-		foreach( $routes as $uri => $route ) {
-			
+		foreach( $routes as $uri => $route ) 
+		{	
 			// check for an alias to a private
 			if ( is_string( $route ) ) 
 			{
@@ -214,10 +214,17 @@ class CCRouter {
 				}
 			}
 			
+			// does this uri contain an alias?
+			if ( strpos( $uri, '->' ) !== false )
+			{
+				list( $uri, $alias ) = explode( '->', $uri );
+				static::$aliases[$alias] = $uri;
+			}
+			
 			// check for a normal alias
 			if ( substr( $uri, 0, 1 ) == '@' ) 
 			{
-				static::$aliases[$uri] = $route;
+				static::$aliases[substr( $uri, 1 )] = $route;
 			}
 			// check for a private 
 			elseif ( substr( $uri, 0, 1 ) == '#' ) 

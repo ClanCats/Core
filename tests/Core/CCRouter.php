@@ -8,6 +8,8 @@
  * @version		2.0
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
+ * @group Core
+ * @group CCRouter
  */
 class CCRouter_Test extends \PHPUnit_Framework_TestCase
 {
@@ -103,6 +105,14 @@ class CCRouter_Test extends \PHPUnit_Framework_TestCase
 		
 		// parameterize
 		$this->assertEquals( CCRouter::alias( 'phpunit.case.3', array( 21, 'woo' ) ), 'phpunit/test2-21-alias-woo' );
+		
+		// alternate alias definition
+		CCRouter::on( array(
+			'aliasshortcut->alicut' => function() { echo 'foobar'; },
+		));
+		
+		$this->assertEquals( 'aliasshortcut', CCRouter::alias( 'alicut' ) );
+		
 	}
 	
 	/**
