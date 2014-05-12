@@ -36,6 +36,20 @@ if ( !function_exists( 'to' ) ) {
     }
 }
 
+/**
+ * Get the session fingerprint
+ *
+ * @param string    $name
+ * @return string
+ */
+if ( !function_exists( 'fingerprint' ) ) 
+{
+    function fingerprint( $name = null ) 
+    {
+        return CCSession::manager( $name )->fingerprint;
+    }
+}
+
 /*
  * ui maker shortcut
  */

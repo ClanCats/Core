@@ -93,6 +93,9 @@ return array(
 	
 		// Define a callback for your default session data.
 		'default_data_provider' => '\\Session\\Manager::default_data_provider',
+		
+		// The default fingerprint parameter
+		'default_fingerprint_parameter' => 's',
 	),
 	
 	/*
