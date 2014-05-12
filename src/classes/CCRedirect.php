@@ -11,10 +11,22 @@
 class CCRedirect extends CCResponse 
 {	
 	/**
+	 * Redirect to next parameter
+	 * also sanitize the parameter we only allow internal redirects
+	 *
+	 * @return CCResponse
+	 */
+	public static function next()
+	{
+		return static::full( parse_url( CCIn::get( 'next' ), PHP_URL_PATH ) );
+	}
+	
+	/**
 	 * We forward all CCUrl functions
 	 *
 	 * @param string 	$name
 	 * @param array 		$arguments
+	 * @return CCResponse
 	 */
 	public static function __callStatic( $name, $arguments )
 	{
