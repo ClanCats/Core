@@ -108,7 +108,7 @@ class CCRouter_Test extends \PHPUnit_Framework_TestCase
 		
 		// alternate alias definition
 		CCRouter::on( array(
-			'aliasshortcut->alicut' => function() { echo 'foobar'; },
+			'aliasshortcut@alicut' => function() { echo 'foobar'; },
 		));
 		
 		$this->assertEquals( 'aliasshortcut', CCRouter::alias( 'alicut' ) );

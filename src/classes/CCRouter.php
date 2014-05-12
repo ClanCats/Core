@@ -215,19 +215,23 @@ class CCRouter {
 			}
 			
 			// does this uri contain an alias?
-			if ( strpos( $uri, '->' ) !== false )
+			if ( strpos( $uri, '@' ) !== false )
 			{
-				list( $uri, $alias ) = explode( '->', $uri );
-				static::$aliases[$alias] = $uri;
+				// is the entire route an alias
+				if ( $uri[0] == '@' )
+				{
+					static::$aliases[substr( $uri, 1 )] = $route;
+				}
+				// does it just contain an alias
+				else
+				{
+					list( $uri, $alias ) = explode( '@', $uri );
+					static::$aliases[$alias] = $uri;
+				}
 			}
 			
-			// check for a normal alias
-			if ( substr( $uri, 0, 1 ) == '@' ) 
-			{
-				static::$aliases[substr( $uri, 1 )] = $route;
-			}
 			// check for a private 
-			elseif ( substr( $uri, 0, 1 ) == '#' ) 
+			if ( substr( $uri, 0, 1 ) == '#' ) 
 			{
 				static::$privates[$uri] = $route;
 			}
