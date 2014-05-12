@@ -23,6 +23,29 @@ class CCSession
 	}
 	
 	/**
+	 * Get the fingerprint form an session
+	 *
+	 * @param string 			$manager
+	 * @return string
+	 */
+	public static function fingerprint( $name = null )
+	{
+		return Manager::create( $name )->fingerprint();
+	}
+	
+	/**
+	 * Check if the given fingerprint or the default fingerprint
+	 * parameter matches the curent session fingerprint.
+	 *
+	 * @param string 			$manager
+	 * @return string
+	 */
+	public static function valid_fingerprint( $fingerprint = null, $name = null )
+	{
+		return Manager::create( $name )->valid_fingerprint( $fingerprint );
+	}
+	
+	/**
 	 * Get a value from the session
 	 *
 	 * @param string				$key

@@ -151,6 +151,9 @@ class Manager extends \CCDataObject
 		// try to get the id from cookie
 		$this->id = $this->cookie_session_id();
 		
+		// set the fingerprint
+		$this->fingerprint = sha1( $this->id );
+		
 		// Before reading we might have to kill old sessions using 
 		// the Garbage collector
 		if ( \CCArr::get( 'gc.enabled', $this->_config, true ) )
@@ -221,6 +224,34 @@ class Manager extends \CCDataObject
 	protected function cookie_session_id()
 	{
 		return \CCCookie::get( $this->cookie_name(), false );
+	}
+	
+	/**
+	 * Retrive the current session fingerprint
+	 *
+	 * @return string
+	 */
+	public function fingerprint()
+	{
+		return $this->fingerprint;
+	}
+	
+	/**
+	 * Does the current session fingerprint match a parameter
+	 *
+	 * When no parameter is given we use GET->s as default parameter
+	 *
+	 * @param string 		$fingerprint
+	 * @return string
+	 */
+	public function valid_fingerprint( $fingerprint = null )
+	{
+		if ( is_null( $fingerprint ) )
+		{
+			$fingerprint = \CCIn::get( \ClanCats::$config->get( 'session.default_fingerprint_parameter' ), false );
+		}
+		
+		return $this->fingerprint === $fingerprint;
 	}
 	
 	/**
