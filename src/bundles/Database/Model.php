@@ -31,11 +31,6 @@ class Model extends \CCModel
 	 */
 	// protected static $_timestamps = false;
 	
-	/*
-	 * The relationships
-	 */
-	// protected static $_relationships = array();
-	
 	/**
  	 * Prepare the model
 	 *
