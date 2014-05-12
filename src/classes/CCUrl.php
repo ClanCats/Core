@@ -20,6 +20,13 @@ class CCUrl
 	private static $path_offset = null;
 	
 	/**
+	 * Parameter provider can add predifned get
+	 *
+	 * @var array
+	 */
+	private static $parameter_provider = array();
+	
+	/**
 	 * static CCUrl initialisation
 	 */
 	public static function _init() 
@@ -35,6 +42,35 @@ class CCUrl
 		{
 			static::$path_offset .= '/';
 		}
+		
+		// register the default parameter providers
+		static::$parameter_provider = array(
+			
+			// Adds a session fingerprint to the parameter list
+			'fingerprint' => function()
+			{
+				return array( ClanCats::$config->get( 'session.default_fingerprint_parameter' ) => fingerprint() );
+			},
+			
+			// Adds the next redirect uri to redirect back on request
+			'back' => function()
+			{
+				$params = CCIn::$_instance->GET; unset( $params['next'] );
+				return array( 'next' => CCUrl::current( $params ) );
+			},
+		);
+	}
+	
+	/**
+	 * Register a parameter provider
+	 *
+	 * @param string			$key
+	 * @param callback		$callback
+	 * @return void
+	 */
+	public static function param( $key, $callback )
+	{
+		static::$parameter_provider[$key] = $callback;
 	}
 
 	/**
@@ -87,6 +123,21 @@ class CCUrl
 		// the array so we can append them as get parameters
 		foreach( $params as $key => $value )
 		{
+			// replace the parameter provider
+			if ( is_numeric( $key ) && $value[0] === ':' )
+			{
+				$param_provider_key = substr( $value, 1 );
+				
+				if ( array_key_exists( $param_provider_key, static::$parameter_provider ) )
+				{
+					$params = array_merge( $params, call_user_func( static::$parameter_provider[$param_provider_key] ) );
+				}
+				
+				// remove the parameter provider from the parameter list
+				unset( $params[$key] );
+			}
+			
+			// replace the parameters
 			$uri = str_replace( ':'.$key, $value, $uri, $count );
 			
 			if ( $count > 0 )
