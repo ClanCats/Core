@@ -164,7 +164,15 @@ class CCForge_Php {
 	 */
 	public function property( $name, $default = null, $comment = null )
 	{
+		if ( $default !== null )
+		{
+			if ( !is_string( $default ) || substr( $default, 0, strlen( 'array' ) ) !== 'array' )
+			{
+				$default = var_export( $default, true );
+			}
+		} 
+		
 		return $this->add( ( $comment ? static::make( 'comment', array( $comment ) )."\n" : '' ).
-			$name.( $default ? ' = '.var_export( $default, true ) : '' ).';' );
+			$name.( $default ? ' = '. $default : '' ).';' );
 	}
 }
