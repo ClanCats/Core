@@ -114,6 +114,161 @@ class shipyard extends \CCConsoleController
 	}
 	
 	/**
+	 * generate a model class
+	 *
+	 * exmample:
+	 * run shipyard::model <class>
+	 * run shipyard::model <class> <table>
+	 * run shipyard::model <namespace>::<class>
+	 *
+	 * @param array 		$params 
+	 * @return void
+	 */
+	public function action_model( $params ) 
+	{	
+		// params
+		$name = $params[0];
+		$table = $params[1];
+		$handler = $params['handler'];
+		
+		// get name if we dont have one
+		while( !$name ) 
+		{
+			$name = CCCli::read( 'Please enter the class name: ' );
+		}
+		
+		// get table if we dont have one
+		while( !$table ) 
+		{
+			$table = CCCli::read( 'Please enter the table name: ' );
+		}
+		
+		$namespace 	= null;
+		$class 		= $name;
+		$author 		= \CCConfig::create( 'shipyard' )->get( 'defaults.authors' );
+		$package		= \CCConfig::create( 'shipyard' )->get( 'defaults.package' );
+		$copyright	= \CCConfig::create( 'shipyard' )->get( 'defaults.copyright' );
+		$version		= \CCConfig::create( 'shipyard' )->get( 'defaults.version' );
+		
+		// get namespace from the param
+		if ( strpos( $name, '::' ) !== false )
+		{
+			$namespace = explode( '::', $name ); $class = $namespace[1]; $namespace = $namespace[0];
+			
+			// try to get the ship from namespace
+			if ( $ship = \CCOrbit::ship_by_namespace( $namespace ) )
+			{
+				$package = $ship->name;
+				$version = $ship->version;
+				$author = $ship->authors;
+			}
+		}
+		
+		// resolve the path
+		if ( !$path = \CCPath::classes( str_replace( '_', '/', $name ), EXT ) )
+		{
+			CCCli::line( 'Could not resolve the path. Check if the namespace is registered.', 'red' ); return;
+		}
+		
+		// create forge instance
+		$forge = new \CCForge_Php( $namespace );
+		
+		// add header
+		$forge->comment( $this->make_comment_header( $class, array(
+			'package'	=> $package,
+			'authors'	=> $author,
+			'version'	=> $version,
+			'copyright'	=> $copyright
+		)));
+		
+		// add class
+		$forge->closure( 'class '.$class.' extends \DB\Model', function() use( $table, $class ) 
+		{	
+			$shema = \DB::fetch( "DESCRIBE {$table};", array(), null, 'assoc' );
+			$props = array();
+			
+			$forge = new \CCForge_Php;
+			
+			// define the internal types
+			$internal_types = array( 'bool', 'int', 'float', 'double', 'string' );
+			
+			$match_types = array(
+				
+				// int
+				'tinyint' => 'int',
+				
+				// string
+				'text' => 'string',
+				'varchar' => 'string',
+			);
+			
+			foreach( $shema as $item ) 
+			{	
+				$default = $item['Default'];
+				$field = $item['Field'];
+				
+				if ( empty( $default ) ) 
+				{	
+					$type = \CCStr::cut( $item['Type'], '(' );
+					
+					if ( array_key_exists( $type, $match_types ) )
+					{
+						$type = $match_types[$type];
+					}
+					elseif ( !in_array( $type, $internal_types ) )
+					{
+						$type = null;
+					}
+					
+					// The primary key should not contain a default value
+					if ( $item['Key'] == 'PRI' ) 
+					{
+						$type = null;
+					}
+					// specialcase tinyint 1 assumed as boolean
+					elseif ( $item['Type'] == 'tinyint(1)' )
+					{
+						$type = 'bool';
+					}
+					
+					if ( $type !== null )
+					{
+						settype( $default, $type );
+					}
+				}
+				
+				$buffer = "\t'$field'";
+				
+				if ( !is_null( $type ) )
+				{
+					$buffer .= " => array( '".$type."'";
+					
+					if ( !is_null( $default ) )
+					{
+						$buffer .= ", ".var_export( $default, true )." )";
+					}
+				}
+				
+				$props[] = $buffer;
+			}
+			
+			echo $forge->property( 'public static $_defaults', "array(\n".implode( ",\n", $props )."\n)", 'The '.$class.' default properties' );
+		});
+		
+		// check before
+		if ( file_exists( $path ) )
+		{
+			if ( !CCCli::confirm( "The class already exists. Do you wish to overwrite it?", true ) ) 
+			{
+				return;
+			}
+		}
+		
+		// write file
+		\CCFile::write( $path, $forge );
+	}
+	
+	/**
 	 * generate an controller
 	 *
 	 * exmample:
