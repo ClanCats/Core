@@ -13,9 +13,9 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class CCLang {
-	
-	/*
+class CCLang 
+{	
+	/**
 	 * the current language
 	 */
 	protected static $lang = null;
