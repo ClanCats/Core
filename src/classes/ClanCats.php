@@ -208,6 +208,22 @@ class ClanCats
 		}
 	}
 	
+	/** 
+	 * Returns the direcotry name
+	 *
+	 * @param string 		$dir
+	 * @return string|false
+	 */
+	public static function directory( $dir )
+	{
+		if ( array_key_exists( $dir, static::$directories ) )
+		{
+			return static::$directories[$dir];
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Detect the environment by the given parameter.
 	 * You can pass arrays, strings and callbacks:
