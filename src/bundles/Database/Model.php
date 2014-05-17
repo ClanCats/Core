@@ -238,6 +238,25 @@ class Model extends \CCModel
 	}
 	
 	/**
+	 * Belongs To releationships
+	 *
+	 * Model Car_Engine:
+	 *     function car()
+	 *     {
+	 *         return $this->belongs_to( 'Car', 'id', 'car_id' );	 
+	 *     }
+	 *
+	 * @param Model			$model
+	 * @param mixed			$foreign_key
+	 * @param mixed			$key
+	 * @return array
+	 */
+	protected function belongs_to( Model $model, $foreign_key = null, $local_key = null )
+	{
+		return new Model_Relation_BelongsTo( $this, $model, $foreign_key, $local_key );
+	}
+	
+	/**
 	 * find with an relationship
 	 */
 	/*public static function with( $with, $params = null, $relcallback = null, $relwith = array() ) 

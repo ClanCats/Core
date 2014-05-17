@@ -39,4 +39,31 @@ class Test_Database_Relations extends \DB\TestCase
 		
 		$this->assertEquals( $person_from_libaray, $person );
 	}
+	
+	/**
+	 * DB\Model::belongs_to
+	 */
+	public function test_belongs_to() 
+	{
+		// find by primary key
+		$library = CCUnit\Model_Library::assign( array(
+			'name'			=> 'Sci-Fi',
+		))->save();
+		
+		$person = CCUnit\Model_DBPerson::assign( array(
+			'name'			=> 'Mario',
+			'age'			=> '20',
+			'library_id' 	=> $library->id,
+		))->save();
+		
+		$library_from_person = $person->library(); 
+		
+		$this->assertTrue( $library_from_person instanceof DB\Model_Relation_BelongsTo );
+		
+		$library_from_person = $library_from_person->run();
+		
+		$this->assertTrue( $library_from_person instanceof CCUnit\Model_Library );
+		
+		$this->assertEquals( $library_from_person, $library );
+	}
 }

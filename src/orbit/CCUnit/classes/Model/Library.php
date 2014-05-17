@@ -26,4 +26,9 @@ class Model_Library extends \DB\Model
 	{
 		return $this->has_one( __NAMESPACE__."\\Model_DBPerson" );
 	}
+	
+	public function books()
+	{
+		return $this->has_many( __NAMESPACE__."\\Model_Book" );
+	}
 }

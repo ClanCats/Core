@@ -26,6 +26,6 @@ class Model_DBPerson extends \DB\Model
 	
 	public function library()
 	{
-		return $this->belongs_to( 'Model_Library' );
+		return $this->belongs_to( __NAMESPACE__."\\Model_Library" );
 	}
 }
