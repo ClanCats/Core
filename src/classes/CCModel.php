@@ -214,6 +214,17 @@ class CCModel
 	}
 	
 	/**
+	 * Get all or a single model setting
+	 *
+	 * @param string			$key
+	 * @return mixed
+	 */
+	public function model_settings( $key = null )
+	{
+		return static::_model( $key );
+	}
+	
+	/**
 	 * Label translation helper 
 	 *
 	 * @param string 		$key

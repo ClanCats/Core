@@ -217,6 +217,25 @@ class Model extends \CCModel
 		// and assign
 		return static::assign( $query->run() );
 	}
+
+	/**
+	 * Has one releationships
+	 *
+	 * Model Car:
+	 *     function engine()
+	 *     {
+	 *         return $this->has_one( 'Car_Engine', 'car_id', 'id' );	 
+	 *     }
+	 *
+	 * @param Model			$model
+	 * @param mixed			$foreign_key
+	 * @param mixed			$key
+	 * @return array
+	 */
+	protected function has_one( Model $model, $foreign_key = null, $local_key = null )
+	{
+		return new Model_Relation_HasOne( $this, $model, $foreign_key, $local_key );
+	}
 	
 	/**
 	 * find with an relationship

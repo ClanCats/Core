@@ -7,25 +7,23 @@
  * @version       1.0.0
  * @copyright     2010 - 2014 ClanCats GmbH
  */
-class Model_DBPerson extends \DB\Model
+class Model_Library extends \DB\Model
 {	
 	/*
 	 * Current Table 
 	 */
-	protected static $_table = "people";
-	
+	protected static $_table = "libraries";
+
 	/*
 	 * Defaults
 	 */
 	protected static $_defaults = array(
 		'id'	,
 		'name'			=> '',
-		'age'			=> array( 'int', 0 ),
-		'library_id'		=> array( 'int'  )
 	);
-	
-	public function library()
+	 
+	public function person()
 	{
-		return $this->belongs_to( 'Model_Library' );
+		return $this->has_one( __NAMESPACE__."\\Model_DBPerson" );
 	}
 }
