@@ -26,7 +26,7 @@ class Model_Book extends \DB\Model
 		'id'	,
 		'name'			=> '',
 		'pages'			=> array( 'json', array() ),
-		'book_id'		=> 0,
+		'library_id'		=> 0,
 		'created_at'		=> array( 'int' ),
 		'modified_at'	=> array( 'int' )
 	);

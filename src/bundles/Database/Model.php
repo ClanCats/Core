@@ -238,6 +238,25 @@ class Model extends \CCModel
 	}
 	
 	/**
+	 * Has many releationships
+	 *
+	 * Model Car:
+	 *     function wheels()
+	 *     {
+	 *         return $this->has_many( 'Car_Wheel', 'car_id', 'id' );	 
+	 *     }
+	 *
+	 * @param Model			$model
+	 * @param mixed			$foreign_key
+	 * @param mixed			$key
+	 * @return array
+	 */
+	protected function has_many( Model $model, $foreign_key = null, $local_key = null )
+	{
+		return new Model_Relation_HasMany( $this, $model, $foreign_key, $local_key );
+	}
+	
+	/**
 	 * Belongs To releationships
 	 *
 	 * Model Car_Engine:

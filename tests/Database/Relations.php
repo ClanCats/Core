@@ -66,4 +66,37 @@ class Test_Database_Relations extends \DB\TestCase
 		
 		$this->assertEquals( $library_from_person, $library );
 	}
+	
+	/**
+	 * DB\Model::has_many
+	 */
+	public function test_has_many() 
+	{
+		// find by primary key
+		$library = CCUnit\Model_Library::assign( array(
+			'name'			=> 'Sci-Fi',
+		))->save();
+		
+		$book = CCUnit\Model_Book::assign( array(
+			'name'			=> 'Book #1',
+			'pages'			=> 364,
+			'library_id' 	=> $library->id,
+		))->save();
+		
+		$book = CCUnit\Model_Book::assign( array(
+			'name'			=> 'Book #2',
+			'pages'			=> 464,
+			'library_id' 	=> $library->id,
+		))->save();
+		
+		$books_from_library = $library->books();
+		
+		$this->assertTrue( $books_from_library instanceof DB\Model_Relation_HasMany );
+		
+		$books_from_library = $books_from_library->run();
+		
+		$this->assertInternalType( 'array', $books_from_library );
+		
+		$this->assertEquals( 2, count( $books_from_library ) );
+	}
 }
