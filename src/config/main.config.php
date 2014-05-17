@@ -218,9 +218,21 @@ return array(
 	 * Language Configuration
 	 */
 	'language' => array(
+	
 		// default language and fallback
-		'default'	=> 'en-US',
+		'default'	=> 'en-us',
+		
 		// available languages
-		'available'	=> array(),
+		'available'	=> array(
+			// 'de' => array(
+			// 	'de',
+			// ),
+			// 'en' => array(
+			// 	'us',
+			// ),
+			// 'fr' => array(
+			// 	'fr',
+			// ),
+		),
 	),
 );

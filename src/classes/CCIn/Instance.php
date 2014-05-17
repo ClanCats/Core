@@ -208,7 +208,7 @@ class CCIn_Instance {
 			/*
 			 * set clients language
 			 */
-			$this->client->language = CCLang::set_language( $this->server( 'HTTP_ACCEPT_LANGUAGE' ) );
+			$this->client->language = CCLang::set_current( $this->server( 'HTTP_ACCEPT_LANGUAGE' ) );
 		}
 
 		// return the object
