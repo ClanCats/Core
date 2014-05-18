@@ -231,7 +231,7 @@ class CCLang
 		if ( !isset( static::$data[static::$current_language][$path][$key] ) )
 		{
 			// We simply return the key to the user and log the missing language file line
-			CCLog::add( 'CCLang::line - No such in line "'.$key.'" in file: '.$path ); return $key;
+			CCLog::add( 'CCLang::line - No such line "'.$key.'" ('.static::$current_language.') in file: '.$path, 'warning' ); return $key;
 		}
 		
 		$line = static::$data[static::$current_language][$path][$key];
