@@ -115,6 +115,18 @@ class CCValidator
 		return $this->failed;
 	}
 	
+	/**
+	 * Set a data value
+	 *
+	 * @param string 		$key
+	 * @param mixed 			$value
+	 * @return void
+	 */
+	public function set( $key, $value )
+	{
+		$this->data[$key] = $value;
+	}
+	
 	/** 
 	 * Get the current validator's data
 	 * Wehn the key is not set this will simply return all data
@@ -452,7 +464,7 @@ class CCValidator
 	 */
 	public function rule_positive( $key, $value )
 	{
-		return ( ( (bool) $value ) ? true : false );
+		return ( ( $value ) ? true : false );
 	}
 	
 	/**
@@ -464,7 +476,7 @@ class CCValidator
 	 */
 	public function rule_negative( $key, $value )
 	{
-		return ( ( (bool) $value ) ? false : true );
+		return ( ( $value ) ? false : true );
 	}
 	
 	/**

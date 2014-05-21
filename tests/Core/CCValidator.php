@@ -469,6 +469,21 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 	}
 	
 	/**
+	 * CCValidator::set
+	 */
+	public function test_set()
+	{		
+		$validator = new CCValidator( array( 
+			'1' => 'foo',
+		));
+		
+		$validator->set( 'bar', 'Bar' );
+		
+		$this->assertEquals( 'Bar', $validator->data('bar') );
+		$this->assertEquals( 2, count( $validator->data() ) );
+	}
+	
+	/**
 	 * CCValidator:: bad method
 	 *
 	 * @expectedException        \BadMethodCallException
