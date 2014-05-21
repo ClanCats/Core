@@ -275,6 +275,37 @@ class CCValidator
 	}
 	
 	/**
+	 * Run the validation with a custom message
+	 *
+	 * @param mixed...
+	 * @return bool
+	 */
+	public function message()
+	{
+		$params = func_get_args();
+		
+		$message = array_shift( $params );
+		$method = array_shift( $params );
+		
+		if ( !$result = $this->validate( $method, $params ) )
+		{
+			$key = array_shift( $params );
+			
+			$params = $this->get_error_message_params( $key, $params );
+			
+			// replace the params inside the line
+			foreach ( $params as $param => $value ) 
+			{
+				$message = str_replace( ':'.$param, $value, $message );
+			}
+			
+			$this->errors[$key][] = $message;
+		}
+		
+		return $result;
+	}
+	
+	/**
 	 * Run an validation call
 	 *
 	 * @param string 		$rule
@@ -363,14 +394,13 @@ class CCValidator
 	}
 	
 	/**
-	 * Generate the error message for an rule
+	 * Get the parameter array for the error messages
 	 *
-	 * @param string			$rule
-	 * @param string			$key
+	 * @param string 		$key
 	 * @param array 			$params
-	 * @return string
+	 * @return array
 	 */
-	protected function generate_error_message( $rule, $key, $params )
+	protected function get_error_message_params( $key, $params )
 	{
 		// do we have a label to replace the key?
 		if ( isset( $this->labels[$key] ) )
@@ -380,8 +410,20 @@ class CCValidator
 			$field = ucfirst( str_replace( array( '_', '-' ), ' ', $key ) );
 		}
 		
-		$params = array_merge( array( 'field' => $field ), $params );
-		
+		return array_merge( array( 'field' => $field ), $params );
+	}
+	
+	/**
+	 * Generate the error message for an rule
+	 *
+	 * @param string			$rule
+	 * @param string			$key
+	 * @param array 			$params
+	 * @return string
+	 */
+	protected function generate_error_message( $rule, $key, $params )
+	{
+		$params = $this->get_error_message_params( $key, $params );
 		return __( ClanCats::$config->get( 'validation.language_prefix' ).'.'.$rule, $params );
 	}
 	
