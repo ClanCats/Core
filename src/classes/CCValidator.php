@@ -61,11 +61,25 @@ class CCValidator
 	private $data = null;
 	
 	/**
+	 * The data labels for validation
+	 *
+	 * @var array
+	 */
+	private $labels = array();
+	
+	/**
 	 * Failed tests container
 	 *
 	 * @var array
 	 */
 	private $failed = array();
+	
+	/**
+	 * Failed tests container
+	 *
+	 * @var array
+	 */
+	private $errors = array();
 
 	/**
 	 * validation success
@@ -116,6 +130,32 @@ class CCValidator
 	}
 	
 	/**
+	 * Return the error messages
+	 *
+	 * @return array
+	 */
+	public function errors( $key = null )
+	{
+		if ( !is_null( $key ) )
+		{
+			if ( isset( $this->errors[$key] ) )
+			{
+				return $this->errors[$key];
+			}
+			return array();
+		}
+		
+		$errors = array();
+		
+		foreach( $this->errors as $error_array )
+		{
+			$errors = array_merge( $errors, $error_array );
+		}
+		
+		return $errors;
+	}
+	
+	/**
 	 * Set a data value
 	 *
 	 * @param string 		$key
@@ -125,6 +165,28 @@ class CCValidator
 	public function set( $key, $value )
 	{
 		$this->data[$key] = $value;
+	}
+	
+	/**
+	 * Set a data value
+	 *
+	 * @param string 		$data
+	 * @param mixed 			$value
+	 * @return void
+	 */
+	public function label( $data, $value = null )
+	{
+		if ( !is_null( $value ) && !is_array( $data ) )
+		{
+			$data = array( $key =>$value );
+		}
+		
+		if ( !is_array( $data ) )
+		{
+			throw new \InvalidArgumentException( 'CCValidator::label - invalid label data given' );
+		}
+		
+		$this->labels = array_merge( $this->labels, $data );
 	}
 	
 	/** 
@@ -201,6 +263,25 @@ class CCValidator
 	 * @return mixed
 	 */
 	public function __call( $method, $params )
+	{
+		// when the validation fail we have to generate the error message
+		if ( !$result = $this->validate( $method, $params ) )
+		{
+			$key = array_shift( $params );
+			$this->errors[$key][] = $this->generate_error_message( $method, $key, $params );
+		}
+		
+		return $result;
+	}
+	
+	/**
+	 * Run an validation call
+	 *
+	 * @param string 		$rule
+	 * @param array 			$params
+	 * @return bool
+	 */
+	protected function validate( $method, $params )
 	{
 		$reverse = false;
 		
@@ -279,6 +360,29 @@ class CCValidator
 		}
 		
 		return $this->proof_result( $rule, $data_key, $result );
+	}
+	
+	/**
+	 * Generate the error message for an rule
+	 *
+	 * @param string			$rule
+	 * @param string			$key
+	 * @param array 			$params
+	 * @return string
+	 */
+	protected function generate_error_message( $rule, $key, $params )
+	{
+		// do we have a label to replace the key?
+		if ( isset( $this->labels[$key] ) )
+		{
+			$field = $this->labels[$key];
+		} else {
+			$field = ucfirst( str_replace( array( '_', '-' ), ' ', $key ) );
+		}
+		
+		$params = array_merge( array( 'field' => $field ), $params );
+		
+		return __( ClanCats::$config->get( 'validation.language_prefix' ).'.'.$rule, $params );
 	}
 	
 	/*
@@ -501,7 +605,7 @@ class CCValidator
 	 */
 	public function rule_email( $key, $value ) 
 	{
-		return preg_match( "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$^", $value );
+		return preg_match( "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,6})$^", $value );
 	}
 	
 	/** 

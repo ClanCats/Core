@@ -116,6 +116,13 @@ return array(
 	),
 	
 	/*
+	 * validation configuration
+	 */
+	'validation' => array(
+		'language_prefix' => 'Core::validation',
+	),
+	
+	/*
 	 * storage file managment 
 	 */
 	'storage' => array(

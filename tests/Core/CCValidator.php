@@ -484,6 +484,35 @@ class CCValidator_Test extends \PHPUnit_Framework_TestCase
 	}
 	
 	/**
+	 * CCValidator::label test
+	 */
+	public function test_label()
+	{		
+		$validator = new CCValidator( array( 'username' => 'Mario' ) );
+		
+		$validator->label( 'username', 'Benutzername' );
+		
+		$validator->label( array(
+			'password' => 'Passwort',
+			'retain' => 'Remember me',
+		));
+	}
+	
+	/**
+	 * CCValidator::label invalid data test
+	 *
+	 * @expectedException InvalidArgumentException
+	 */
+	public function test_label_invalid_argument()
+	{		
+		$validator = new CCValidator( array( 'username' => 'Mario' ) );
+		
+		$validator->label( 'username' );
+		$validator->label( null );
+		$validator->label();
+	}
+	
+	/**
 	 * CCValidator:: bad method
 	 *
 	 * @expectedException        \BadMethodCallException
