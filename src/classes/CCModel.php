@@ -266,6 +266,28 @@ class CCModel
 	}
 	
 	/**
+	 * Strict assign only sets some values out of an array.
+	 * This can be useful to easly set some values from post.
+	 *
+	 * example:
+	 *     $model->srtict_assign( array( 'name', 'description' ), CCIn::all( 'post' ) )
+	 *
+	 * @param array 			$fields
+	 * @param array 			$data
+	 * @return void 
+	 */
+	public function strict_assign( array $fields, array $data )
+	{
+		foreach( $fields as $field )
+		{
+			if ( isset( $data[$field] ) )
+			{
+				$this->__set( $field, $data[$field] );
+			}
+		}
+	}
+	
+	/**
 	 * Assign the data type in a set operation
 	 *
 	 * @param string 	$type

@@ -46,6 +46,19 @@ class CCDataObject
 	}
 	
 	/**
+	 * Binds the var in the first dimension.
+	 *
+	 * @param string 	$key
+	 * @param mixed		$value
+	 *
+	 * @return void
+	 */
+	public function bind( $key, &$value) 
+	{
+		$this->_data[$key] = &$value;
+	}
+	
+	/**
 	 * Add data to the object
 	 *
 	 * @param string 	$key

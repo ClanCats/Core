@@ -8,6 +8,8 @@
  * @version		2.0
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
+ * @group Core
+ * @group CCDataObject
  */
 class CCDataObject_Test extends \PHPUnit_Framework_TestCase
 {
@@ -75,6 +77,26 @@ class CCDataObject_Test extends \PHPUnit_Framework_TestCase
 		// test 2d delete
 		$object->delete( 'hello.value' );
 		$this->assertFalse( $object->has( 'hello.value' ) );
+	}
+	
+	/**
+	 * CCDataObject::bind tests
+	 */
+	public function test_bind() 
+	{
+		$object = CCDataObject::assign( $this->test_array );
+		
+		$foo = 'Foo';
+		
+		$object->bind( 'foo', $foo );
+		
+		$this->assertEquals( 'Foo', $foo );
+		$this->assertEquals( 'Foo', $object->foo );
+		
+		$foo = 'Bar';
+		
+		$this->assertEquals( 'Bar', $foo );
+		$this->assertEquals( 'Bar', $object->foo );
 	}
 	
 	/**

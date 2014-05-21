@@ -43,16 +43,17 @@ class CCController
 		$class = static::find( $path );
 		
 		// if class already loaded
-		if ( class_exists( $class, false ) ) 
+		if ( !class_exists( $class, false ) ) 
 		{
-			return new $class;
+			// register the controller with the autoloader
+			\CCFinder::bind( $class, CCPath::get( $path, CCDIR_CONTROLLER, 'Controller'.EXT ) );
 		}
 		
-		// register the controller with the autoloader
-		\CCFinder::bind( $class, CCPath::get( $path, CCDIR_CONTROLLER, 'Controller'.EXT ) );
+		// create new controller instance and assign the name
+		$controller = new $class;
+		$controller->name = $path;
 		
-		// return new instance
-		return new $class;
+		return $controller;
 	}
 	
 	/**
@@ -127,6 +128,12 @@ class CCController
 	 */
 	protected $status = 200;
 	
+	/**
+	 * The current controller name
+	 *
+	 * @param string
+ 	 */
+	protected $name = null;
 	
 	/**
 	 * Create the response object from an string
@@ -140,7 +147,34 @@ class CCController
 	{
 		return CCResponse::create( $string, $this->status );
 	}
+	
+	/**
+	 * Creates the language prefixes wich allows us 
+	 * to use the short :action and :controller translations
+	 *
+	 * @param string 		$action
+	 * @return void
+ 	 */
+	protected function set_language_alias( $action )
+	{
+		// create langugage aliases
+		$name = explode( '::', $this->name );
 		
+		if ( isset( $name[1] ) )
+		{
+			$prefix = $name[0].'::';
+			$name = $name[1];
+		}
+		else
+		{
+			$prefix = '';
+			$name = $name[0];
+		}
+		
+		CCLang::alias( ':controller', $prefix.'controller/'.strtolower( $name ) );
+		CCLang::alias( ':action', $prefix.'controller/'.strtolower( $name.'.'.$action ) );
+	}
+	
 	/**
 	 * controller execution
 	 * 
@@ -150,6 +184,8 @@ class CCController
 	 */
 	public function execute( $action = null, $params = array() ) 
 	{
+		$this->set_language_alias( $action );
+		
 		// reset the response
 		$this->response = null;
 		$this->output = null;

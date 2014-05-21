@@ -33,7 +33,8 @@ class CCIn {
 			return static::$_instance;
 		}
 		
-		if ( !$set instanceof CCIn_Instance ) {
+		if ( !$set instanceof CCIn_Instance ) 
+		{
 			throw new \InvalidArgumentException('CCIn::set() - only CCIn_Instance object can be passed.');
 		}
 		
@@ -53,6 +54,18 @@ class CCIn {
 	public static function create( $get, $post, $cookie, $files, $server ) 
 	{
 		return new CCIn_Instance( $get, $post, $cookie, $files, $server );
+	}
+	
+	/**
+	 * Return all data of a type
+	 * 
+	 * @param string 		$key
+	 * @return array
+	 */
+	public static function all( $key )
+	{
+		$key = strtoupper( $key );	
+		return static::$_instance->$key;
 	}
 	
 	/**
