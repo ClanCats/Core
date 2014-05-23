@@ -68,6 +68,75 @@ class Migrator
 	}
 	
 	/**
+	 * Revert the last migration
+	 *
+	 * @return void
+	 */
+	public static function rollback()
+	{
+		// first of all we have to filter only the already migrated versions
+		$available = static::available();
+		
+		foreach( $available as $key => $migrations )
+		{
+			foreach( $migrations as $time => $migration )
+			{
+				if ( $time > static::$config->get( $key.'.revision', 0 ) )
+				{
+					unset( $available[$key][$time] );
+				}
+			}
+		}
+		
+		$revisions = array();
+		
+		foreach( $available as $key => $value )
+		{
+			if ( empty( $value ) )
+			{
+				continue;
+			}
+			
+			foreach( $value as $name => $path )
+			{
+				$revisions[$name.'::'.$key] = $path;
+			}
+		}
+		
+		// nothing to rollback?
+		if ( empty( $revisions ) )
+		{
+			if ( \ClanCats::is_cli() )
+			{
+				\CCCli::warning( 'nothing to rollback to.' );
+			}
+			
+			return false;
+		}
+		
+		ksort( $revisions );
+		
+		end( $revisions ); 
+		list( $time, $key ) = explode( '::', key( $revisions ) );
+		
+		$migration = new static( array_pop( $revisions ) );
+		
+		// rollback the migration
+		$migration->down();
+		
+		// get the lastet migration from the group
+		$others = \CCArr::get( $key, $available );
+		
+		ksort( $others );
+		array_pop( $others );
+		end( $others );
+		
+		// update the config
+		static::$config->set( $key.'.revision', key( $others ) );
+		static::$config->write();
+	}
+	
+	/**
 	 * Returns the available migrations
 	 *
 	 * @return array
@@ -107,11 +176,13 @@ class Migrator
 		
 		foreach( $objects as $name => $object )
 		{
-			if ( \CCStr::extension( $name ) == 'php' )
+			if ( \CCStr::extension( $name ) == 'sql' )
 			{
-				$files[substr( basename( $name ), 0, strpos( basename( $name ),  '_' ) )] = $name;
+				$files[\CCStr::cut( substr( basename( $name ), strrpos( basename( $name ),  '_' )+1 ), '.' )] = $name;
 			}
 		}
+		
+		ksort( $files );
 		
 		return $files;
 	}
@@ -154,14 +225,16 @@ class Migrator
 	}
 	
 	/**
-	 * An migration object
+	 * The migration sql file
 	 *
-	 * @var \DB\Migrator_Migration
+	 * @var string
 	 */
-	protected $migration = null;
+	protected $path = null;
 	
 	/**
 	 * The migration name
+	 *
+	 * @var string
 	 */
 	protected $name = null;
 	
@@ -173,27 +246,8 @@ class Migrator
 	 */
 	protected function __construct( $path )
 	{
-		$name = \CCStr::cut( substr( basename( $path ), strpos( basename( $path ), '_' )+1 ), '.' );
-		$this->name = $name;
-		
-		$class_name = explode( '_', $name );
-		
-		foreach( $class_name as $key => $value )
-		{
-			$class_name[$key] = ucfirst( $value );
-		}
-		
-		$class_name = "Migrations\\".implode( '_', $class_name );
-		
-		// bind the class to the finder
-		\CCFinder::bind( $class_name, $path );
-		
-		$this->migration = new $class_name;
-		
-		if ( !$this->migration instanceof Migrator_Migration )
-		{
-			throw new Exception( 'Invalid migration at path: '.$path );
-		}
+		$this->path = $path;
+		$this->name = \CCStr::cut( substr( basename( $path ), 0, strrpos( basename( $path ), '_' ) ), '.' );	
 	}
 	
 	/**
@@ -206,6 +260,8 @@ class Migrator
 		return $this->name;
 	}
 	
+	
+	
 	/**
 	 * Migrates the current migration up
 	 *
@@ -213,7 +269,8 @@ class Migrator
 	 */
 	public function up()
 	{
-		$this->migration->up();
+		\CCCli::info( $this->name.'...', 'migrating' );
+		$this->run_queries( 'up' );
 	}
 	
 	/**
@@ -223,6 +280,97 @@ class Migrator
  	 */
 	public function down()
 	{
-		$this->migration->down();
+		\CCCli::info( $this->name.'...', 'reverting' );
+		$this->run_queries( 'down' );
+	}
+	
+	/**
+	 * Run all queries of specified group
+	 *
+	 * @param string 		$group
+	 * @return void
+	 */
+	private function run_queries( $group )
+	{
+		if ( !$handle = fopen( $this->path , "r") )
+		{
+			throw new Exception( "Could not read migration: ".$this->path );
+		}
+		
+		$mode = null;
+		$query  = '';
+		
+		while ( !feof( $handle ) ) 
+		{
+			$buffer = trim( fgets( $handle, 4096 ) );
+			
+			$this->parse_mode( $mode, $buffer );
+			
+			if ( $this->is_comment( $buffer ) )
+			{
+				continue;
+			}
+			
+			// only continue if we are in up mode
+			if ( $mode === $group )
+			{
+				$query .= $buffer;
+				
+				if ( substr( rtrim( $query ), -1 ) == ';' ) 
+				{
+					// run the query
+					DB::run( $query );
+					
+					// reset the query for the next one.
+					$query = '';
+				}
+			}
+			
+		}
+		
+		fclose($handle);
+	}
+	
+	/**
+	 * Try to parse the current mode
+	 *
+	 * @param string 		$mode
+	 * @param string			$buffer
+	 * @return bool
+	 */
+	private function parse_mode( &$mode, $buffer )
+	{
+		if ( substr( trim( $buffer ), 0, 6 ) === '# --->' )
+		{
+			$mode = trim( substr( $buffer, 6 ) );
+		}
+	}
+	
+	/**
+	 * Is this string an sql comment?
+	 *
+	 * @param string			$buffer
+	 * @return bool
+	 */
+	private function is_comment( $buffer )
+	{
+		if ( is_string( $buffer ) && strlen( $buffer ) >= 1 )
+		{
+			if ( $buffer[0] == '#' )
+			{
+				return true;
+			}
+			
+			if ( substr( $buffer, 0, 2 ) == '--' )
+			{
+				return true;
+			}
+		}
+		else
+		{
+			return true;
+		}
+		
+		return false;
 	}
 }

@@ -22,17 +22,28 @@ class migrator extends \CCConsoleController {
 			'desc'	=> 'Helps keeping the database updated when developing in teams.',
 			'actions'	=> array(
 				'migrate'	=> 'checks for new migrations and runs them.',
+				'rollback'	=> 'reverts the last migration.',
 			),
 		);
 	}
 
 	/**
-	 * install an orbit module
+	 * Migrate the database to the lasted version
 	 *
 	 * @param array 		$params 
 	 */
 	public function action_migrate( $params ) 
 	{
 		\DB\Migrator::migrate();
+	}
+	
+	/**
+	 * Revert the last revision
+	 *
+	 * @param array 		$params 
+	 */
+	public function action_rollback( $params ) 
+	{
+		\DB\Migrator::rollback();
 	}
 }
