@@ -16,7 +16,7 @@ class CCContainer
 	 * the holder
 	 */
 	private static $_container = array();
-	
+
 	/**
 	 * register an container 
 	 *
@@ -28,7 +28,7 @@ class CCContainer
 	{
 		static::$_container[$key] = $callback;
 	}
-	
+
 	/**
 	 * does this container exist?
 	 *
@@ -39,7 +39,7 @@ class CCContainer
 	{
 		return array_key_exists( $key, static::$_container );
 	}
-	
+
 	/**
 	 * Is this callable
 	 *
@@ -52,15 +52,15 @@ class CCContainer
 		{
 			return true;
 		}
-		
+
 		if ( array_key_exists( $key, static::$_container ) )
 		{
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * call a container 
 	 *
@@ -71,21 +71,21 @@ class CCContainer
 	public static function call()
 	{
 		$arguments = func_get_args();
-		
+
 		// get the key
 		$key = array_shift( $arguments );
-		
+
 		// container call
-		if ( array_key_exists( $key, static::$_container ) && is_callable( static::$_container[$key] ) )
+		if ( is_string( $key ) && array_key_exists( $key, static::$_container ) && is_callable( static::$_container[$key] ) )
 		{
 			return call_user_func_array( static::$_container[$key], $arguments );
 		}
-		
+
 		if ( !is_callable( $key ) )
 		{
 			throw new CCException( "CCContainer::call - Cannot call '".$key."' invalid callback." );
 		}
-		
+
 		// default callback
 		return call_user_func_array( $key, $arguments );;
 	}
