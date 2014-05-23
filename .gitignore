@@ -1,4 +1,5 @@
 test-env/ccf/storage/
+test-env/vendor/
 .DS_Store
 Thumbs.db
 composer.phar

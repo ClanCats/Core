@@ -6,6 +6,9 @@
 	"require": {
 		"php": ">=5.3",
 		"composer/installers": "~1.0"
+	},
+	"config": {
+		"vendor-dir": "test-env/vendor"
 	}
 }
 
