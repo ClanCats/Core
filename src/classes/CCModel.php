@@ -233,7 +233,7 @@ class CCModel
 	 */
 	public function __( $key, $params = array() )
 	{
-		return __( 'model/label.'.static::_model( 'name' ), $params );
+		return __( 'model/'.static::_model( 'name' ).'.label.'.$key, $params );
 	}
 
 	/**
