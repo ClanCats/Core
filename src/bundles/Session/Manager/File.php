@@ -47,7 +47,11 @@ class Manager_File implements Manager_Interface
 	 */
 	public function write( $id, $data )
 	{
-	    \CCFile::write( $this->file_path( $id ), serialize( $data ) );
+		if ( !\CCFile::write( $this->file_path( $id ), serialize( $data ) ) )
+		{
+			\CCError::exception( new Exception( 'Could not write session file.' ) );
+		}
+	    return true;
 	}
 	
 	/**
