@@ -268,7 +268,7 @@ class CCFinder
 			 */
 			elseif ( array_key_exists( $class, static::$classes ) ) 
 			{
-				require  static::$classes[$class];
+				require static::$classes[$class];
 			}
 			/*
 			 * try your luck without the map
