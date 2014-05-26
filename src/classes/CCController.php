@@ -171,6 +171,11 @@ class CCController
 			$name = $name[0];
 		}
 		
+		if ( empty( $action ) )
+		{
+			$action = static::$_default_action;
+		}
+		
 		CCLang::alias( ':controller', $prefix.'controller/'.strtolower( $name ) );
 		CCLang::alias( ':action', $prefix.'controller/'.strtolower( $name.'.'.$action ) );
 	}
