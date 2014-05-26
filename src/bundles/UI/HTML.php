@@ -72,7 +72,8 @@ class HTML extends E
 	 * @param mixed		$param1
 	 * @param mixed		$param2
 	 */
-	public static function tag( $name, $param1 = null, $param2 = null ) {
+	public static function tag( $name, $param1 = null, $param2 = null ) 
+	{
 		return static::create( $name, $param1, $param2 );
 	}
 	

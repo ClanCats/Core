@@ -16,9 +16,24 @@ class E {
 	 * @param string 	$name
 	 * @param mixed		$param1
 	 * @param mixed		$param2
+	 * @return UI\E
 	 */
-	public static function create( $name, $param1 = null, $param2 = null ) {
+	public static function create( $name, $param1 = null, $param2 = null ) 
+	{
 		return new static( $name, $param1, $param2 );
+	}
+	
+	/**
+	 * Create elemnts by dynamic calls
+	 *
+	 * @param string 		$name
+	 * @param array 			$arguments
+	 * @return UI\E
+	 */
+	public static function __callStatic( $name, $arguments )
+	{
+		array_unshift( $arguments, $name );
+		return forward_static_call_array( array( "UI\\E", 'create' ), $arguments );
 	}
 	
 	/**
