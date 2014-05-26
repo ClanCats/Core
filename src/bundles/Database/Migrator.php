@@ -144,12 +144,12 @@ class Migrator
 	public static function available()
 	{
 		$bundles = array_merge( \CCFinder::$bundles, array( 
-			'app' => \CCPath::get( '', null, \ClanCats::directory( 'migration' ) ) 
+			'app' => \CCPath::get( '', null ) 
 		));
 		
 		$available = array();
 		
-		foreach( \CCFinder::$bundles as $name => $path )
+		foreach( $bundles as $name => $path )
 		{
 			$directory = $path.\ClanCats::directory( 'migration' );
 			
