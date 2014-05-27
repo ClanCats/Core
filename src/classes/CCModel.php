@@ -386,7 +386,7 @@ class CCModel
 			}
 			else
 			{
-				return $this->{'_get_modifier_'.$key}( $item );
+				return $this->{'_get_modifier_'.$key}( $this->_data_store[$key] );
 			}
 		}
 
