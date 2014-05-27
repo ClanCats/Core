@@ -156,6 +156,19 @@ class CCValidator
 	}
 	
 	/**
+	 * Add an error to validator
+	 *
+	 * @param string			$key
+	 * @param string			$message
+	 * @return void
+	 */
+	public function add_error( $key, $message )
+	{
+		$this->success = false;
+		$this->errors[$key][] = $message;
+	}
+	
+	/**
 	 * Set a data value
 	 *
 	 * @param string 		$key
