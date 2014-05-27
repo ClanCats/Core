@@ -5,7 +5,8 @@
 	"license": "MIT",
 	"require": {
 		"php": ">=5.3",
-		"composer/installers": "~1.0"
+		"composer/installers": "~1.0",
+		"nesbot/Carbon": "*"
 	},
 	"config": {
 		"vendor-dir": "test-env/vendor"
