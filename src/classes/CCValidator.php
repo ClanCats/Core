@@ -695,7 +695,7 @@ class CCValidator
 	 * @param string			$format
 	 * @param bool
 	 */
-	public function rule_date_format( $key, $value, $format = 'd-m-Y' ) 
+	public function rule_date_format( $key, $value, $format = 'd/m/Y' ) 
 	{
 		return date( $format, strtotime( trim( $value ) ) ) == trim( $value );
 	}
