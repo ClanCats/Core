@@ -428,12 +428,23 @@ class CCModel
 	}
 	
 	/**
-	 * return the raw data of the object
+	 * return the raw data of the object or a single attribute
 	 *
+	 * @param string 			$key
 	 * @return array
 	 */
-	public function raw() 
+	public function raw( $key = null ) 
 	{
+		if ( !is_null( $key ) )
+		{
+			if ( isset( $this->_data_store[$key] ) )
+			{
+				return $this->_data_store[$key];
+			}
+			
+			throw new \InvalidArgumentException( "CCModel - Invalid or undefined model property '".$key."'." );
+		}
+		
 		return $this->_data_store;
 	}
 	
