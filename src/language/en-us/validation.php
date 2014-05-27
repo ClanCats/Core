@@ -6,4 +6,5 @@
 	'between' => 'The :field should be between :0 and :1 characters.',
 	'match' => 'The :field field must match the :0 field.',
 	'negative' => 'The :field must be negative.',
+	'date_format' => 'The :field contains an invalid date.',
 );
