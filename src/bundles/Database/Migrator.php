@@ -42,7 +42,16 @@ class Migrator
 			$time = time();
 		}
 		
-		return \CCPath::get( \CCStr::clean_url( $name, '_' ).'_'.$time, \ClanCats::directory( 'migration' ), '.sql' );
+		$name = explode( '/', $name );
+		
+		foreach( $name as $key => $value )
+		{
+			$name[$key] = \CCStr::clean_url( $value, '_' );
+		}
+		
+		$name = implode( '/', $name );
+		
+		return \CCPath::get( $name.'_'.$time, \ClanCats::directory( 'migration' ), '.sql' );
 	}
 	
 	/**
