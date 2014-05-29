@@ -56,4 +56,19 @@ class migrator extends \CCConsoleController {
 	{
 		while( \DB\Migrator::rollback() );
 	}
+	
+	/**
+	 * Create new migration
+	 * 
+	 * @param array 		$params 
+	 * @return void
+	 */
+	public function action_create( $params )
+	{
+		$name = array_shift( $params );
+		
+		$file = \DB\Migrator::path( $name );
+		
+		\CCFile::write( $file, "# ---> up\n\n\n\n# ---> down\n\n" );
+	}
 }

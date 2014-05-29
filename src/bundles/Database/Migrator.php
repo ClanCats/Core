@@ -30,6 +30,22 @@ class Migrator
 	}
 	
 	/**
+	 * Get a migration path by name
+	 *
+	 * @param string 		$name
+	 * @return string
+	 */
+	public static function path( $name, $time = null )
+	{
+		if ( is_null( $time ) )
+		{
+			$time = time();
+		}
+		
+		return \CCPath::get( \CCStr::clean_url( $name, '_' ).'_'.$time, \ClanCats::directory( 'migration' ), '.sql' );
+	}
+	
+	/**
 	 * Run all new migration
 	 *
 	 * @return void
@@ -213,20 +229,6 @@ class Migrator
 	}
 	
 	/**
-	 * Create new migration class
-	 * 
-	 * @param string			$name
-	 * @return void
-	 */
-	public static function shipyard( $name )
-	{
-		$file = \CCPath::get( $name, \ClanCats::directory( 'migration' ), EXT );
-		
-		$directory = dirname( $file ).'/';
-		$file = basename( $file );
-	}
-	
-	/**
 	 * The migration sql file
 	 *
 	 * @var string
@@ -261,8 +263,6 @@ class Migrator
 	{
 		return $this->name;
 	}
-	
-	
 	
 	/**
 	 * Migrates the current migration up
