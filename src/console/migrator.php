@@ -46,4 +46,14 @@ class migrator extends \CCConsoleController {
 	{
 		\DB\Migrator::rollback();
 	}
+	
+	/**
+	 * Revert all revisions
+	 *
+	 * @param array 		$params 
+	 */
+	public function action_reset( $params ) 
+	{
+		while( \DB\Migrator::rollback() );
+	}
 }

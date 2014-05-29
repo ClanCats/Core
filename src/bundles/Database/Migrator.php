@@ -134,6 +134,8 @@ class Migrator
 		// update the config
 		static::$config->set( $key.'.revision', key( $others ) );
 		static::$config->write();
+		
+		return true;
 	}
 	
 	/**
