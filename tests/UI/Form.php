@@ -257,4 +257,52 @@ class Test_UI_Form extends PHPUnit_Framework_TestCase
 			
 		$this->assertEquals( $expected, $form );	
 	}
+	
+	/** 
+	 * Form::checkbox tests
+	 */
+	public function test_select()
+	{
+		// simple
+		$form = (string) Form::select( 'gender', array( 'F', 'M' ) );
+		
+		$expected = '<select id="gender-select" name="gender" size="1"><option value="0">F</option><option value="1">M</option></select>';
+			
+		$this->assertEquals( $expected, $form );	
+		
+		// selected simple
+		$form = (string) Form::select( 'gender', array( 'F', 'M' ), 1 );
+		
+		$expected = '<select id="gender-select" name="gender" size="1"><option value="0">F</option><option value="1" selected="selected">M</option></select>';
+			
+		$this->assertEquals( $expected, $form );	
+		
+		// selected by key
+		$form = (string) Form::select( 'gender', array( 'F', 'M' ), 0 );
+		
+		$expected = '<select id="gender-select" name="gender" size="1"><option value="0" selected="selected">F</option><option value="1">M</option></select>';
+			
+		$this->assertEquals( $expected, $form );	
+		
+		// key value
+		$form = (string) Form::select( 'gender', array( 'F' => 'Female', 'M' => 'Male' ) );
+		
+		$expected = '<select id="gender-select" name="gender" size="1"><option value="F">Female</option><option value="M">Male</option></select>';
+			
+		$this->assertEquals( $expected, $form );	
+		
+		// key value select
+		$form = (string) Form::select( 'gender', array( 'F' => 'Female', 'M' => 'Male' ), array( 'F', 'M' ) );
+		
+		$expected = '<select id="gender-select" name="gender" size="1"><option value="F" selected="selected">Female</option><option value="M" selected="selected">Male</option></select>';
+			
+		$this->assertEquals( $expected, $form );	
+		
+		// key value select and size
+		$form = (string) Form::select( 'gender', array( 'F' => 'Female', 'M' => 'Male' ), array( 'F', 'M' ), 2 );
+		
+		$expected = '<select id="gender-select" name="gender" size="2"><option value="F" selected="selected">Female</option><option value="M" selected="selected">Male</option></select>';
+			
+		$this->assertEquals( $expected, $form );	
+	}
 }

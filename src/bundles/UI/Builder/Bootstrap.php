@@ -55,6 +55,17 @@ class Builder_Bootstrap implements Builder_Interface
 	}
 	
 	/**
+	 * Build an input label
+	 *
+	 * @param UI\HTML		$element
+	 * @return UI\HTML
+	 */
+	public function build_form_select( $element )
+	{
+		return $element->class( 'form-control' );
+	}
+	
+	/**
 	 * Build the UI alerts
 	 *
 	 * @param array 		$alerts

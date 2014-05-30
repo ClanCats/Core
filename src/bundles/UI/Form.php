@@ -44,6 +44,7 @@ class Form
 		static::macro( 'label', "\\UI\\Form::make_label" );
 		static::macro( 'checkbox', "\\UI\\Form::make_checkbox" );
 		static::macro( 'textarea', "\\UI\\Form::make_textarea" );
+		static::macro( 'select', "\\UI\\Form::make_select" );
 	}
 	
 	/**
@@ -304,45 +305,54 @@ class Form
 		
 		return Builder::handle( 'form_textarea', $element );
 	}
-	
-	/**
-	 * generate an input
-	 *
-	 * @param string 	$key | This is the name 
-	 * @param string	$type
-	 * @param array 	$attr
-	 */
-	public function _button( $type, $text, $attr = array() ) {
-		return HTML::tag('button', $text, array_merge( array( 'id' => $this->id_prefix.$type.'_button', 'type' => $type ), $attr ) );
-	}
-	
-	
-	
 
-	
-	
-	
 	/**
 	 * generate an select
 	 *
-	 * @param string 	$key | This is the name 
-	 * @param string	$type
-	 * @param array 	$attr
+	 *     Form::select( 'gender', array( 'F', 'M' ), 0 );
+	 *
+	 *     Form::select( 'gender', array( '1' => 'A', '2' => 'B' ), array( 1,2 ), 2 );
+	 *
+	 * @param string		$id			The id that has been generated for us.
+	 * @param string 	$name		This is the name
+	 * @param array		$options
+	 * @param array 		$selected
+	 * @param int		$size
+	 * @return string
 	 */
-	public function _select( $key, $data, $selected = array(), $size = 1, $attr = array() ) {
-		
-		if ( !is_array( $selected ) ) {
+	public function make_select( $id, $name, array $options, $selected = array(), $size = 1 ) 
+	{	
+		if ( !is_array( $selected ) ) 
+		{
 			$selected = array( $selected );
 		}
 		
-		return HTML::tag( 'select', function() use( $data, $selected ){
-			foreach( $data as $key => $item ) {
-				if ( in_array( $key, $selected ) ) {
-					echo HTML::tag( 'option', $item, array( 'value' => $key, 'selected' => 'selected' ) );
-				} else {
-					echo HTML::tag( 'option', $item, array( 'value' => $key ) );
-				}
+		$buffer = "";
+		
+		foreach( $options as $key => $value )
+		{
+			$option = HTML::tag( 'option', $value )
+				->value( $key );
+			
+			if ( in_array( $key, $selected ) )
+			{
+				$option->selected( true );
 			}
-		}, array_merge( array( 'id' => $this->id_prefix.$key, 'name' => $key, 'size' => $size ), $attr ));
+			
+			$buffer .= $option->render();
+		}
+		
+		$element = HTML::tag( 'select', $buffer, array(
+			'id' => $id,
+			'name' => $name,
+			'size' => $size,
+		) );
+		
+		if ( !static::$builder_enabled )
+		{
+			 return $element;
+		}
+		
+		return Builder::handle( 'form_select', $element );
 	}
 }
