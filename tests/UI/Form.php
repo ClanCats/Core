@@ -11,6 +11,9 @@
  * @group UI
  * @group UI_Form
  */
+ 
+use UI\Form;
+ 
 class Test_UI_Form extends PHPUnit_Framework_TestCase
 {
 	/**
@@ -122,7 +125,7 @@ class Test_UI_Form extends PHPUnit_Framework_TestCase
 	public function test_input()
 	{
 		// without key
-		$form = (string) \UI\Form::input( 'username' );
+		$form = (string) Form::input( 'username' );
 		
 		$expected = '<input id="username-input" name="username" type="text" />';
 			
@@ -130,34 +133,48 @@ class Test_UI_Form extends PHPUnit_Framework_TestCase
 		
 		// now while a form is opend
 		
-		\UI\Form::start( 'foo' );
+		Form::start( 'foo' );
 		
-		$form = (string) \UI\Form::input( 'username' );
+		$form = (string) Form::input( 'username' );
 		
 		$expected = '<input id="foo-form-username-input" name="username" type="text" />';
 			
 		$this->assertEquals( $expected, $form );
 		
 		// test again after closing
-		\UI\Form::end();
+		Form::end();
 		
-		$form = (string) \UI\Form::input( 'username' )->class( 'form-control' );
+		$form = (string) Form::input( 'username' )->class( 'form-control' );
 		
 		$expected = '<input id="username-input" name="username" type="text" class="form-control" />';
 			
 		$this->assertEquals( $expected, $form );
 		
 		// change the type
-		$form = (string) \UI\Form::input( 'primary', 'email' );
+		$form = (string) Form::input( 'primary', null, 'email' );
 		
 		$expected = '<input id="primary-input" name="primary" type="email" />';
 			
 		$this->assertEquals( $expected, $form );
 		
 		// add attributes
-		$form = (string) \UI\Form::input( 'count', 'number', array( 'data-min' => 5 ) );
+		$form = (string) Form::input( 'count', null, 'number', array( 'data-min' => 5 ) );
 		
 		$expected = '<input id="count-input" name="count" type="number" data-min="5" />';
+			
+		$this->assertEquals( $expected, $form );
+		
+		// add content
+		$form = (string) Form::input( 'name', 'Abanoba' );
+		
+		$expected = '<input id="name-input" name="name" type="text" value="Abanoba" />';
+			
+		$this->assertEquals( $expected, $form );
+		
+		// escaped content
+		$form = (string) Form::input( 'name', 'Abanoba" /><input name="thisisbad ' );
+		
+		$expected = '<input id="name-input" name="name" type="text" value="Abanoba&quot; /&gt;&lt;input name=&quot;thisisbad " />';
 			
 		$this->assertEquals( $expected, $form );
 	}
@@ -168,30 +185,30 @@ class Test_UI_Form extends PHPUnit_Framework_TestCase
 	public function test_label()
 	{
 		// simple
-		$form = (string) \UI\Form::label( 'username', 'Benutzername' );
+		$form = (string) Form::label( 'username', 'Benutzername' );
 		
 		$expected = '<label id="username-label" for="username-input">Benutzername</label>';
 			
 		$this->assertEquals( $expected, $form );
 		
 		// without text
-		$form = (string) \UI\Form::label( 'username' );
+		$form = (string) Form::label( 'username' );
 	
 		$expected = '<label id="username-label" for="username-input">username</label>';
 			
 		$this->assertEquals( $expected, $form );
 		
 		// inside of a form
-		\UI\Form::start( 'foo' );
+		Form::start( 'foo' );
 		
-		$form = (string) \UI\Form::label( 'username' );
+		$form = (string) Form::label( 'username' );
 		
 		$expected = '<label id="foo-form-username-label" for="foo-form-username-input">username</label>';
 			
 		$this->assertEquals( $expected, $form );
 		
 		// test again after closing
-		\UI\Form::end();
+		Form::end();
 	}
 	
 	/** 
@@ -200,17 +217,44 @@ class Test_UI_Form extends PHPUnit_Framework_TestCase
 	public function test_checkbox()
 	{
 		// simple
-		$form = (string) \UI\Form::checkbox( 'active', 'Active' );
+		$form = (string) Form::checkbox( 'active', 'Active' );
 		
 		$expected = '<label><input id="active-check" name="active" type="checkbox" /> Active</label>';
 			
 		$this->assertEquals( $expected, $form );	
 		
 		// checked test
-		$form = (string) \UI\Form::checkbox( 'active', 'Active', true );
+		$form = (string) Form::checkbox( 'active', 'Active', true );
 			
 		$expected = '<label><input id="active-check" name="active" type="checkbox" checked="checked" /> Active</label>';
 				
 		$this->assertEquals( $expected, $form );		
+	}
+	
+	/** 
+	 * Form::checkbox tests
+	 */
+	public function test_textarea()
+	{
+		// simple
+		$form = (string) Form::textarea( 'comment' );
+		
+		$expected = '<textarea id="comment-text" name="comment"></textarea>';
+			
+		$this->assertEquals( $expected, $form );	
+		
+		// with value
+		$form = (string) Form::textarea( 'comment', 'foo' );
+		
+		$expected = '<textarea id="comment-text" name="comment">foo</textarea>';
+			
+		$this->assertEquals( $expected, $form );	
+		
+		// with value
+		$form = (string) Form::textarea( 'comment', '<foo">hopefully escaped<' );
+		
+		$expected = '<textarea id="comment-text" name="comment">&lt;foo&quot;&gt;hopefully escaped&lt;</textarea>';
+			
+		$this->assertEquals( $expected, $form );	
 	}
 }

@@ -43,6 +43,7 @@ class Form
 		static::macro( 'input', "\\UI\\Form::make_input" );
 		static::macro( 'label', "\\UI\\Form::make_label" );
 		static::macro( 'checkbox', "\\UI\\Form::make_checkbox" );
+		static::macro( 'textarea', "\\UI\\Form::make_textarea" );
 	}
 	
 	/**
@@ -201,13 +202,18 @@ class Form
 	 * @param string		$type
 	 * @param array 		$attr
 	 */
-	public static function make_input( $id, $key, $type = 'text', $attr = array() ) 
+	public static function make_input( $id, $key, $value = null, $type = 'text', $attr = array() ) 
 	{
 		$element = HTML::tag( 'input', array_merge( array( 
 			'id' => $id, 
 			'name' => $key, 
 			'type' => $type 
 		), $attr ));
+		
+		if ( !is_null( $value ) )
+		{
+			$element->value( _e( $value ) );
+		}
 		
 		if ( !static::$builder_enabled )
 		{
@@ -253,6 +259,7 @@ class Form
 	 * @param string		$text
 	 * @param bool		$active		Is the checkbox cheked
 	 * @param array 		$attr
+	 * @return string
 	 */
 	public static function make_checkbox( $id, $key, $text = '', $active = false, $attr = array() ) 
 	{
@@ -262,7 +269,7 @@ class Form
 			'type' => 'checkbox' 
 		), $attr ));
 		
-		$element->checked( $active );
+		$element->checked( (bool) $active );
 		
 		$element = HTML::tag( 'label', $element->render().' '.$text );
 		
@@ -272,6 +279,30 @@ class Form
 		}
 		
 		return Builder::handle( 'form_checkbox', $element );
+	}
+	
+	/**
+	 * generate a textarea
+	 *
+	 * @param string		$id			The id that has been generated for us.
+	 * @param string 	$key			This is the name 
+	 * @param string		$value
+	 * @param array 		$attr
+	 * @return string
+	 */
+	public function make_textarea( $id, $key, $value = '', $attr = array() ) 
+	{
+		$element = HTML::tag( 'textarea', _e( $value ), array_merge( array( 
+			'id' => $id, 
+			'name' => $key,
+		), $attr ));
+		
+		if ( !static::$builder_enabled )
+		{
+			 return $element;
+		}
+		
+		return Builder::handle( 'form_textarea', $element );
 	}
 	
 	/**
@@ -289,16 +320,7 @@ class Form
 	
 
 	
-	/**
-	 * generate a textarea
-	 *
-	 * @param string 	$key | This is the name 
-	 * @param string	$value
-	 * @param array 	$attr
-	 */
-	public function _textarea( $key, $value = '', $attr = array() ) {
-		return HTML::tag('textarea', $value, array_merge( array( 'id' => $this->id_prefix.$key, 'name' => $key ), $attr ));
-	}
+	
 	
 	/**
 	 * generate an select

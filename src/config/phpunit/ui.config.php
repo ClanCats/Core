@@ -20,14 +20,17 @@ return array(
 
 		// form id formatter
 		'form_id_format' => '%s-form',
-
+		
 		// input id  formatter
 		'input_id_format' => '%s-input',
-
+		
 		// label id  formatter
 		'label_id_format' => '%s-label',
 		
-		// label id  formatter
+		// checkbox id  formatter
 		'checkbox_id_format' => '%s-check',
+		
+		// textarea id  formatter
+		'textarea_id_format' => '%s-text',
 	),
 );
