@@ -189,6 +189,11 @@ class shipyard extends \CCConsoleController
 			
 			$forge = new \CCForge_Php;
 			
+			// add the table property on top
+			echo $forge->property( 'public static $_table', $table, 'Database table' );
+			
+			echo $forge->line(2);
+			
 			// define the internal types
 			$internal_types = array( 'bool', 'int', 'float', 'double', 'string' );
 			
