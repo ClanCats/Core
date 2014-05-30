@@ -47,4 +47,15 @@ class User extends \DB\Model
 	{
 		return \CCStr::hash( $password );
 	}
+	
+	/**
+	 * The email should only contain lower case characters
+	 * 
+	 * @param string 		$email
+	 * @return string
+	 */
+	protected function _set_modifier_email( $email )
+	{
+		return strtolower( $email );
+	}
 }
