@@ -336,7 +336,7 @@ class Model extends \CCModel
 		
 		// we have to sort the relationships to make sure that
 		// select the relations in the right order.	
-		sort( $with );
+		asort( $with );
 		
 		foreach( $with as $relation => $callback )
 		{
@@ -347,13 +347,41 @@ class Model extends \CCModel
 			}
 			
 			if ( strpos( $relation, '.' ) !== false )
-			{
+			{	
+				$relation_layers = explode( '.', $relation );
 				
+				$relation_name = array_pop( $relation_layers );
+				
+				$relation_collection = array();
+				
+				foreach( $results as $key => &$item )
+				{
+					$curr_item = $item;
+					
+					foreach( $relation_layers as $layer )
+					{
+						$curr_item = $curr_item->raw( $layer );
+					}
+					
+					$relation_collection[] = $curr_item;
+				}
+				
+				$ref_object = reset( $relation_collection );
+				
+				$relation_object = call_user_func( array( $ref_object, $relation_name ) );
+				if ( $relation_object instanceof Model_Relation )
+				{
+					$relation_object->collection_assign( $relation_name, $relation_collection, $callback );
+				}
 			}
 			else
 			{
 				$relation_object = call_user_func( array( $ref_object, $relation ) );
-				$relation_object->collection_assign( $relation, $results, $callback );
+				if ( $relation_object instanceof Model_Relation )
+				{
+					$relation_object->collection_assign( $relation, $results, $callback );
+				}
+				
 			}
 		}
 		

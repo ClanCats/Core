@@ -66,9 +66,31 @@ class Test_Database_Relations extends \DB\TestCase
 			'library_id' 	=> $library->id,
 		))->save();
 		
+		$query_count = count( \DB::query_log() );
+		
 		$libraries = CCUnit\Model_Library::with( array( 'person', 'person.library' ) );
 		
-		//_dd( $libraries );
+		// check if only 3 queries where executed
+		$this->assertEquals( $query_count+3, count( \DB::query_log() ) );
+		
+		// check if the result is correct
+		$this->assertEquals( $library->id, $libraries[$library->id]->id );
+		
+		$this->assertEquals( $person->id, $libraries[$library->id]->person->id );
+		
+		$this->assertEquals( $library->id, $libraries[$library->id]->person->library->id );
+		
+		// there still should not be more quries..
+		$this->assertEquals( $query_count+3, count( \DB::query_log() ) );
+		
+		
+		$libraries = CCUnit\Model_Library::with( array( 'person' => function ( $q ) 
+		{
+			$q->where( 'name', 'in', array( 'Mario', 'John' ) );
+		}));
+		
+		// check the last query
+		$this->assertEquals( 'select * from `people` where `library_id` in (1, 2) and `name` in (Mario, John)', \DB::last_query() );
 	}
 	
 	/**
