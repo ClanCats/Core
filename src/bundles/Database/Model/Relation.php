@@ -47,6 +47,13 @@ class Model_Relation
 	public $local_model = null;
 	
 	/**
+	 * Should this relationship deliver a single item
+	 *
+	 * @var bool
+	 */ 
+	public $singleton = true;
+	
+	/**
 	 * Create new relationship instance
 	 *
 	 * @param DB\Model			$model
@@ -125,6 +132,60 @@ class Model_Relation
 	 * @return void
 	 */
 	protected function prepare_query() {}
+	
+	/**
+	 * Prepare the query with collection select
+	 *
+	 * @param array 			$collection
+	 * @return void
+	 */
+	protected function collection_query( &$collection ) 
+	{
+		$local_keys = array();
+		
+		foreach( $collection as $item )
+		{
+			$local_keys[] = $item->raw( $this->local_key );
+		}
+		
+		// set the correct collection where
+		$this->query->wheres = array();
+		$this->query->where( $this->foreign_key, 'in', $local_keys );
+		$this->query->group_result( $this->foreign_key );
+		
+		$this->query->limit( null );
+	}
+	
+	/**
+	 * Prepare the query with collection select
+	 *
+	 * @param string 			$relation
+	 * @param array  			$collection
+	 * @param callback			$callback
+	 * @return void
+	 */
+	public function collection_assign( $relation, &$collection, $callback = null ) 
+	{
+		// make the query
+		$this->collection_query( $collection );
+		
+		call_user_func_array( $callback, array( &$this->query ) );
+		
+		// get the reults
+		$results = $this->query->run();
+		
+		foreach( $collection as $item )
+		{
+			if ( $this->singleton )
+			{
+				$item->raw_set( $relation, reset( $results[ $item->raw( $this->local_key ) ] ) );
+			}
+			else
+			{
+				$item->raw_set( $relation, $results[ $item->raw( $this->local_key ) ] );
+			}
+		}
+	}
 	
 	/**
 	 * Forward the query functionality

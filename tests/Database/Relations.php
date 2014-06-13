@@ -38,6 +38,37 @@ class Test_Database_Relations extends \DB\TestCase
 		$this->assertTrue( $person_from_libaray instanceof CCUnit\Model_DBPerson );
 		
 		$this->assertEquals( $person_from_libaray, $person );
+		
+		// fast selector	
+		$this->assertTrue( $library->person instanceof CCUnit\Model_DBPerson );
+		
+		$query_count = count( \DB::query_log() );
+		
+		$this->assertEquals( $library->person, $person );
+		
+		// make sure the query were executed just once
+		$this->assertEquals( $query_count, count( \DB::query_log() ) );
+	}
+	
+	/**
+	 * DB\Model::has_one
+	 */
+	public function test_with_has_one() 
+	{
+		// find by primary key
+		$library = CCUnit\Model_Library::assign( array(
+			'name'			=> 'Fantasy',
+		))->save();
+		
+		$person = CCUnit\Model_DBPerson::assign( array(
+			'name'			=> 'Tarek',
+			'age'			=> '20',
+			'library_id' 	=> $library->id,
+		))->save();
+		
+		$libraries = CCUnit\Model_Library::with( array( 'person', 'person.library' ) );
+		
+		//_dd( $libraries );
 	}
 	
 	/**
@@ -99,4 +130,6 @@ class Test_Database_Relations extends \DB\TestCase
 		
 		$this->assertEquals( 2, count( $books_from_library ) );
 	}
+	
+	
 }

@@ -217,6 +217,26 @@ class Model extends \CCModel
 		// and assign
 		return static::assign( $query->run() );
 	}
+	
+	/**
+	 * Call a function as a property
+	 *
+	 * @param string 		$key
+	 * @return mixed
+	 */
+	public function __call_property( $key )
+	{
+		$result = parent::__call_property( $key );
+		
+		// when we recive a relation we execute it and save it
+		// to the data to avoid mutlitple queries
+		if ( $result instanceof Model_Relation )
+		{
+			return $this->_data_store[$key] = $result->run();
+		}
+		
+		return $result;
+	}
 
 	/**
 	 * Has one releationships
@@ -277,11 +297,69 @@ class Model extends \CCModel
 
 	/**
 	 * find with an relationship
+	 *
+	 *     Person::with( 'cars' );
+	 *
+	 * @param array|string 			$with
+	 * @param callback				$callback
+	 * @return array
 	 */
-	/*public static function with( $with, $params = null, $relcallback = null, $relwith = array() ) 
+	public static function with( $with, $callback = null ) 
 	{	
-		// ToDo rewrite
-	}*/
+		if ( !is_array( $with ) )
+		{
+			$with = array( $with );
+		}
+		
+		$settings = static::_model();
+		
+		$query = DB::select( $settings['table'] );
+		
+		// run the callback
+		call_user_func_array( $param, array( &$query ) );
+		
+		// alway group the result and fetch assoc
+		$query->forward_key( $settings['primary_key'] );
+		$query->fetch_arguments = array( 'assoc' );
+		
+		// get the main result set
+		$results = static::assign( $query->run() );
+		$singleton = false;
+		
+		if ( !is_array( $results ) )
+		{
+			$results = array( $results );
+			$singleton = true;
+		}
+		
+		$ref_object = reset( $results );
+		
+		// we have to sort the relationships to make sure that
+		// select the relations in the right order.	
+		sort( $with );
+		
+		foreach( $with as $relation => $callback )
+		{
+			if ( is_int( $relation ) && is_string( $callback ) )
+			{
+				$relation = $callback;
+				$callback = null;
+			}
+			
+			if ( strpos( $relation, '.' ) !== false )
+			{
+				
+			}
+			else
+			{
+				$relation_object = call_user_func( array( $ref_object, $relation ) );
+				$relation_object->collection_assign( $relation, $results, $callback );
+			}
+		}
+		
+		// and assign
+		return $results;
+	}
 
 	/**
 	 * save an model

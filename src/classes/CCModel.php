@@ -395,9 +395,23 @@ class CCModel
 			return $this->{'_get_modifier_'.$key}();
 		}
 		
+		// when a function extists we forward the call
+		if ( method_exists( $this, $key ) )
+		{
+			return $this->__call_property( $key );
+		}
+		
 		throw new \InvalidArgumentException( "CCModel - Invalid or undefined model property '".$key."'." );
 	}
-
+	
+	/**
+	 * Call a function as a property
+	 */
+	public function __call_property( $key )
+	{
+		return call_user_func( array( $this, $key ) );
+	}
+	
 	/**
 	 * Set a value by key in the model data
 	 *
@@ -446,6 +460,18 @@ class CCModel
 		}
 		
 		return $this->_data_store;
+	}
+	
+	/**
+	 * Set a value to the model without using the modifiers
+	 *
+	 * @param string 		$key
+	 * @param string			$value
+	 * @return void
+	 */
+	public function raw_set( $key, $value )
+	{
+		$this->_data_store[$key] = $value;
 	}
 	
 	/**
