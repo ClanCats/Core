@@ -51,7 +51,7 @@ class Test_Database_Relations extends \DB\TestCase
 	}
 	
 	/**
-	 * DB\Model::has_one
+	 * DB\Model::has_one with
 	 */
 	public function test_with_has_one() 
 	{
@@ -118,6 +118,89 @@ class Test_Database_Relations extends \DB\TestCase
 		$this->assertTrue( $library_from_person instanceof CCUnit\Model_Library );
 		
 		$this->assertEquals( $library_from_person, $library );
+	}
+	
+	/**
+	 * DB\Model::has_one with
+	 */
+	public function test_with_belongs_to_and_has_many_and_other_with_relation_stuff() 
+	{
+		$library_fantasy = CCUnit\Model_Library::assign( array(
+			'name'			=> 'Fantasy',
+		))->save();
+		
+		$library_scifi = CCUnit\Model_Library::assign( array(
+			'name'			=> 'Sci-Fi',
+		))->save();
+		
+		// create some fantasy books for testing
+		$books = array(
+		 	array( 'name' => 'Die Stadt der Träumenden Bücher', 'pages' => 425, 'library_id' => $library_fantasy->id ),
+		 	array( 'name' => 'Das Labyrinth der Träumenden Bücher', 'pages' => 380, 'library_id' => $library_fantasy->id ),
+		 	array( 'name' => 'Rumo', 'pages' => 469, 'library_id' => $library_fantasy->id ),
+		);
+		
+		$books = CCUnit\Model_Book::assign( $books );
+		
+		// save them
+		foreach( $books as $book )
+		{
+			$book->save();
+		}
+		
+		// create some sci fi books for testing
+		$books = array(
+		 	array( 'name' => 'Dune', 'pages' => 341, 'library_id' => $library_scifi->id ),
+		 	array( 'name' => 'The last generation', 'pages' => 480, 'library_id' => $library_scifi->id ),
+		);
+		
+		$books = CCUnit\Model_Book::assign( $books );
+		
+		// save them
+		foreach( $books as $book )
+		{
+			$book->save();
+		}
+		
+		$query_count = count( \DB::query_log() );
+		
+		$books = CCUnit\Model_Book::with( array( 'library' ) );
+		
+		// check if only 3 queries where executed
+		$this->assertEquals( $query_count+2, count( \DB::query_log() ) );
+		
+		// check 
+		foreach( $books as $book )
+		{
+			$this->assertTrue( $book->library instanceof CCUnit\Model_Library );
+		}
+		
+		// now lets test if the has many works together with with
+		$libraries = CCUnit\Model_Library::with( 'books' );
+		
+		foreach( $libraries as $library )
+		{
+			if ( is_array( $library->books ) && count( $library->books ) >= 1 )
+			{
+				$this->assertTrue( reset( $library->books ) instanceof CCUnit\Model_Book );
+			}
+		}
+		
+		// well what happens if we expecto only one result
+		$library = CCUnit\Model_Library::with( 'books', function( $q ) use( $library_fantasy ) 
+		{
+			$q->limit(1);
+			$q->where( 'id', $library_fantasy->id );	
+		});
+		
+		$this->assertTrue( $library instanceof CCUnit\Model_Library );
+		
+		foreach( $library->books as $book )
+		{
+			$this->assertTrue( $book instanceof CCUnit\Model_Book );
+		}
+		
+		// im not even sure why this stuff works...
 	}
 	
 	/**

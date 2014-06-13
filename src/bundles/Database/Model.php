@@ -316,7 +316,10 @@ class Model extends \CCModel
 		$query = DB::select( $settings['table'] );
 		
 		// run the callback
-		call_user_func_array( $param, array( &$query ) );
+		if ( !is_null( $callback ) )
+		{
+			call_user_func_array( $callback, array( &$query ) );
+		}
 		
 		// alway group the result and fetch assoc
 		$query->forward_key( $settings['primary_key'] );
@@ -383,6 +386,11 @@ class Model extends \CCModel
 				}
 				
 			}
+		}
+		
+		if ( $singleton )
+		{
+			return reset( $results );
 		}
 		
 		// and assign

@@ -12,6 +12,13 @@
 class Model_Relation_HasMany extends Model_Relation
 {
 	/**
+	 * Should this relationship deliver a single item
+	 *
+	 * @var bool
+	 */ 
+	public $singleton = false;
+	
+	/**
 	 * Prepare the query object
 	 *
 	 * @return void
