@@ -151,6 +151,33 @@ class CCIn_Instance {
 	{
 		return array_key_exists( strtoupper($key), $this->SERVER );
 	}
+	
+	/**
+	 * get a FILE param
+	 *
+	 * @param string		$key
+	 * @param mixed		$default
+	 * @return mixed
+	 */
+	public function file( $key, $default = null ) 
+	{
+		if ( !isset( $this->FILES[$key] ) ) 
+		{
+			return $default;
+		}
+		return $this->FILES[$key];
+	}
+	
+	/**
+	 * has a FILE param
+	 *
+	 * @param string		$key
+	 * @return mixed
+	 */
+	public function has_file( $key ) 
+	{
+		return array_key_exists( $key, $this->FILES );
+	}
 
 	/**
 	 * get the client data

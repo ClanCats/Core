@@ -135,6 +135,28 @@ class CCIn {
 	{
 		return static::$_instance->has_server( $key );
 	}
+	
+	/**
+	 * get a FILE param
+	 *
+	 * @param string		$key
+	 * @return mixed
+	 */
+	public static function file( $key, $default = null ) 
+	{
+		return static::$_instance->file( $key, $default );
+	}
+	
+	/**
+	 * has a FILE param
+	 *
+	 * @param string		$key
+	 * @return mixed
+	 */
+	public static function has_file( $key ) 
+	{
+		return static::$_instance->has_file( $key );
+	}
 
 	
 	/**
