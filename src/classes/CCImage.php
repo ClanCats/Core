@@ -15,8 +15,21 @@ class CCImage {
 	/**
 	 * creates an new empty image
 	 */
-	public static function create( $width, $height, $type = 'jpg' ) {
+	public static function create( $width, $height, $type = 'jpg' ) 
+	{
 		return new static( imagecreatetruecolor( $width, $height ), $type );
+	}
+
+	/**
+	 * Create a new CCImage from upload
+	 *
+	 * @param string 		$key
+	 * @param string 		$type
+	 * @return CCImage|null
+	 */
+	public static function upload( $key, $type = null )
+	{
+		static::load( CCFile::upload_path( $key ), $type );
 	}
 
 	/**
@@ -25,8 +38,8 @@ class CCImage {
 	 * @param string 	$type | if the type is null the file extention gets used!
 	 * @return CCImage
 	 */
-	public static function load( $file, $type = null ) {
-
+	public static function load( $file, $type = null ) 
+	{
 		if ( is_null( $type ) ) {
 			$type = CCStr::extension( $file );
 		}
@@ -458,7 +471,7 @@ class CCImage {
 		// run image fill
 		imagefill( $this->image_context, 0, 0, $color );
 	}
-	
+
 	/**
 	 * Blur our image
 	 *
