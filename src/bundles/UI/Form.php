@@ -38,13 +38,6 @@ class Form
 	public static function _init()
 	{
 		static::$builder_enabled = Builder::$config->get( 'form.builder_enabled' );
-		
-		// we register the internal macros to make them overwritable
-		static::macro( 'input', "\\UI\\Form::make_input" );
-		static::macro( 'label', "\\UI\\Form::make_label" );
-		static::macro( 'checkbox', "\\UI\\Form::make_checkbox" );
-		static::macro( 'textarea', "\\UI\\Form::make_textarea" );
-		static::macro( 'select', "\\UI\\Form::make_select" );
 	}
 	
 	/**
@@ -170,16 +163,21 @@ class Form
 	 */
 	public static function __callStatic( $method, $args ) 
 	{
-		if ( !array_key_exists( $method , static::$macros ) )
-		{
-			throw new Exception( "UI\\Form - Unknown macro '".$method."'." );
-		}
-		
 		// take the first argument and add it again as the id
 		array_unshift( $args, static::build_id( $method, reset( $args ) ) );
 		
-		// execute the macro
-		return call_user_func_array( static::$macros[$method], $args );
+		if ( array_key_exists( $method, static::$macros ) )
+		{
+			// execute the macro
+			return call_user_func_array( static::$macros[$method], $args );
+		}
+		
+		if ( method_exists( __CLASS__, 'make_'.$method ) )
+		{
+			return call_user_func_array( array( __CLASS__, 'make_'.$method ), $args );
+		}
+		
+		throw new Exception( "UI\\Form - Unknown macro '".$method."'." );
 	}
 	
 	/**
@@ -291,7 +289,7 @@ class Form
 	 * @param array 		$attr
 	 * @return string
 	 */
-	public function make_textarea( $id, $key, $value = '', $attr = array() ) 
+	public static function make_textarea( $id, $key, $value = '', $attr = array() ) 
 	{
 		$element = HTML::tag( 'textarea', _e( $value ), array_merge( array( 
 			'id' => $id, 
@@ -304,6 +302,19 @@ class Form
 		}
 		
 		return Builder::handle( 'form_textarea', $element );
+	}
+	
+	/**
+	 * generate a file input
+	 *
+	 * @param string		$id			The id that has been generated for us.
+	 * @param string 	$key			This is the name
+	 * @param array 		$attr
+	 * @return string
+	 */
+	public static function make_file( $id, $key, $attr = array() ) 
+	{
+		return static::make_input( $id, $key, null, 'file', $attr );
 	}
 
 	/**
@@ -320,7 +331,7 @@ class Form
 	 * @param int		$size
 	 * @return string
 	 */
-	public function make_select( $id, $name, array $options, $selected = array(), $size = 1 ) 
+	public static function make_select( $id, $name, array $options, $selected = array(), $size = 1 ) 
 	{	
 		if ( !is_array( $selected ) ) 
 		{
