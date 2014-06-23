@@ -290,6 +290,11 @@ class shipyard extends \CCConsoleController
 		$name = $params[0];
 		$parent = $params[1];
 		
+		if ( isset( $params['view'] ) )
+		{
+			$parent = 'CCViewController';
+		}
+		
 		// get name if we dont have one
 		while( !$name ) 
 		{
