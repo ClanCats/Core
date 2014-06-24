@@ -51,6 +51,7 @@ class CCImage
 	 *
 	 * @param string 	$file 
 	 * @param string 	$type		jpg|png|gif
+	 *
 	 * @return CCImage|false
 	 */
 	public static function create( $file, $type = null ) 
@@ -114,7 +115,7 @@ class CCImage
 	 *
 	 * @return CCImage|false
 	 */
-	public static function from_string( $string, $type = null ) 
+	public static function string( $string, $type = null ) 
 	{
 		$image = imagecreatefromstring( $string );
 
@@ -309,10 +310,11 @@ class CCImage
 	}
 
 	/**
-	 * output our image
+	 * Send the image to the output buffer
 	 *
-	 * @param string		$type
 	 * @param int		$quality
+	 * @param string		$type		jpg|png|gif
+	 * @return void
 	 */
 	public function stream( $quality = null, $type = null ) 
 	{
@@ -320,21 +322,19 @@ class CCImage
 	}
 
 	/**
-	 * return the image data
+	 * Return the image data as string
 	 *
-	 * @param string	$type
 	 * @param int		$quality
+	 * @param string		$type		jpg|png|gif
 	 * @return string
 	 */
 	public function stringify( $quality = null, $type = null ) 
 	{
-		ob_start();
-		$this->stream( $quality, $type );
-		return ob_get_clean();
+		ob_start(); $this->stream( $quality, $type ); return ob_get_clean();
 	}
 
 	/**
-	 * get the image as CCResponse
+	 * Create a CCRespone of the image
 	 *
 	 * @param string 		$quality			The image quality
 	 * @param string 		$type			jpg|png|gif
@@ -353,16 +353,24 @@ class CCImage
 	}
 
 	/**
-	 * resize the current image
-	 *
-	 * alternative syntax $image->resize( 100x200, 'fit' )
+	 * Resize the image
+	 * 
+	 * Examples:
+	 *     // simple resize
+	 *     $image->resize( '200x150', 'fill' );
+	 *     // does the same as
+	 *     $image->resize( 200, 150, 'fill' );
+	 *     // you can use auto values
+	 *     $image->resize( 500, 'auto' );
 	 * 
 	 * @param int 		$width
 	 * @param int		$height
 	 * @param string		$mode
+	 *
+	 * @return self
 	 */
-	public function resize( $width, $height, $mode = null ) {
-
+	public function resize( $width, $height, $mode = null ) 
+	{
 		// check for alternative syntax 
 		if ( strpos( $width, 'x' ) !== false ) 
 		{
@@ -404,14 +412,14 @@ class CCImage
 	}
 
 	/**
-	 * resize the current image from width and keep aspect ratio
+	 * Resize the current image from width and keep aspect ratio
 	 * 
 	 * @param int 		$width
 	 * @param int 		$height
 	 * @return self
 	 */
-	public function resize_landscape( $width, $ignore_me ) {
-
+	public function resize_landscape( $width, $ignore_me ) 
+	{
 		// calculate height
 		$height = $width * ( $this->height / $this->width );
 
@@ -419,14 +427,14 @@ class CCImage
 	}
 
 	/**
-	 * resize the current image from height and keep aspect ratio
+	 * Resize the current image from height and keep aspect ratio
 	 * 
 	 * @param int 		$width
 	 * @param int 		$height
 	 * @return self
 	 */
-	public function resize_portrait( $height, $ignore_me ) {
-
+	public function resize_portrait( $height, $ignore_me )
+	{
 		// calculate width
 		$width = $height * ( $this->width / $this->height );
 
@@ -434,25 +442,27 @@ class CCImage
 	}
 
 	/**
-	 * resize the image that it fits into a size doesn't crop
+	 * Resize the image that it fits into a size doesn't crop and does not add a border
 	 * 
 	 * @param int 		$width
 	 * @param int 		$height
 	 * @return self
 	 */
-	public function resize_max( $width, $height ) {
-
+	public function resize_max( $width, $height ) 
+	{
 		$new_width = $this->width;
 		$new_height = $this->height;
 
-		if ( $new_width > $width ) {
+		if ( $new_width > $width ) 
+		{
 			// set new with
 			$new_width = $width;
 			// calculate height
 			$new_height = $new_width * ( $this->height / $this->width );
 		}
 
-		if ( $new_height > $height ) {
+		if ( $new_height > $height ) 
+		{
 			// set new height
 			$new_height = $height;
 			// calculate width
@@ -463,7 +473,7 @@ class CCImage
 	}
 
 	/**
-	 * resize the image that it fits into a size doesn't crop
+	 * Resize the image that it fits into a size doesn't crop adds a background layer
 	 * 
 	 * @param int 		$width
 	 * @param int 		$height
@@ -480,7 +490,7 @@ class CCImage
 		$background->fill_color( $background_color );
 
 		// add the layer
-		$background->add_layer( $this, 'center' );
+		$background->add_layer( $this, 'center', 'middle' );
 
 		// overwrite the image context 
 		$this->image_context = $background->image_context;
@@ -535,8 +545,7 @@ class CCImage
 	}
 
 	/**
-	 * resize the current image
-	 * strict means the ratio get broken
+	 * Resize the current image to strict dimensions
 	 * 
 	 * @param int 		$width
 	 * @param int		$height
@@ -546,7 +555,6 @@ class CCImage
 	 */
 	public function resize_strict( $width, $height ) 
 	{
-
 		// check dimensions
 		if ( !( $width > 0 ) || !( $height > 0 ) ) 
 		{
@@ -554,15 +562,7 @@ class CCImage
 		}
 
 		$result = imagecreatetruecolor( $width, $height );  
-		imagecopyresampled( 
-			$result, 
-			$this->image_context, 
-			0, 0, 0, 0, 
-			$width, 
-			$height, 
-			$this->width, 
-			$this->height
-		); 
+		imagecopyresampled( $result, $this->image_context, 0, 0, 0, 0, $width, $height, $this->width, $this->height ); 
 
 		// overwrite the image context 
 		$this->image_context = $result;
@@ -577,7 +577,14 @@ class CCImage
 	/**
 	 * Crop the current image
 	 *
-	 * @param
+	 * This is a simplefied crop.
+	 *
+	 * @param int 		$x
+	 * @param int 		$y 
+	 * @param int		$width
+	 * @param int 		$height
+	 *
+	 * @return self
 	 */
 	public function crop( $x, $y, $width, $height )
 	{
@@ -610,29 +617,42 @@ class CCImage
 	 * @param CCImage 		$image
 	 * @param int			$x
 	 * @param int			$y
+	 *
+	 * @return self
 	 */
-	public function add_layer( CCImage $image, $x = 0, $y = 0 ) {
-
-		// alternative syntax
-		if ( is_string( $x ) && is_numeric( $x ) === false ) {
-
-			if ( $x == 'center' ) {
-				$x = ( $this->width / 2 ) - ( $image->width / 2 );
-				$y = ( $this->height / 2 ) - ( $image->height / 2 );
-			}
+	public function add_layer( CCImage $image, $x = 0, $y = 0 ) 
+	{
+		// auto values
+		if ( $x == 'center' || $x == 'auto' )
+		{
+			$x = ( $this->width / 2 ) - ( $image->width / 2 );
 		}
-
+		elseif ( $x == 'left' )
+		{
+			$x = 0;
+		}
+		elseif ( $x == 'right' )
+		{
+			$x = $this->width - $image->width;
+		}
+		
+		if ( $y == 'middle' || $y == 'auto' )
+		{
+			$y = ( $this->height / 2 ) - ( $image->height / 2 );
+		}
+		elseif ( $x == 'top' )
+		{
+			$x = 0;
+		}
+		elseif ( $x == 'bottom' )
+		{
+			$x = $this->height - $image->height;
+		}
+		
 		// run image copy
-		imagecopy( 
-			$this->image_context, 
-			$image->image_context, 
-			$x,//x 
-			$y,//y
-			0, 
-			0, 
-			$image->width, 
-			$image->height
-		);
+		imagecopy( $this->image_context, $image->image_context, $x, $y, 0, 0, $image->width, $image->height );
+		
+		return $this;
 	}
 
 	/**
@@ -640,154 +660,70 @@ class CCImage
 	 * you can pass an array with rgb or hex string
 	 *
 	 * @param mixed 		$color
+	 * @return self
 	 */
-	public function fill_color( $color ) {
-
+	public function fill_color( $color ) 
+	{
 		// parse the color
 		$color = CCColor::create( $color );
 		$color = imagecolorallocate( $this->image_context, $color->RGB[0], $color->RGB[1], $color->RGB[2] );
 
 		// run image fill
 		imagefill( $this->image_context, 0, 0, $color );
+		
+		return $this;
 	}
 
 	/**
-	 * Blur our image
+	 * Blur the image using the gaussian blur.
 	 *
-	 * @param int 	$ratio
+	 * @param int 			$ratio
+	 * @return self
 	 */
-	public function blur( $ratio ) {
-		for ($x=0; $x<$ratio; $x++) {
+	public function blur( $ratio = 5 ) 
+	{
+		for ($x=0; $x<$ratio; $x++) 
+		{
 			imagefilter($this->image_context, IMG_FILTER_GAUSSIAN_BLUR);
 			//$gaussian = array(array(1.0, 2.0, 1.0), array(2.0, 1.0, 2.0), array(1.0, 2.0, 1.0));
 			//imageconvolution($this->image_context, $gaussian, 16, 0);
 		}
+		
+		return $this;
 	}
 
 	/**
-	 * crop the image 
-	 * 
-	 * @param $crop
-	 * @param $size
-	 */
-	public function resize2( $size = null, $crop = null ) {
-
-		$x = 0;
-		$y = 0;
-		$width = imagesx( $this->image_context );
-		$height = imagesy( $this->image_context );
-
-		// size param
-		if ( is_null( $size ) ) {
-			$size = array( $width, $height );
-		}
-		else {
-			$size = explode( 'x', $size );
-		}
-
-		// crop param
-		if ( is_null( $crop ) ) {
-			$crop = array( $width, $height );
-		}
-		elseif ( $crop == 'auto' ) {
-			$crop = $size;
-		}
-		else {
-			$crop = explode( ':', $crop );
-		}
-
-
-		/*
-		 * CROP (Aspect Ratio) Section
-		 */
-		if ((empty($crop[0]) === true) || (is_numeric($crop[0]) === false)) {
-			$crop[0] = $crop[1];
-		} 
-		elseif ((empty($crop[1]) === true) || (is_numeric($crop[1]) === false)) {
-			$crop[1] = $crop[0];
-		}
-
-		$ratio = array(0 => $width / $height, 1 => $crop[0] / $crop[1]);
-
-		if ($ratio[0] > $ratio[1]) {
-			$width = $height * $ratio[1];
-			$x = (imagesx($this->image_context) - $width) / 2;
-		}
-		elseif ($ratio[0] < $ratio[1]) {
-			$height = $width / $ratio[1];
-			$y = (imagesy($this->image_context) - $height) / 2;
-		}
-
-		/*
-		 * Resize Section
-		 */
-		if ((empty($size[0]) === true) || (is_numeric($size[0]) === false)) {
-			$size[0] = round($size[1] * $width / $height);
-		} else if ((empty($size[1]) === true) || (is_numeric($size[1]) === false)) {
-			$size[1] = round($size[0] * $height / $width);
-		}
-
-		$result = ImageCreateTrueColor($size[0], $size[1]);
-
-		if ( is_resource( $result ) ) {
-
-			ImageSaveAlpha( $result, true );
-			ImageAlphaBlending( $result, true );
-			ImageFill( $result, 0, 0, ImageColorAllocate( $result, 255, 255, 255 ) );
-			ImageCopyResampled( $result, $this->image_context, 0, 0, $x, $y, $size[0], $size[1], $width, $height );
-
-			ImageInterlace( $result, true );
-
-			// set the image 
-			$this->image_context = $result;
-
-			$this->width = $size[0];
-			$this->height = $size[1];
-
-			// return self
-			return $this;
-		}
-		else {
-			throw new CCException( "CCImage - Faild at croping the image." );
-		}
-	}
-
-
-	/**
-	 * get the average lumincance from the picture 
+	 * Get the average luminance of the image 
 	 * 
 	 * @param int 	$num_samples
+	 * @return int	( 1-255 )
+	 *
+	 * @thanks to: http://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
 	 */
-	public function luminance( $num_samples = 10 ) {
-
-		$img = $this->image_context;
-
-		$width = imagesx($img);
-		$height = imagesy($img);
-
-		$x_step = intval($width/$num_samples);
-		$y_step = intval($height/$num_samples);
+	public function get_luminance( $num_samples = 10 ) 
+	{
+		$x_step = (int) $this->width / $num_samples;
+		$y_step = (int) $this->height / $num_samples;
 
 		$total_lum = 0;
 		$sample_no = 1;
 
-		for ($x=0; $x<$width; $x+=$x_step) {
-			for ($y=0; $y<$height; $y+=$y_step) {
-
-				$rgb = imagecolorat($img, $x, $y);
+		for ( $x=0; $x<$this->width; $x+=$x_step ) 
+		{
+			for ( $y=0; $y<$this->height; $y+=$y_step ) 
+			{
+				$rgb = imagecolorat($this->image_context, $x, $y);
 				$r = ($rgb >> 16) & 0xFF;
 				$g = ($rgb >> 8) & 0xFF;
 				$b = $rgb & 0xFF;
-
-				// choose a simple luminance formula from here
-				// http://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+				
 				$lum = ($r+$r+$b+$g+$g+$g)/6;
 
 				$total_lum += $lum;
 				$sample_no++;
 			}
 		}
-		$avg_lum  = $total_lum/$sample_no;
-		return (int) $avg_lum;
+		
+		return (int) ( $total_lum / $sample_no );
 	}
 }
