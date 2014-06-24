@@ -64,13 +64,12 @@ class CCFile
 	}
 
 	/**
-	 * save a file
-	 * 
-	 * @param string 	$path
-	 * @param string		$content
-	 * @return bool
+	 * Create a directory 
+	 *
+	 * @param string 		$path
+	 * @return void
 	 */
-	public static function write( $path, $content ) 
+	public static function mkdir( $path )
 	{
 		if ( !is_dir( dirname( $path ) ) ) 
 		{
@@ -79,9 +78,22 @@ class CCFile
 				throw new CCException( "CCFile - could not create directory: ".dirname( $path ) );
 			}
 		}
+	}
+
+	/**
+	 * save a file
+	 * 
+	 * @param string 	$path
+	 * @param string		$content
+	 * @return bool
+	 */
+	public static function write( $path, $content ) 
+	{
+		static::mkdir( $path );
 
 		// if writing the file fails
-		if ( file_put_contents( $path, $content, LOCK_EX ) === false ) {
+		if ( file_put_contents( $path, $content, LOCK_EX ) === false ) 
+		{
 
 			if ( static::_can_print() ) 
 			{
