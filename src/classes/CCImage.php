@@ -279,6 +279,12 @@ class CCImage
 	{
 		$type = $this->set_type( $type );
 		
+		// create directory if not exists
+		if ( !is_null( $file ) )
+		{
+			CCFile::mkdir( $file );
+		}
+		
 		switch( $type ) 
 		{
 			// PNG images
