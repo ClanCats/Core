@@ -9,77 +9,175 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class CCStorage {
+class CCStorage 
+{
+	/**
+	 * Paths holder
+	 *
+	 * @var array
+	 */
+	protected static $paths = array();
+	
+	/**
+	 * URls holder
+	 *
+	 * @var array
+	 */
+	protected static $urls = array();
+	
+	/**
+	 * Path replacement params
+	 *
+	 * @var array
+	 */
+	protected static $params = array();
 
 	/**
-	 * get a storage path
+	 * Default holder name
+	 *
+	 * @var array
+	 */
+	protected static $default = 'main';
+
+	/**
+	 * Static init load the paths and urls from the configuration
+	 *
+	 * @return void
+	 */
+	public static function _init()
+	{
+		static::$paths = ClanCats::$config->get( 'storage.paths' );
+		static::$urls = ClanCats::$config->get( 'storage.urls' );
+	}
+	
+	/**
+	 * Add a replacement param
+	 *
+	 * @param string 		$key
+	 * @param string 		$value
+	 *
+	 * @return void
+	 */
+	public static function param( $key, $value )
+	{
+		static::$params[$key] = CCStr::clean_url( $value );
+	}
+	
+	/**
+	 * Adds a new storage directory 
+	 *
+	 * @param string 		$key
+	 * @param string 		$path
+	 * @param string 		$url
+	 * 
+	 * @return void
+	 */
+	public static function add( $key, $path, $url = null )
+	{
+		static::$paths[$key] = $path;
+		
+		if ( !is_null( $url ) )
+		{
+			static::$urls[$key] = $url;
+		}
+	}
+	
+	/**
+	 * Prepares a file with the parameters
+	 *
+	 * @param string 		$file
+	 * @return $file
+	 */
+	public static function file( $file )
+	{
+		$params = array_merge( static::$params, array(
+			'time' => time(),
+			'fingerprint' => \CCSession::fingerprint(),
+			'random' => CCStr::random(),
+		));
+		
+		foreach( $params as $param => $value )
+		{
+			$file = str_replace( ':'.$param, $value, $file );
+		}
+		
+		return $file;
+	}
+	
+	/**
+	 * Get a storage path ( absolute )
 	 *
 	 * @param string		$file
 	 * @param string		$key
 	 * @return string
 	 */
-	public static function path( $file = null, $key = null ) {
-		
+	public static function path( $file = null, $key = null ) 
+	{
 		// get the storage key
-		if ( is_null( $key ) ) {
-			$key = ClanCats::$config->get( 'storage.default' );
+		if ( is_null( $key ) ) 
+		{
+			$key = static::$default;
 		}
-		
-		// get aviable storage paths
-		$paths = ClanCats::$config->get( 'storage.paths' );
-		
+
 		// check if path exists
-		if ( !array_key_exists( $key, $paths ) ) {
+		if ( !isset( static::$paths[$key] ) ) 
+		{
 			throw new CCException( 'CCStorage - use of undefined storage path '.$key.'.' );
 		}
+			
+		if ( strpos( $file, ':' ) )
+		{
+			$file = static::file( $file );
+		}
 		
-		return $paths[$key].$file;
+		return static::$paths[$key].$file;
 	}
-	
+
 	/**
-	 * get the public url to a file if aviable
+	 * Get the public url to a file if available
 	 *
 	 * @param string		$file
 	 * @param string		$key
 	 * @return string
 	 */
-	public static function url( $file = null, $key = null ) {
-		
+	public static function url( $file = null, $key = null ) 
+	{
 		// get the storage key
-		if ( is_null( $key ) ) {
-			$key = ClanCats::$config->get( 'storage.default' );
+		if ( is_null( $key ) ) 
+		{
+			$key = static::$default;
 		}
-		
-		// get aviable storage urls
-		$paths = ClanCats::$config->get( 'storage.urls' );
-		
-		// check if url exists
-		if ( !array_key_exists( $key, $paths ) ) {
+
+		// check if path exists
+		if ( !isset( static::$urls[$key] ) ) 
+		{
 			throw new CCException( 'CCStorage - use of undefined public url '.$key.'.' );
 		}
-		
-		return CCUrl::to( $paths[$key].$file );
+
+		return CCUrl::to( static::$urls[$key].$file );
 	}
-	
+
 	/**
-	 * write a file to the storage
+	 * Write a file to the storage
  	 *
 	 * @param string		$file
 	 * @param string		$key
 	 * @return string
 	 */
-	public static function write( $file, $content, $key = null ) {
+	public static function write( $file, $content, $key = null ) 
+	{
 		return CCFile::write( static::path( $file, $key ), $content );
 	}
-	
+
 	/**
-	 * write a file to the storage
+	 * Write a file to the storage
 	 *
 	 * @param string		$file
 	 * @param string		$key
 	 * @return string
 	 */
-	public static function touch( $file, $key = null ) {
+	public static function touch( $file, $key = null ) 
+	{
 		return static::write( $file, '', $key );
 	}
 }

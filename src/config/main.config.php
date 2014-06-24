@@ -127,12 +127,9 @@ return array(
 	 */
 	'storage' => array(
 		
-		// what is the default storage holder
-		'default' => 'main',
-		
 		// define the aviable storage paths
 		'paths' => array(
-			'main'		=> CCFPATH.'storage/',
+			'main'		=> CCROOT.'storage/',
 			'public'		=> PUBLICPATH.'storage/',
 		),
 		/*
