@@ -80,14 +80,14 @@ class CCDate
 	/**
 	 * format the date
 	 */
-	public static function format( $time, $format = 'j F Y \a\t G:i' ) {
+	public static function format( $time, $format = 'd.m.Y  G:i' ) {
 		return date( $format, $time );  
 	}
 	
 	/**
 	 * format a date without time
 	 */
-	public static function format_date( $date, $format = 'j F Y' ) {
+	public static function format_date( $date, $format = 'd.m.Y' ) {
 		return date( $format, strtotime( $date ) ); 
 	}
 	
