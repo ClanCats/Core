@@ -1,8 +1,4 @@
-<?php 
-/**
- * ClanCats deutsch
- */
-return array(
+<?php return array(
 
 	/*
 	 * CCDate
