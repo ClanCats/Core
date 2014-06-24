@@ -119,6 +119,7 @@ class CCUrl
 			$uri = static::$path_offset.$uri;
 		}
 		
+		
 		// Try to replace parameters in the uri and remove them from
 		// the array so we can append them as get parameters
 		foreach( $params as $key => $value )
@@ -128,13 +129,13 @@ class CCUrl
 			{
 				$param_provider_key = substr( $value, 1 );
 				
-				if ( array_key_exists( $param_provider_key, static::$parameter_provider ) )
-				{
-					$params = array_merge( $params, call_user_func( static::$parameter_provider[$param_provider_key] ) );
-				}
-				
 				// remove the parameter provider from the parameter list
 				unset( $params[$key] );
+				
+				if ( array_key_exists( $param_provider_key, static::$parameter_provider ) )
+				{
+					$params = $params + call_user_func( static::$parameter_provider[$param_provider_key] );
+				}
 			}
 			
 			// replace the parameters
