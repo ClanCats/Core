@@ -43,6 +43,7 @@ return array(
 	'CCValidator'			=> 'CCValidator'.EXT,
 	'CCFileValidator'		=> 'CCFileValidator'.EXT,
 	'CCImage'				=> 'CCImage'.EXT,
+	'CCColor'				=> 'CCColor'.EXT,
 	'CCLang'					=> 'CCLang'.EXT,
 	'CCHTTP'					=> 'CCHTTP'.EXT,
 	'CCDataObject'			=> 'CCDataObject'.EXT,
