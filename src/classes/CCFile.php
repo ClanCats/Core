@@ -17,7 +17,7 @@ class CCFile
 	 * @var bool
 	 */
 	protected static $_print_infos = false;
-	
+
 	/**
 	 * Enable the print infos
 	 *
@@ -27,7 +27,7 @@ class CCFile
 	{
 		static::$_print_infos = true;
 	}
-	
+
 	/**
 	 * Enable the print infos
 	 *
@@ -37,7 +37,7 @@ class CCFile
 	{
 		static::$_print_infos = false;
 	}
-	
+
 	/**
 	 * Is CCFile able to print information
 	 *
@@ -47,7 +47,7 @@ class CCFile
 	{
 		return ( CLI && static::$_print_infos ) ? true : false;
 	}
-	
+
 	/**
 	 * get a file 
 	 *
@@ -62,7 +62,7 @@ class CCFile
 		}
 		return false;
 	}
-	
+
 	/**
 	 * save a file
 	 * 
@@ -79,27 +79,27 @@ class CCFile
 				throw new CCException( "CCFile - could not create directory: ".dirname( $path ) );
 			}
 		}
-		
+
 		// if writing the file fails
 		if ( file_put_contents( $path, $content, LOCK_EX ) === false ) {
-			
+
 			if ( static::_can_print() ) 
 			{
 				CCCli::line( CCCli::color( 'failure', 'red' ).' creating '.$path );
 			}
-			
+
 			return false;
 		}
-		
+
 		// everything went good
 		if ( static::_can_print() ) 
 		{
 			CCCli::line( CCCli::color( 'created', 'green' ).' '.$path );
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * append to a file
 	 * 
@@ -118,7 +118,7 @@ class CCFile
 		}
 		return file_put_contents( $path, $content, LOCK_EX | FILE_APPEND );
 	}
-	
+
 	/**
 	 * Delete a file
 	 * This function is going to remove a file from your filesystem
@@ -129,12 +129,12 @@ class CCFile
 	public static function delete( $path ) 
 	{
 		$success = false;
-		
+
 		if ( file_exists( $path ) ) 
 		{
 			$success = unlink( $path );
 		}
-		
+
 		if ( static::_can_print() ) 
 		{
 			if ( $success )
@@ -146,10 +146,10 @@ class CCFile
 				CCCli::line( CCCli::color( 'removing failure', 'red' ).' '.$path );
 			}
 		}
-		
+
 		return $success;
 	}
-	
+
 	/**
 	 * Returns a simple list of files using glob
 	 *
@@ -160,7 +160,7 @@ class CCFile
 	{
 		return glob( $path );
 	}
-	
+
 	/**
 	 * get the path of an uplaoded file
 	 *
@@ -168,14 +168,10 @@ class CCFile
 	 * @return string|false
 	 */
 	public static function upload_path( $key ) 
-	{
-		if ( isset( ClanCats::$FILES[$key] ) ) {
-			return ClanCats::$FILES[$key]['tmp_name'];
-		}
-		
-		return false;
+	{	
+		return CCArr::get( 'tmp_name', CCIn::file( $key, array( 'tmp_name' => false ) ) );
 	}
-	
+
 	/**
 	 * Move user uploads to another dir
 	 *
@@ -185,11 +181,11 @@ class CCFile
 	 */
 	public static function upload( $key, $path ) 
 	{
-		
+
 		if ( $file = static::upload_path( $key ) ) {
 			return move_uploaded_file( $file, $path );
 		}
-		
+
 		return false;
 	}
 }
