@@ -19,9 +19,9 @@ class Transporter_Sendmail extends Transporter_PHPMailer
 	 */
 	protected function setup_driver( &$driver )
 	{
-		if ( !is_null( $this->conifg->path ) )
+		if ( !is_null( $this->config->path ) )
 		{
-			$driver->Sendmail = $this->conifg->path;
+			$driver->Sendmail = $this->config->path;
 		}
 	}
 }
