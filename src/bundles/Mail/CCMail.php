@@ -17,9 +17,9 @@ class CCMail
 	 * @param string 			$transporter
 	 * @return CCMail
 	 */
-	public static function factory( $transporter = null ) 
+	public static function create( $transporter = null, $config = null ) 
 	{
-		return new static( $transporter );
+		return new static( $transporter, $config );
 	}
 	
 	/**
@@ -32,43 +32,48 @@ class CCMail
 	/*
 	 * is this an plaintext mail
 	 */ 
-	public $is_plaintext = false;
+	protected $is_plaintext = false;
 	
 	/*
 	 * send email to
 	 */
-	public $to = array();
+	protected $to = array();
 	
 	/*
 	 * send email bcc
 	 */
-	public $bcc = array();
+	protected $bcc = array();
+	
+	/*
+	 * send email bcc
+	 */
+	protected $ccc = array();
 	
 	/*
 	 * email from
 	 */
-	public $from = array();
+	protected $from = array();
 	
 	/*
 	 * email from
 	 */
-	public $attachments = array();
+	protected $attachments = array();
 	
 	/*
 	 * subject 
 	 */ 
-	public $subject = "";
+	protected $subject = "";
 	
 	/* 
 	 * content
 	 */
-	public $message = "";
-	public $plaintext = "";
+	protected $message = "";
+	protected $plaintext = "";
 	
 	/*
 	 * the theme
 	 */
-	public $theme = null;
+	protected $layout = null;
 	
 	/**
 	 * Mail constructor
@@ -76,9 +81,9 @@ class CCMail
 	 * @param string			$transporter
 	 * @return void
 	 */
-	public function __construct( $transporter ) 
+	public function __construct( $transporter = null, $config = null ) 
 	{
-		$this->transporter = Transporter::create( $transporter );
+		$this->transporter = Transporter::create( $transporter, $config );
 	}
 	
 	/**
@@ -163,9 +168,85 @@ class CCMail
 	}
 	
 	/**
+	 * Prepare the message for sending to the transport
+	 *
+	 * @return void 
+	 */
+	public function send()
+	{
+		// load the mail configuration
+		$config = \CCConfig::create( 'mail' );
+		
+		// when mailing is disabled do nothing just return
+		if ( $config->disabled === true )
+		{
+			return;
+		}
+		
+		// we cannot send a mail without recipients
+		if ( empty( $this->to ) )
+		{
+			throw new Exception( "Cannot send mail without recipients." );
+		}
+		
+		// is a catch all enabled?
+		if ( $config->get( 'catch_all.enabled' ) === true )
+		{
+			// to be able to modify the mail without removing
+			// the user options we have to clone the mail
+			$mail = clone $this;
+			
+			// we have to remove all recipients ( to, ccc, bcc ) and set them
+			// to our catch all recipients
+			$mail->to = array();
+			$mail->ccc = array();
+			$mail->bcc = array();
+			
+			$mail->to( $config->get( 'catch_all.addresses' ) );
+			
+			// transport the cloned mail
+			return $mail->transport( $config->get( 'catch_all.transporter' ) );
+		}
+		
+		// transport the mail
+		$this->transport();
+	}
+	
+	/**
+	 * Transport the message
+	 *
+	 * @param string 		$transport 		Use a diffrent transporter
+	 * @return void
+	 */
+	protected function transport( $transporter = null )
+	{
+		if ( !is_null( $transporter ) )
+		{
+			$transporter = Transporter::create( $transporter );
+		}
+		else
+		{
+			$transporter = $this->transporter;
+		}
+		
+		// pass the current mail to the transporter
+		$transporter->send( $this );
+	}
+	
+	/**
+	 * Export the mail data 
+	 *
+	 * @return array
+	 */	
+	public function export_data()
+	{
+		$data = get_object_vars( $this ); unset( $data['transporter'] );return $data;
+	}
+	
+	/**
 	 * send that email
 	 */
-	public function send() 
+	public function send_old() 
 	{
 		// fix to 
 		if ( !is_array( $this->to ) ) {

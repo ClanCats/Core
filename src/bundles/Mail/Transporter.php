@@ -80,6 +80,13 @@ class Transporter
 	protected $config = null;
 	
 	/**
+	 * The transporter driver
+	 *
+	 * @var Transporter_Driver
+	 */
+	protected $driver = null;
+	
+	/**
 	 * Transporter instance constructor
 	 *
 	 * @param string 		$name
@@ -118,6 +125,24 @@ class Transporter
 		
 		
 		// load the driver
+		$driver_class = __NAMESPACE__.'\\Transporter_'.ucfirst( $this->config->driver );
 		
+		if ( !class_exists( $driver_class ) )
+		{
+			throw new Exception( "Invalid mail driver '".$this->config->driver."'" );
+		}
+		
+		$this->driver = new $driver_class( $this->config );
+	}
+	
+	/**
+	 * Send the mail out
+	 *
+	 * @param CCMail 		$mail
+	 * @return void
+	 */
+	public function send( CCMail $mail )
+	{
+		$this->driver->send( $mail );
 	}
 }
