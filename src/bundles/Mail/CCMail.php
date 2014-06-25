@@ -118,7 +118,7 @@ class CCMail
 	}
 	
 	/**
-	 * Add an recipient
+	 * Add a recipient
 	 *
 	 *     $mail->to( 'mario@foobar.com' );
 	 *     $mail->to( 'some@email.com', 'Jennifer Rostock' )
@@ -213,13 +213,47 @@ class CCMail
 	}
 	
 	/**
-	 * set email from
+	 * Set the from email and name
 	 *
 	 * @param string 		$mail
 	 * @param string 		$name
+	 * @return self
 	 */
-	public function from( $mail, $name = null ) {
-		$this->from = array( 'mail' => $mail, 'name' => $name );
+	public function from( $email, $name = null ) 
+	{
+		$this->from = array( $email, $name ); return $this;
+	}
+	
+	/**
+	 * Add a recipient
+	 *
+	 *     $mail->attachment( '/path/to/my/file.zip' );
+	 *     $mail->attachment( '/some/image.jpg', 'your_photo.jpg' );
+	 *     $mail->attachment( array( '/some/other/image.jpg' => 'wallpaper.jpg' ) );
+	 * 
+	 * @param string 		$path		The path to your file
+	 * @param string 		$name
+	 * @return self
+	 */
+	public function attachment( $path, $name )
+	{
+		if ( !is_array( $path ) ) 
+		{
+			$path = array( $path => $name );
+		}
+		
+		foreach( $path as $file => $name )
+		{
+			if ( is_numeric( $file ) && is_string( $name ) )
+			{
+				$this->attachments[$name] = null;
+			}
+			else
+			{
+				$this->attachments[$file] = $name;
+			}
+		}
+		
 		return $this;
 	}
 	
@@ -228,7 +262,8 @@ class CCMail
 	 *
 	 * @param string 	$subject
 	 */
-	public function subject( $subject ) {
+	public function subject( $subject ) 
+	{
 		$this->subject = $subject;
 		return $this;
 	}

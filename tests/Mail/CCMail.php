@@ -201,4 +201,62 @@ class Test_Mail_CCMail extends \PHPUnit_Framework_TestCase
 			'email4@example.com' => 'email4'
 		));
 	}
+	
+	/**
+	 * CCMail::from tests
+	 */
+	public function test_from()
+	{
+		$mail = CCMail::create();
+		
+		$mail->to( 'info@example.com' );
+		
+		$mail->from( 'email1@example.com' );
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		list( $email, $name ) = $mail_data['from'];
+		
+		$this->assertEquals( 'email1@example.com', $email );
+		$this->assertEquals( null, $name );
+		
+		// again with name
+		$mail->from( 'email1@example.com', 'Foo' );
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		list( $email, $name ) = $mail_data['from'];
+		
+		$this->assertEquals( 'email1@example.com', $email );
+		$this->assertEquals( 'Foo', $name );
+	}
+	
+	/**
+	 * CCMail::cc tests
+	 */
+	public function test_attachment()
+	{
+		$mail = CCMail::create();
+		
+		$mail->to( 'info@example.com' );
+		
+		$mail->attachment( 'some/image.jpg' );
+		$mail->attachment( 'some/other/image.jpg', 'my_image.jpg' );
+		$mail->attachment( array( 'file.zip', '/last/file.zip' => 'compressed.zip' ) );
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		$this->assertEquals( $mail_data['attachments'], array(
+			'some/image.jpg' => null,
+			'some/other/image.jpg' => 'my_image.jpg',
+			'file.zip' => null,
+			'/last/file.zip' => 'compressed.zip'
+		));
+	}
 }
