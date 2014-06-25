@@ -115,6 +115,9 @@ class CCMail
 		{
 			$this->layout = \CCView::create( $layout );
 		}
+		
+		// fill the from with the defaults
+		$this->from = \CCConfig::create( 'mail' )->from;
 	}
 	
 	/**
@@ -291,6 +294,28 @@ class CCMail
 	}
 	
 	/**
+	 * Set a view as message
+	 *
+	 * @param string 		$view
+	 * @return self
+	 */
+	public function view( $view )
+	{
+		$this->message = \CCView::create( $view ); return $this;
+	}
+	
+	/** 
+	 * Is the current message just plaintext
+	 *
+	 * @param bool		$is
+	 * @return self
+	 */
+	public function is_plaintext( $is = true )
+	{
+		$this->is_plaintext = $is;
+	}
+	
+	/**
 	 * Render the message
 	 *
 	 * @return string
@@ -416,15 +441,6 @@ class CCMail
 	 */
 	public function send_old() 
 	{
-		// fix to 
-		if ( !is_array( $this->to ) ) {
-			$this->to( $this->to );
-		}
-		
-		// fix from
-		if ( !is_array( $this->from ) ) {
-			$this->from( $this->from );
-		}
 		
 		// create new phpmailer instance
 		$driver = new \PHPMailer\PHPMailer();

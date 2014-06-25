@@ -55,10 +55,7 @@ return array(
 	),
 
 	/*
-	 * mail defaults
+	 * Default from email and name
 	 */ 
-	'defaults' => array(
-		'from_mail' 		=> 'info@example.com',
-		'from_name' 		=> ClanCats::runtime( 'name' ),
-	),
+	'from' => array( 'info@example.com', ClanCats::runtime( 'name' ) ),
 );

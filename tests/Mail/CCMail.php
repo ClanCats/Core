@@ -313,4 +313,40 @@ class Test_Mail_CCMail extends \PHPUnit_Framework_TestCase
 		
 		$this->assertEquals( 'CCMail:some message', $mail_data['message'] );
 	}
+	
+	/**
+	 * CCMail::view tests
+	 */
+	public function test_view()
+	{
+		$mail = CCMail::create();
+		
+		$mail->to( 'info@example.com' );
+		
+		$mail->view( 'CCUnit::foo' );
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		$this->assertEquals( 'CCMail:FooBar', $mail_data['message'] );
+	}
+	
+	/**
+	 * CCMail::is_plaintext tests
+	 */
+	public function test_is_plaintext()
+	{
+		$mail = CCMail::create();
+		
+		$mail->to( 'info@example.com' );
+		
+		$mail->is_plaintext();
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		$this->assertEquals( true, $mail_data['is_plaintext'] );
+	}
 }

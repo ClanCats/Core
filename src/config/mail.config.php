@@ -16,6 +16,9 @@ return array(
 			
 			// default is diver is unsing sendmail
 			'driver' => 'sendmail',
+			
+			// the sendmail path
+			'path' => '/usr/sbin/sendmail',
 		),
 		
 		// This is an example using the smtp diver
@@ -26,9 +29,14 @@ return array(
 		// 	// in this example we use the gmail
 		// 	// smtp servers.
 		// 	'host'			=> 'smtp.gmail.com',
+		//	
+		//	// is authentication reqired?
 		// 	'auth' 			=> true,
+		//	
+		//	// your smtp authentication data
 		// 	'user'			=> 'example@gmail.com',
 		// 	'pass'			=> '<yourpassword>',
+		//	
 		// 	'encryption'		=> 'ssl',
 		// 	'port'			=> 465,
 		// ), 
@@ -68,10 +76,7 @@ return array(
 	),
 
 	/*
-	 * mail defaults
+	 * Default from email and name
 	 */ 
-	'defaults' => array(
-		'from_mail' 		=> 'info@example.com',
-		'from_name' 		=> ClanCats::runtime( 'name' ),
-	),
+	'from' => array( 'info@example.com', ClanCats::runtime( 'name' ) ),
 );
