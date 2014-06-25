@@ -136,7 +136,7 @@ class Transporter
 	}
 	
 	/**
-	 * Send the mail out
+	 * Forward the mail to the driver
 	 *
 	 * @param CCMail 		$mail
 	 * @return void

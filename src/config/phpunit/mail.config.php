@@ -31,7 +31,7 @@ return array(
 	 * You can add a layout view, your html mail message will be available
 	 * as $content in the layout file.
 	 */
-	'layout'	 => null,
+	'layout'	 => 'CCUnit::mail',
 
 	/*
 	 * catch all emails and send them to another address.

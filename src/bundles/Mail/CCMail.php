@@ -29,51 +29,75 @@ class CCMail
 	 */
 	protected $transporter = null;
 	
-	/*
-	 * is this an plaintext mail
+	/**
+	 * Is this a plaintext email
+	 *
+	 * @var bool
 	 */ 
 	protected $is_plaintext = false;
 	
-	/*
-	 * send email to
+	/**
+	 * Mail recipients
+	 *
+	 * @var array
 	 */
 	protected $to = array();
 	
-	/*
-	 * send email bcc
+	/**
+	 * Blind carbon copies
+	 *
+	 * @var array
 	 */
 	protected $bcc = array();
 	
-	/*
-	 * send email bcc
+	/**
+	 * Carbon copies
+	 *
+	 * @var array
 	 */
-	protected $ccc = array();
+	protected $cc = array();
 	
-	/*
-	 * email from
+	/**
+	 * From email and name
+	 *
+	 * @var array[email => name]
 	 */
 	protected $from = array();
 	
-	/*
-	 * email from
+	/**
+	 * Attachemnts
+	 *
+	 * @var array
 	 */
 	protected $attachments = array();
 	
-	/*
-	 * subject 
+	/**
+	 * Mail subject
+	 *
+	 * @var string
 	 */ 
 	protected $subject = "";
 	
-	/* 
-	 * content
+	/**
+	 * Plaintext message
+	 *
+	 * @var string
 	 */
-	protected $message = "";
-	protected $plaintext = "";
+	protected $plaintext = null;
 	
-	/*
-	 * the theme
+	/** 
+	 * HTML Message
+	 *
+	 * @var string|CCView
 	 */
-	protected $layout = null;
+	public $message = "";
+	
+	/**
+	 * Mail layout view
+	 *
+	 * @var CCView
+	 */
+	public $layout = null;
 	
 	/**
 	 * Mail constructor
@@ -83,7 +107,14 @@ class CCMail
 	 */
 	public function __construct( $transporter = null, $config = null ) 
 	{
+		// prepare the transporter
 		$this->transporter = Transporter::create( $transporter, $config );
+		
+		// prepare the layout if we have one
+		if ( $layout = \CCConfig::create( 'mail' )->layout )
+		{
+			$this->layout = \CCView::create( $layout );
+		}
 	}
 	
 	/**
@@ -135,35 +166,40 @@ class CCMail
 	}
 	
 	/**
-	 * render the mail
+	 * Render the message
+	 *
+	 * @return string
 	 */
-	public function render() {
-		
+	public function render() 
+	{	
 		$message = $this->message;
 		
+		reset( $this->to );
+		
+		// default view parameters for the message and the layout
+		$params = array(
+			'mail' => $this,
+			'to_email' => key($this->to),
+			'to_name' => $this->to[ key($this->to) ],
+		);
+		
 		// if the message is a view
-		if ( $message instanceof CCView ) {
-			
-			// first recipient
-			reset( $this->to );
-			$message->to_mail = key($this->to);
-			$message->to_name = $this->to[ key($this->to) ];
-			
-			$message->render();
+		if ( $message instanceof \CCView ) 
+		{	
+			$message->_data = $message->_data + $params;
+			$message = $message->render();
 		}
 		
-		if ( $this->theme ) {
-			$this->theme->content = $message;
-			$this->theme->mail = $this;
+		// prepare the layout
+		if ( $this->layout ) 
+		{
+			$this->layout->content = $message;
+			$this->layout->_data = $this->layout->_data + $params;
 			
-			// first recipient
-			reset( $this->to );
-			$this->theme->to_mail = key($this->to);
-			$this->theme->to_name = $this->to[ key($this->to) ];
-			
-			$message = $this->theme->render();
+			$message = $this->layout->render();
 		}
 		
+		// return the renderd message
 		return $message;
 	}
 	
@@ -199,7 +235,7 @@ class CCMail
 			// we have to remove all recipients ( to, ccc, bcc ) and set them
 			// to our catch all recipients
 			$mail->to = array();
-			$mail->ccc = array();
+			$mail->cc = array();
 			$mail->bcc = array();
 			
 			$mail->to( $config->get( 'catch_all.addresses' ) );
@@ -240,7 +276,14 @@ class CCMail
 	 */	
 	public function export_data()
 	{
-		$data = get_object_vars( $this ); unset( $data['transporter'] );return $data;
+		$data = get_object_vars( $this ); 
+		
+		// render the message
+		$data['message'] = $this->render();
+		
+		unset( $data['transporter'] );
+		
+		return $data;
 	}
 	
 	/**

@@ -28,6 +28,9 @@ class Test_Mail_CCMail extends \PHPUnit_Framework_TestCase
 		$mail = new CCMail( 'alias' );
 		
 		$mail = new CCMail( 'woops', array( 'driver' => 'array' ) );
+		
+		// do we have a layout
+		$this->assertTrue( $mail->layout instanceof CCView );
 	}
 	
 	/**
@@ -51,8 +54,14 @@ class Test_Mail_CCMail extends \PHPUnit_Framework_TestCase
 		$mail = CCMail::create();
 		
 		$mail->to( 'info@example.com' );
+		$mail->message = "foo my message";
 		
 		$mail->send();
+		
+		// check message
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		$this->assertEquals( 'CCMail:foo my message', $mail_data['message'] );
 		
 		// count should go up now
 		$this->assertEquals( $send_mails_count+1, count( Mail\Transporter_Array::$store ) );
