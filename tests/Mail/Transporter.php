@@ -56,4 +56,14 @@ class Test_Mail_Transporter extends \PHPUnit_Framework_TestCase
 	{
 		$transporter = Transporter::create( 'invalid' );
 	}
+	
+	/**
+	 * Transporter::create tests
+	 *
+	 * @expectedException Mail\Exception
+	 */
+	public function test_create_invalid_driver()
+	{
+		$transporter = Transporter::create( 'custom', array( 'driver' => 'invalid' ) );
+	}
 }
