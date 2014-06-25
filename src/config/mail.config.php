@@ -24,7 +24,7 @@ return array(
 		// This is an example using the smtp diver
 		// 'main' => array(
 		// 	
-		// 	'diver' => 'smtp',
+		// 	'driver' => 'smtp',
 		// 	
 		// 	// in this example we use the gmail
 		// 	// smtp servers.
