@@ -568,6 +568,9 @@ class PHPMailer
     public function __construct($exceptions = false)
     {
         $this->exceptions = ($exceptions == true);
+        // @CCF Fix
+        return;
+        
         //Make sure our autoloader is loaded
         if (version_compare(PHP_VERSION, '5.1.2', '>=')) {
             $autoload = spl_autoload_functions();
@@ -3400,7 +3403,7 @@ class PHPMailer
  * PHPMailer exception handler
  * @package PHPMailer
  */
-class phpmailerException extends Exception
+class phpmailerException extends \Exception
 {
     /**
      * Prettify error message output
