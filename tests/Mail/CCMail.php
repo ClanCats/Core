@@ -259,4 +259,58 @@ class Test_Mail_CCMail extends \PHPUnit_Framework_TestCase
 			'/last/file.zip' => 'compressed.zip'
 		));
 	}
+	
+	/**
+	 * CCMail::subject tests
+	 */
+	public function test_subject()
+	{
+		$mail = CCMail::create();
+		
+		$mail->to( 'info@example.com' );
+		
+		$mail->subject( 'phpunit subject' );
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		$this->assertEquals( 'phpunit subject', $mail_data['subject'] );
+	}
+	
+	/**
+	 * CCMail::plaintext tests
+	 */
+	public function test_plaintext()
+	{
+		$mail = CCMail::create();
+		
+		$mail->to( 'info@example.com' );
+		
+		$mail->plaintext( 'some plain message' );
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		$this->assertEquals( 'some plain message', $mail_data['plaintext'] );
+	}
+	
+	/**
+	 * CCMail::message tests
+	 */
+	public function test_message()
+	{
+		$mail = CCMail::create();
+		
+		$mail->to( 'info@example.com' );
+		
+		$mail->message( 'some message' );
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		$this->assertEquals( 'CCMail:some message', $mail_data['message'] );
+	}
 }

@@ -258,14 +258,36 @@ class CCMail
 	}
 	
 	/**
-	 * set subject
+	 * Set the mail subject
 	 *
-	 * @param string 	$subject
+	 * @param string 		$subject
+	 * @return self
 	 */
 	public function subject( $subject ) 
 	{
-		$this->subject = $subject;
-		return $this;
+		$this->subject = $subject; return $this;
+	}
+	
+	/**
+	 * Set the mail plaintext message
+	 *
+	 * @param string 		$plaintext
+	 * @return self
+	 */
+	public function plaintext( $plaintext ) 
+	{
+		$this->plaintext = $plaintext; return $this;
+	}
+	
+	/**
+	 * Set the mail message
+	 *
+	 * @param string 		$message
+	 * @return self
+	 */
+	public function message( $message )
+	{
+		$this->message = $message; return $this;
 	}
 	
 	/**
