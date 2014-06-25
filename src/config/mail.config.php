@@ -56,6 +56,9 @@ return array(
 		
 		// to what addresses should the mail be send instead.
 		'addresses'	=> array(),
+		
+		// with what transporter should the mails 
+		'transporter' => null,
 	),
 
 	/*
@@ -69,8 +72,6 @@ return array(
 	 */ 
 	'defaults' => array(
 		'from_mail' 		=> 'info@example.com',
-		'from_name' 		=> 'CCEmail',
-
-		'subject'		=> '',
+		'from_name' 		=> ClanCats::runtime( 'name' ),
 	),
 );

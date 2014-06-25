@@ -64,4 +64,60 @@ class Transporter
 			unset( static::$_instances[$name] );
 		}
 	}
+	
+	/**
+	 * The transporter handler name
+	 *
+	 * @var string
+	 */
+	protected $name = null;
+	
+	/**
+	 * The transporter config array
+	 *
+	 * @var string
+	 */
+	protected $config = null;
+	
+	/**
+	 * Transporter instance constructor
+	 *
+	 * @param string 		$name
+	 * @param array 			$config
+	 * @return void
+	 */
+	public function __construct( $name, $config = null ) 
+	{	
+		if ( is_null( $config ) )
+		{
+			$config = \CCConfig::create( 'mail' )->get( 'transporter.'.$name );
+			
+			// check for an alias. If you set a string 
+			// in your config file we use the config 
+			// with the passed key.
+			if ( is_string( $config ) ) 
+			{
+				$config = \CCConfig::create( 'mail' )->get( 'transporter.'.$config );
+			}
+		}
+		
+		if ( !is_array( $config ) )
+		{
+			throw new Exception( "Auth\\Handler::create - Invalid auth handler (".$name.")." );
+		}
+		
+		// also don't forget to set the name manager name becaue we need him later.
+		$this->name = $name;
+		
+		// assign defaults and create the configuration object
+		$this->config = \CCDataObject::assign( \CCArr::merge( array(
+			
+			// What driver should be used
+			'driver' => 'sendmail',
+		), $config ));
+		
+		
+		// load the driver
+		
+	}
 }
