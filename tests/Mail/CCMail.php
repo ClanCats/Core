@@ -128,4 +128,77 @@ class Test_Mail_CCMail extends \PHPUnit_Framework_TestCase
 		$mail = CCMail::create();
 		$mail->send();
 	}
+	
+	/**
+	 * CCMail::to tests
+	 */
+	public function test_to()
+	{
+		$mail = CCMail::create();
+		
+		$mail->to( 'email2@example.com' );
+		$mail->to( 'email1@example.com', 'name1' );
+		$mail->to( array( 'email3@example.com', 'email4@example.com' => 'email4' ) );
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		$this->assertEquals( $mail_data['to'], array(
+			'email2@example.com' => null,
+			'email1@example.com' => 'name1',
+			'email3@example.com' => null,
+			'email4@example.com' => 'email4'
+		));
+	}
+	
+	/**
+	 * CCMail::bcc tests
+	 */
+	public function test_bcc()
+	{
+		$mail = CCMail::create();
+		
+		$mail->to( 'info@example.com' );
+		
+		$mail->bcc( 'email2@example.com' );
+		$mail->bcc( 'email1@example.com', 'name1' );
+		$mail->bcc( array( 'email3@example.com', 'email4@example.com' => 'email4' ) );
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		$this->assertEquals( $mail_data['bcc'], array(
+			'email2@example.com' => null,
+			'email1@example.com' => 'name1',
+			'email3@example.com' => null,
+			'email4@example.com' => 'email4'
+		));
+	}
+	
+	/**
+	 * CCMail::cc tests
+	 */
+	public function test_cc()
+	{
+		$mail = CCMail::create();
+		
+		$mail->to( 'info@example.com' );
+		
+		$mail->cc( 'email2@example.com' );
+		$mail->cc( 'email1@example.com', 'name1' );
+		$mail->cc( array( 'email3@example.com', 'email4@example.com' => 'email4' ) );
+		
+		$mail->send();
+		
+		$mail_data = CCArr::last( Mail\Transporter_Array::$store );
+		
+		$this->assertEquals( $mail_data['cc'], array(
+			'email2@example.com' => null,
+			'email1@example.com' => 'name1',
+			'email3@example.com' => null,
+			'email4@example.com' => 'email4'
+		));
+	}
 }

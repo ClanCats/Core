@@ -118,17 +118,96 @@ class CCMail
 	}
 	
 	/**
-	 * add mail recipients
+	 * Add an recipient
 	 *
-	 * @param array 		$mail
+	 *     $mail->to( 'mario@foobar.com' );
+	 *     $mail->to( 'some@email.com', 'Jennifer Rostock' )
+	 *     $mail->to( array( 'some@emailaddress.com' => 'Han Solo' ) );
+	 * 
+	 * @param string 		$email
+	 * @param string 		$name
+	 * @return self
 	 */
-	public function to( $mail, $name = null ) {
-		
-		if ( !is_array( $mail ) ) {
-			$mail = array( $mail => $name );
+	public function to( $email, $name = null ) 
+	{	
+		if ( !is_array( $email ) ) 
+		{
+			$email = array( $email => $name );
 		}
 		
-		$this->to = array_merge( $this->to, $mail );
+		foreach( $email as $address => $name )
+		{
+			if ( is_numeric( $address ) && is_string( $name ) )
+			{
+				$this->to[$name] = null;
+			}
+			else
+			{
+				$this->to[$address] = $name;
+			}
+		}
+		
+		return $this;
+	}
+	
+	/**
+	 * Add Blind carbon copies
+	 * 
+	 * Works like the 'to' function.
+	 * 
+	 * @param string 		$email
+	 * @param string 		$name
+	 * @return self
+	 */
+	public function bcc( $email, $name = null ) 
+	{	
+		if ( !is_array( $email ) ) 
+		{
+			$email = array( $email => $name );
+		}
+		
+		foreach( $email as $address => $name )
+		{
+			if ( is_numeric( $address ) && is_string( $name ) )
+			{
+				$this->bcc[$name] = null;
+			}
+			else
+			{
+				$this->bcc[$address] = $name;
+			}
+		}
+		
+		return $this;
+	}
+	
+	/**
+	 * Add Carbon copies
+	 * 
+	 * Works like the 'to' function.
+	 * 
+	 * @param string 		$email
+	 * @param string 		$name
+	 * @return self
+	 */
+	public function cc( $email, $name = null ) 
+	{	
+		if ( !is_array( $email ) ) 
+		{
+			$email = array( $email => $name );
+		}
+		
+		foreach( $email as $address => $name )
+		{
+			if ( is_numeric( $address ) && is_string( $name ) )
+			{
+				$this->cc[$name] = null;
+			}
+			else
+			{
+				$this->cc[$address] = $name;
+			}
+		}
 		
 		return $this;
 	}
@@ -141,17 +220,6 @@ class CCMail
 	 */
 	public function from( $mail, $name = null ) {
 		$this->from = array( 'mail' => $mail, 'name' => $name );
-		return $this;
-	}
-	
-	/**
-	 * set email bcc
-	 *
-	 * @param string 		$mail
-	 * @param string 		$name
-	 */
-	public function bcc( $mail ) {
-		$this->bcc[] = $mail;
 		return $this;
 	}
 	
