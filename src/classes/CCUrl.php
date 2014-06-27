@@ -174,9 +174,18 @@ class CCUrl
 	public static function alias( $alias, $params = array(), $retain = false )
 	{
 		$route_params = array();
-
-		// slashes in aliases get appended as suffix
-		list( $alias, $suffix ) = explode( '/', $alias );
+		
+		// to handle the suffix after a slash in an alias define
+		$suffix = '';
+		
+		if ( strpos( $alias, '/' ) !== false )
+		{
+			// slashes in aliases get appended as suffix
+			list( $alias, $suffix ) = explode( '/', $alias );
+			
+			$suffix = '/'.$suffix;
+		}
+	
 
 		// get the parameters with the numeric keys so we can 
 		// pass them as route parameters like [any]-[num]-[num]/[any]/
@@ -188,7 +197,7 @@ class CCUrl
 			}
 		}
 
-		return CCUrl::to( CCRouter::alias( $alias, $route_params ).'/'.$suffix, $params, $retain );
+		return CCUrl::to( CCRouter::alias( $alias, $route_params ).$suffix, $params, $retain );
 	}
 
 	/**
