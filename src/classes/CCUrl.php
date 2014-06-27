@@ -175,6 +175,9 @@ class CCUrl
 	{
 		$route_params = array();
 
+		// slashes in aliases get appended as suffix
+		list( $alias, $suffix ) = explode( '/', $alias );
+
 		// get the parameters with the numeric keys so we can 
 		// pass them as route parameters like [any]-[num]-[num]/[any]/
 		foreach( $params as $key => $value )
@@ -185,7 +188,7 @@ class CCUrl
 			}
 		}
 
-		return CCUrl::to( CCRouter::alias( $alias, $route_params ), $params, $retain );
+		return CCUrl::to( CCRouter::alias( $alias, $route_params ).'/'.$suffix, $params, $retain );
 	}
 
 	/**
@@ -272,26 +275,26 @@ class CCUrl
 	public static function active( $url )
 	{
 		$url = parse_url( $url, PHP_URL_PATH );
-		
+
 		if ( empty( $url ) )
 		{
 			return false;
 		}
-		
+
 		if ( $url[0] !== '/' )
 		{
 			$url = static::to( $url );
 		}
-		
+
 		// when we are on "/" only "/" counts as active.
 	 	if ( $url === '/' )
 		{
 			return static::current() == $url;
 		}
-		
+
 		// for everything else we cut the url and compare
 		$cut = substr( static::current(), 0, strlen( $url ) );
-		
+
 		return $cut == $url;
 	}
 }
