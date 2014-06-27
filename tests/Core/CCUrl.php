@@ -229,4 +229,25 @@ class Test_CCUrl extends \PHPUnit_Framework_TestCase
 		// reset the url path
 		ClanCats::$config->set( 'url.path', '/' ); CCUrl::_init();
 	}
+	
+	/**
+	 * CCUrl::active tests
+	 */
+	public function test_active() 
+	{
+		// fake some data
+		CCIn::instance( new CCIn_Instance( array( 'param'=>1, 'test'=>'tee' ), array(), array(), array(), array( 'REQUEST_URI' => '//foo/bar//file.xml?param=1&test=tee' ) ) );
+		
+		$this->assertFalse( CCUrl::active( '/' ) );
+		
+		$this->assertTrue( CCUrl::active( '/foo/bar' ) );
+		
+		$this->assertFalse( CCUrl::active( '/foo/boo' ) );
+		
+		$this->assertTrue( CCUrl::active( 'http://example.com/foo/bar' ) );
+		
+		$this->assertTrue( CCUrl::active( 'foo' ) );
+		
+		$this->assertTrue( CCUrl::active( 'foo/bar/file.xml?sdfsd' ) );
+	}
 }
