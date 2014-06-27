@@ -51,6 +51,9 @@ class CCTheme extends CCView
 		// set the asset holder path
 		\CCAsset::holder( 'theme' )->path = static::public_namespace();
 		
+		// set the vendor path
+		\CCAsset::holder( 'vendor' )->path = 'assets/vendor/';
+		
 		// you may ask why not just return the parent::create(bla bla.. directly?
 		// i actually wanted to do something with that var view. So if you'r still
 		// able to read this i completly forgot it.
