@@ -178,7 +178,7 @@ class CCUrl
 		// to handle the suffix after a slash in an alias define
 		$suffix = '';
 		
-		if ( strpos( $alias, '/' ) !== false )
+		if ( strpos( $alias, '/' ) !== false && $alias !== '/' )
 		{
 			// slashes in aliases get appended as suffix
 			list( $alias, $suffix ) = explode( '/', $alias );
