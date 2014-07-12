@@ -218,7 +218,7 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 			$expression = trim( $match[1] );
 			
 			// repair it 
-			$expression = $this->repair_expression( $expression );
+			$expression = $that->repair_expression( $expression );
 			
 			return '<?php '.$expression.' ?>'; 
 		}, $view );
