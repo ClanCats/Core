@@ -45,7 +45,7 @@ class CCFile
 	 */
 	protected static function _can_print()
 	{
-		return ( CLI && static::$_print_infos ) ? true : false;
+		return ( ClanCats::is_cli() && static::$_print_infos ) ? true : false;
 	}
 
 	/**
