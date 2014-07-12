@@ -78,6 +78,7 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 	{
 		$this->transform( 'echos' );
 		$this->transform( 'phptag' );
+		$this->transform( 'arrays' );
 		
 		//_dd( $this->content );
 		
@@ -199,7 +200,18 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 	 */
 	private function compile_echos( $view )
 	{
-		return preg_replace('/\{\{(.*?)\}\}/s', "<?php echo $1; ?>", $view );
+		return preg_replace_callback('/\{\{(.*?)\}\}/s', function( $match )
+		{ 
+			$print = trim( $match[1] );
+			
+			// add missing semicolons
+			if ( substr( $print, -1 ) != ';' )
+			{
+				$print .= ';';
+			}
+			
+			return '<?php echo '.$print.' ?>'; 
+		}, $view );
 	}
 	
 	/**
@@ -221,6 +233,69 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 			$expression = $that->repair_expression( $expression );
 			
 			return '<?php '.$expression.' ?>'; 
+		}, $view );
+	}
+	
+	/**
+	 * Search and replace vars with . array access
+	 *
+	 * @param string 	$view
+	 * @return void
+	 */
+	private function compile_arrays( $view )
+	{
+		// I hate this workaround
+		$that = $this;
+		
+		return preg_replace_callback('/(\$[^\s]+)/s', function( $match ) use( $that )
+		{ 
+			$var = $match[1];
+			
+			if ( strpos( $var, '.' ) !== false )
+			{
+				$buffer = '';
+				$length = strlen( $var );
+				$inside_arr = false;
+				
+				for( $i=0;$i<$length;$i++ )
+				{
+					$char = $var[$i];
+					
+					if ( $char == '.' && !$inside_arr )
+					{
+						$buffer .= "['";
+						$inside_arr = true;
+					}
+					else
+					{
+						if ( $inside_arr && in_array( $char, array( ';', '-' ) ) )
+						{
+							$buffer .= "']";
+							$inside_arr = false;
+						}
+						
+						if ( $char == '.' )
+						{
+							$buffer .= "']['";
+							$inside_arr = true;
+						}
+						else
+						{
+							$buffer .= $char;
+						}
+					}
+				}
+				
+				if ( $inside_arr )
+				{
+					$buffer .= "']";
+				}
+				
+				$var = $buffer;
+			}
+			
+			return $var;
+			
 		}, $view );
 	}
 }

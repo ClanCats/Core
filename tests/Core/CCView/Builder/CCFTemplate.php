@@ -188,4 +188,34 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 			$this->compile( '{% endswitch %}' ) 
 		);
 	}
+	
+	/**
+	 * tests Builder switch
+	 */
+	public function test_array_access()
+	{
+		// simple
+		$this->assertEquals( 
+			'<?php echo $foo[\'bar\']; ?>', 
+			$this->compile( '{{ $foo.bar }}' ) 
+		);
+		
+		// multidimension
+		$this->assertEquals( 
+			'<?php echo $foo[\'bar\'][\'yay\']; ?>', 
+			$this->compile( '{{ $foo.bar.yay }}' ) 
+		);
+		
+		// more multidimension
+		$this->assertEquals( 
+			'<?php echo $foo[\'bar\'][\'yay\'][\'yes\']; ?>', 
+			$this->compile( '{{ $foo.bar.yay.yes }}' ) 
+		);
+		
+		// objects
+		$this->assertEquals( 
+			'<?php echo $user->profile[\'name\']; ?>', 
+			$this->compile( '{{ $user->profile.name }}' ) 
+		);
+	}
 }
