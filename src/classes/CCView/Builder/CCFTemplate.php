@@ -199,7 +199,7 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 	 */
 	private function compile_echos( $view )
 	{
-		return preg_replace('/\{\{(.*?)\}\}/', "<?php echo $1; ?>", $view );
+		return preg_replace('/\{\{(.*?)\}\}/s', "<?php echo $1; ?>", $view );
 	}
 	
 	/**
@@ -213,7 +213,7 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 		// I hate this workaround
 		$that = $this;
 		
-		return preg_replace_callback('/\{\%(.*?)\%\}/', function( $match ) use( $that )
+		return preg_replace_callback('/\{\%(.*?)\%\}/s', function( $match ) use( $that )
 		{ 
 			$expression = trim( $match[1] );
 			
