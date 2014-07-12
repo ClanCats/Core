@@ -98,7 +98,7 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 	/**
 	 * Repair an expression
 	 */
-	private function repair_expression( $exp )
+	public function repair_expression( $exp )
 	{
 		$commands = explode( ' ', $exp );		
 		
