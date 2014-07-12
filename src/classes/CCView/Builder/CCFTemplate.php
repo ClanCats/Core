@@ -30,6 +30,32 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 		'foreach',
 		'each',
 		'loop',
+		'switch',
+	);
+	
+	/**
+	 * Ending commands
+	 *
+	 * @var array
+	 */
+	protected $bracket_ending_commands = array(
+		'endif',
+		'endfor',
+		'endforeach',
+		'endeach',
+		'endloop',
+		'break',
+		'continue',
+		'endswitch',
+	);
+	
+	/**
+	 * Continue commands
+	 *
+	 * @var array
+	 */
+	protected $bracket_continue_commands = array(
+		'else',
 	);
 	
 	/**
@@ -121,6 +147,45 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 				$commands[$key] .= ' )';
 			}
 			
+			$commands[] = ':';
+		}
+		// bracket ending command
+		elseif ( count( $commands == 1 ) && in_array( $commands[0], $this->bracket_ending_commands ) )
+		{
+			// each = foreach
+			if ( $commands[0] == 'endeach' )
+			{
+				$commands[0] = 'endforeach';
+			}
+			// loop special
+			elseif ( $commands[0] == 'endloop' )
+			{
+				$commands[0] = 'endfor';
+			}
+			
+			// check for semicolon
+			if ( substr( $commands[0], 0, 1 ) != ';' )
+			{
+				$commands[0] .= ';';
+			}
+		}
+		// bracket continue command
+		elseif ( count( $commands == 1 ) && in_array( $commands[0], $this->bracket_continue_commands ) )
+		{		
+			// remove the opening duble point
+			end($commands); $key = key($commands);
+			if ( substr( $commands[$key], -1 ) == ':' )
+			{
+				$commands[$key] = substr( $commands[$key], 0, -1 );
+				
+				// is it now empty?
+				if ( $commands[$key] == ' ' || empty( $commands[$key] ) )
+				{
+					unset( $commands[$key] );
+				}
+			}
+			
+			// add the double point
 			$commands[] = ':';
 		}
 		

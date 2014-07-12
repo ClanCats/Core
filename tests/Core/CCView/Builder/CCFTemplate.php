@@ -50,6 +50,30 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 			$this->compile( '{% if $foo > 0 %}' ) 
 		);
 		
+		// endif
+		$this->assertEquals( 
+			'<?php endif; ?>', 
+			$this->compile( '{% endif %}' ) 
+		);
+		
+		// endif with semi
+		$this->assertEquals( 
+			'<?php endif; ?>', 
+			$this->compile( '{% endif; %}' ) 
+		);
+		
+		// else
+		$this->assertEquals( 
+			'<?php else : ?>', 
+			$this->compile( '{% else %}' ) 
+		);
+		
+		// else with opening
+		$this->assertEquals( 
+			'<?php else : ?>', 
+			$this->compile( '{% else : %}' ) 
+		);
+		
 		// brackets already there
 		$this->assertEquals( 
 			'<?php if ( $foo > 0 ) : ?>', 
@@ -80,6 +104,7 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 			$this->compile( '{% elseif $foo > ( 5 + 5 ) %}' ) 
 		);
 	}
+	
 	/**
 	 * tests Builder loops
 	 */
@@ -91,10 +116,22 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 			$this->compile( '{% foreach $users as $user %}' ) 
 		);
 		
+		// end foreach
+		$this->assertEquals( 
+			'<?php endforeach; ?>', 
+			$this->compile( '{% endforeach %}' ) 
+		);
+		
 		// each
 		$this->assertEquals( 
 			'<?php foreach ( $users as $user ) : ?>', 
 			$this->compile( '{% each $users as $user %}' ) 
+		);
+		
+		// end foreach
+		$this->assertEquals( 
+			'<?php endforeach; ?>', 
+			$this->compile( '{% endeach %}' ) 
 		);
 		
 		// for
@@ -103,10 +140,52 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 			$this->compile( '{% for $i=0;$i<10;$i++ %}' ) 
 		);
 		
-		// for
+		// end for
+		$this->assertEquals( 
+			'<?php endfor; ?>', 
+			$this->compile( '{% endfor %}' ) 
+		);
+		
+		// loop
 		$this->assertEquals( 
 			'<?php for ( $i=0;$i<10;$i++ ) : ?>', 
 			$this->compile( '{% loop 10 %}' ) 
+		);
+		
+		// end loop
+		$this->assertEquals( 
+			'<?php endfor; ?>', 
+			$this->compile( '{% endloop %}' ) 
+		);
+	}
+	
+	/**
+	 * tests Builder switch
+	 */
+	public function test_switch()
+	{
+		// switch
+		$this->assertEquals( 
+			'<?php switch ( $category ) : ?>', 
+			$this->compile( '{% switch $category %}' ) 
+		);
+		
+		// case
+		$this->assertEquals( 
+			'<?php case "foo": ?>', 
+			$this->compile( '{% case "foo": %}' ) 
+		);
+		
+		// break
+		$this->assertEquals( 
+			'<?php break; ?>', 
+			$this->compile( '{% break %}' ) 
+		);
+		
+		// endswitch
+		$this->assertEquals( 
+			'<?php endswitch; ?>', 
+			$this->compile( '{% endswitch %}' ) 
 		);
 	}
 }
