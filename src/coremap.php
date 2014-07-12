@@ -10,15 +10,9 @@
  *
  */
 return array(
-	
-	// -- ClanCats
-	'ClanCats'		=> 'ClanCats'.EXT,
-		
-	// -- Config
-	'CCConfig'				=> 'CCConfig'.EXT,
-	
-	// -- Core
+	'ClanCats'				=> 'ClanCats'.EXT,
 	'CCPath'					=> 'CCPath'.EXT,
+	'CCConfig'				=> 'CCConfig'.EXT,
 	'CCIn'					=> 'CCIn'.EXT,
 	'CCIn_Instance'			=> 'CCIn/Instance'.EXT,
 	'CCServer'				=> 'CCServer'.EXT,

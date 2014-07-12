@@ -1,6 +1,6 @@
 <?php
 /**
- * CCF View Test suite
+ * CCF View tests
  ** 
  *
  * @package		ClanCatsFramework
@@ -8,6 +8,8 @@
  * @version		2.0
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
+ * @group Core
+ * @group CCView
  */
 class CCView_Test extends \PHPUnit_Framework_TestCase
 {

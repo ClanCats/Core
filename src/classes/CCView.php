@@ -10,15 +10,28 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class CCView extends CCDataObject {
-	
-	/*
+class CCView extends CCDataObject 
+{	
+	/**
 	 * global data holder
+	 *
+	 * @var array
 	 */
 	public static $_globals = array();
 	
 	/**
-	 * set a global var
+	 * A runtime cache for the view paths
+	 *
+	 * @var array
+	 */
+	public static $_view_paths = array();
+	
+	/**
+	 * Share a var global
+	 *
+	 * @param string 		$key
+	 * @param mixed 			$value
+	 * @return void
 	 */
 	public static function share( $key, $value )
 	{
@@ -26,7 +39,7 @@ class CCView extends CCDataObject {
 	}
 	
 	/**
-	 * view creator
+	 * View creator
 	 * returns a new view instance
 	 *
 	 * @param string		$file
@@ -50,8 +63,30 @@ class CCView extends CCDataObject {
 		return file_exists( CCPath::get( $file, CCDIR_VIEW, EXT ) ); 
 	}
 	
-	/*
+	/**
+	 * Get the cache path of a view
+	 *
+	 * @param string			$view
+	 * @return string
+	 */
+	public static function cache_path( $view )
+	{
+		if ( strpos( $view, '::' ) !== false )
+		{
+			list( $package, $view ) = explode( '::', $view );
+		}
+		else 
+		{
+			$package = 'app';
+		}
+		
+		return \CCStorage::path( 'views/'.$package.'/'.$view.EXT );
+	}
+	
+	/**
 	 * view file
+	 *
+	 * @var string
 	 */
 	protected $_file = null;
 	
@@ -153,25 +188,81 @@ class CCView extends CCDataObject {
 	}
 	
 	/**
-	 * render the view
+	 * Get the path to real view file
+	 *
+	 * This function will also build the cache view file if needed.
+	 *
+	 * @param string 		$path
+	 * @return string 
+	 */
+	protected function view_path( $view )
+	{
+		if ( isset( static::$_view_paths[$view] ) )
+		{
+			return static::$_view_paths[$view];
+		}
+		
+		// view is empty?
+		if ( is_null( $view ) )
+		{
+			throw new CCException( "CCView - cannot render view without a view file." );
+		}
+		
+		// generate the views path
+		$path = CCPath::get( $view, CCDIR_VIEW, EXT );
+		
+		if ( !file_exists( $path ) ) 
+		{
+			throw new CCException( "CCView - could not find view: ".$view." at: {$path}." );
+		}
+		
+		// does the view implement a view builder?
+		if ( strpos( $view, '.' ) !== false )
+		{
+			$cache = static::cache_path( $view );
+			
+			// does the cache not exits or is out of date
+			if ( !file_exists( $cache ) || filemtime( $cache ) < filemtime( $path ) )
+			{
+				list( $view_name, $builder ) = explode( '.', $view );
+				$this->build_cache( $cache, $builder, $path );
+			}
+			
+			$path = $cache;
+		}
+		
+		return static::$_view_paths[$view] = $path;
+	}
+	
+	/**
+	 * Build a view cache file
+	 *
+	 * @param string 		$path 
+	 * @param string 		$builder 
+	 * @param string 
+	 *
+	 * @return void
+	 */
+	protected function build_cache( $path, $builder, $view_path )
+	{
+		CCFile::write( $path, CCView_Builder::compile( $builder, $view_path ) );
+	}
+	
+	/**
+	 * Render the view and return the output.
 	 *
 	 * @param string		$file
 	 * @return string
 	 */
 	public function render( $file = null ) 
 	{
-		// set new file
 		if ( !is_null( $file ) )
 		{
 			$this->file( $file );
 		}
 		
-		// view is empty?
-		if ( is_null( $this->file() ) ) 
-		{
-			throw new CCException( "CCView::render - cannot render view without view file." );
-		}
-			
+		$path = $this->view_path( $this->file() );
+		
 		// extract the view data
 		extract( $this->_data );
 			
@@ -181,21 +272,10 @@ class CCView extends CCDataObject {
 			extract( static::$_globals, EXTR_PREFIX_SAME, 'global' );
 		}
 			
-		// start capturing output buffer
 		ob_start();
 		
-		// generate the views path
-		$path = CCPath::get( $this->file(), CCDIR_VIEW, EXT );
-		
-		if ( !file_exists( $path ) ) 
-		{
-			throw new CCException( "CCView::render - could not find view: ".$this->file()." at: {$path}." );
-		}
-		
-		// require the file
 		require( $path );
-		
-		// return the output
+
 		return ob_get_clean();
 	}
 }
