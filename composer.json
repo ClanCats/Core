@@ -1,15 +1,15 @@
 {
 	"name": "clancats/core",
 	"description": "The ClanCatsFramework Core repository",
-	"type": "clancatsframework-core",
 	"license": "MIT",
 	"require": {
 		"php": ">=5.3",
 		"composer/installers": "~1.0",
-		"nesbot/Carbon": "*"
+		"nesbot/carbon": "~1.0",
 	},
 	"config": {
 		"vendor-dir": "test-env/vendor"
-	}
+	},
+	"minimum-stability": "dev"
 }
 
