@@ -247,7 +247,7 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 		// I hate this workaround
 		$that = $this;
 		
-		return preg_replace_callback('/(\$[^\s]+)/s', function( $match ) use( $that )
+		return preg_replace_callback('/(\$[^)\s]+)/s', function( $match ) use( $that )
 		{ 
 			$var = $match[1];
 			

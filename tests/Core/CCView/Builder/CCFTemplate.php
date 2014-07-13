@@ -37,6 +37,14 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 			'<?php echo _e( $input ); ?>', 
 			$this->compile( '{{_e( $input )}}' 
 		) );
+		
+		// if
+		$this->assertEquals( 
+			'<?php echo empty($items) ? \'There are no items.\' : count($items).\' items found.\'; ?>', 
+			$this->compile( '{{empty($items) ? \'There are no items.\' : count($items).\' items found.\'}}' ) 
+		);
+		
+		
 	}
 	
 	/**
