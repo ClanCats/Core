@@ -241,7 +241,8 @@ class CCConsoleController
 	 * @param array 		$params
 	 * @return void
 	 */
-	protected function help_formatter( $help = null ) {
+	protected function help_formatter( $help = null ) 
+	{
 		if ( is_null( $help ) ) 
 		{
 			CCCli::line( 'Invalid data passed to help formatter.' , 'red' ); return;
@@ -249,35 +250,81 @@ class CCConsoleController
 	
 		$output = array();
 		
-		/*
-		 * Format the name
-		 */
-		if ( array_key_exists( 'name', $help ) ) 
+		// print the name
+		if ( isset( $help['name'] ) ) 
 		{	
-			$output[] = CCCli::color( '/**', 'white' );
-			$output[] = CCCli::color( ' * ', 'white' ).CCCli::color( $help['name'] );
-			$output[] = CCCli::color( ' * ', 'white' ).str_repeat( '-', strlen( $help['name'] ) );	
-			
-			/*
-			 * add the description
-			 */
-			if ( array_key_exists( 'desc', $help ) ) 
-			{
-				$output[] = CCCli::color( ' * ', 'white' ).wordwrap( str_replace( "\n", "\n".' * ', $help['desc'] ), 60 );	
-			}
-			$output[] = CCCli::color( ' */', 'white' );
+			$output[] = '+-'.str_repeat( '-', strlen( $help['name'] ) ).'-+';
+			$output[] = '| '.CCCli::color( $help['name'], 'light_yellow' ).' |';
+			$output[] = '+-'.str_repeat( '-', strlen( $help['name'] ) ).'-+';	
 		}
 		
-		/*
-		 * are there actions aviable
-		 */
-		if ( array_key_exists( 'actions', $help ) ) 
+		// description
+		if ( isset( $help['desc'] ) ) 
+		{
+			$output[] = wordwrap( str_replace( "\n", "\n".' * ', $help['desc'] ), 60 );	
+		}
+		
+		// list the actions 
+		if ( isset( $help['actions'] ) && !empty( $help['actions'] ) ) 
 		{	
-			$output[] = CCCli::color( 'Actions:', 'purple' );	
-			foreach( $help['actions'] as $action => $desc )
+			// for every action in this console controller
+			foreach( $help['actions'] as $action => $attributes )
 			{
-				$output[] = CCCli::color( ' - '.$action, 'cyan' );
-				$output[] = CCCli::color( '   '.$desc );	
+				// print the action
+				$output[] = '';
+				$output[] = '| '.CCStr::suffix( get_called_class(), '\\' ).'::'.CCCli::color( $action, 'cyan' );
+				$output[] = '|';
+				
+				// for every attribute ( arguments, usage etc. )
+				foreach( $attributes as $attribute => $options )
+				{
+					$output[] = '| '.CCCli::color( ucfirst( $attribute ), 'light_yellow' );
+					
+					// if we just got a string
+					if ( is_string( $options ) )
+					{
+						$output[] = '|  '.CCCli::color( $options, 'green' );
+					}
+					// a key value array
+					elseif ( is_array( $options ) )
+					{
+						// print every option and its description
+						foreach( $options as $option => $description )
+						{
+							$buffer = CCCli::color( $option, 'green' );
+							
+							$buffer .= str_repeat( ' ', 35 - strlen( $buffer ) );
+							
+							$buffer .= $description;
+							
+							$buffer = '|  '.$buffer;
+							
+							// is the line to long?
+							if ( strlen( $buffer ) > 80 )
+							{
+								$overflow = substr( $buffer, 80 );
+								
+								$buffer = substr( $buffer, 0, 80 )."\n";
+								
+								$overflow = wordwrap( $overflow, 45 );
+								$overflow = explode( "\n", $overflow );
+								
+								foreach( $overflow as $key => $value )
+								{
+									$overflow[$key] = '| '.str_repeat( ' ',  25 ).trim( $value );	
+								}
+								
+								$buffer .= implode( "\n", $overflow );
+							}
+							
+							$output[] = $buffer;
+						}
+					}
+					
+					$output[] = '|';
+				}
+				
+				array_pop( $output );
 			}
 		}
 		

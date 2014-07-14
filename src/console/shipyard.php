@@ -21,8 +21,29 @@ class shipyard extends \CCConsoleController
 			'name'	=> 'Shipyard',
 			'desc'	=> 'The shipyard is an helper that generates classes, configuration files, ships and other stuff for you.',
 			'actions'	=> array(
-				'class'	=> "class <class>\n   class <namespace>::<class>",
-				'ship'	=> 'create <ship name> <namespace>',
+				
+				// class action
+				'class'	=> array(
+					'usage' => 'shipyard::class <classname>',
+					'argumnets' => array(
+						'classname' => 'The name of the class'
+					),
+					'options' => array(
+						'-extends' => 'The superclass that should be extended.',
+						'-implements' => 'The interfaces that should be implemented. (comma seperated)',
+					),
+				),
+				
+				// controller action
+				'controller' => array(
+					'usage' => 'shipyard::controller <controllername>',
+					'argumnets' => array(
+						'controllername' => 'The name of the controller'
+					),
+					'options' => array(
+						'-view' => 'Is this a view controller?',
+					),
+				),
 			),
 		);
 	}
