@@ -43,6 +43,7 @@ return array(
 	'CCDataObject'			=> 'CCDataObject'.EXT,
 	'CCJson'					=> 'CCJson'.EXT,
 	'CCForge_Php'			=> 'CCForge/Php'.EXT,
+	'CCShipyard'				=> 'CCShipyard'.EXT,
 	
 	// Cli
 	'CCCli'					=> 'CCCli'.EXT,

@@ -24,7 +24,7 @@ class CCForge_Php {
 	}
 	
 	/**
-	 * runs a forge comment on a dummy forge
+	 * runs a forge command on a dummy forge
 	 *
 	 * @param string		$cmd
 	 * @param array 		$params
@@ -38,6 +38,7 @@ class CCForge_Php {
 		}
 		
 		$forge = new static;
+		
 		if ( !method_exists( $forge, $cmd ) )
 		{
 			throw new CCException( "CCForge_Php - Command could not be found." );
@@ -156,23 +157,23 @@ class CCForge_Php {
 	}
 	
 	/**
-	 * generates an class property
+	 * generates a class property
 	 *
 	 * @param string		$str
 	 * @param int		$wordwrap
 	 * @return string
 	 */
-	public function property( $name, $default = null, $comment = null )
+	public function property( $name, $default = null, $comment = null, $export = true )
 	{
 		if ( $default !== null )
 		{
-			if ( !is_string( $default ) || substr( $default, 0, strlen( 'array' ) ) !== 'array' )
+			if ( $export )
 			{
 				$default = var_export( $default, true );
 			}
 		} 
 		
 		return $this->add( ( $comment ? static::make( 'comment', array( $comment ) )."\n" : '' ).
-			$name.( $default ? ' = '. $default : '' ).';' );
+			$name.( $default !== null ? ' = '. $default : '' ).';' );
 	}
 }

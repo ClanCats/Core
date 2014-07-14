@@ -428,6 +428,17 @@ class shipyard extends \CCConsoleController
 			$namespace = false;
 		}
 		
+		$target = ORBITPATH.$name.'/';
+		
+		if ( isset( $params['target'] ) ) 
+		{
+			if ( substr( $params['target'], -1 ) != '/' )
+			{
+				$params['target'] .= '/';
+			}
+			$target = CCFPATH.$name.$params['target'];
+		}
+		
 		// create blueprint
 		$blueprint = array(
 			'name'			=> $name,
@@ -442,7 +453,7 @@ class shipyard extends \CCConsoleController
 			'namespace'		=> $namespace,
 		);
 		
-		$target = ORBITPATH.$name.'/';
+		
 		
 		// check if the module is in our orbit path
 		if ( is_dir( $target ) ) 
@@ -522,6 +533,29 @@ class shipyard extends \CCConsoleController
 		
 		// sucess
 		CCCli::line( "'".$name."' succesfully created under: ".$target, 'green' );
+	}
+	
+	/**
+	 * generate themes
+	 *
+	 * exmample:
+	 * run shipyard::theme <name>
+	 *
+	 * @param array 		$params 
+	 * @return void
+	 */
+	public function action_theme( $params ) 
+	{
+		// params
+		$name = $params[0];
+		
+		// get name if we dont have one
+		while( !$name ) 
+		{
+			$name = CCCli::read( 'Please enter the theme name: ' );
+		}
+		
+		\CCConsoleController::parse( 'shipyard::ship '.$name.' -target CCF/app/themes/' );
 	}
 	
 	/**

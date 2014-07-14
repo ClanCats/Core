@@ -15,7 +15,8 @@ class orbit extends \CCConsoleController {
 	/**
 	 * return an array with information about the script
 	 */
-	public function help() {
+	public function help() 
+	{
 		return array(
 			'name'	=> 'Orbit',
 			'desc'	=> 'CCF module / plugin managment, we call them ships.',
