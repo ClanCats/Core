@@ -144,6 +144,16 @@ class CCShipyard_Class implements CCShipyard_Interface
 	}
 	
 	/**
+	 * Create new lines
+	 *
+	 * @param int 		$nums
+	 */
+	public function build_line( $nums = 1 )
+	{	
+		return \CCForge_Php::make( 'line', $nums );
+	}
+	
+	/**
 	 * generates an file header string
 	 *
 	 * @param string		$title

@@ -144,4 +144,21 @@ class Test_CCShipyard extends \PHPUnit_Framework_TestCase
 		$this->assertRegExp( '/protected static function say\( \$what \)/i', $builder->output() );
 		$this->assertRegExp( '/Say something load/i', $builder->output() );
 	}
+	
+	/** 
+	 * tests model builder
+	 */
+	public function test_builder_model()
+	{
+		// simple property
+		$builder = CCShipyard::create( 'dbmodel', 'People', 'people' );
+		
+		$this->assertRegExp( '/class People extends/i', $builder->output() );
+		$this->assertRegExp( '/protected static \$_table = \'people\'\;/i', $builder->output() );
+		$this->assertRegExp( '/protected static \$_defaults = array\(/i', $builder->output() );
+		
+		$builder->timestamps();
+		
+		$this->assertRegExp( '/protected static \$_timestamps = true\;/i', $builder->output() );
+	}
 }

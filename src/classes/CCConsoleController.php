@@ -292,11 +292,8 @@ class CCConsoleController
 						foreach( $options as $option => $description )
 						{
 							$buffer = CCCli::color( $option, 'green' );
-							
 							$buffer .= str_repeat( ' ', 35 - strlen( $buffer ) );
-							
 							$buffer .= $description;
-							
 							$buffer = '|  '.$buffer;
 							
 							// is the line to long?
