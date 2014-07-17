@@ -21,7 +21,16 @@ class doctor extends \CCConsoleController {
 			'name'	=> 'Dr. CCF',
 			'desc'	=> 'Can do several operations on the application.',
 			'actions'	=> array(
-				'permissions'	=> 'checks and repairs the needed permissions.',
+				
+				'permissions'	=> array(
+					'info' => 'Will check the write permissions of the directories and tries to fix them if needed.',
+					'usage' => 'doctor::permissions',
+				),
+				
+				'security_key'=> array(
+					'info' => 'Generates a new security salt if needed.',
+					'usage' => 'shipyard::security_key',
+				),
 			),
 		);
 	}
