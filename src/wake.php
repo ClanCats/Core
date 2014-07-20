@@ -262,6 +262,18 @@ if ( ClanCats::$config->locale )
 
 /*
  *---------------------------------------------------------------
+ * Require the application map
+ *---------------------------------------------------------------
+ * 
+ * The application map can contain additional path information
+ */
+if ( file_exists( APPPATH.'map'.EXT ) )
+{
+	APPPATH.'map'.EXT;
+}
+
+/*
+ *---------------------------------------------------------------
  * composer / vendor
  *---------------------------------------------------------------
  * 
