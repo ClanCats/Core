@@ -269,7 +269,7 @@ if ( ClanCats::$config->locale )
  */
 if ( file_exists( APPPATH.'map'.EXT ) )
 {
-	APPPATH.'map'.EXT;
+	require APPPATH.'map'.EXT;
 }
 
 /*
