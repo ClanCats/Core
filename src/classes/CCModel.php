@@ -402,7 +402,7 @@ class CCModel
 			return $this->__call_property( $key );
 		}
 
-		throw new \InvalidArgumentException( "CCModel - Invalid or undefined model property '".$key."'." );
+		throw new \InvalidArgumentException( "CCModel - Invalid or undefined property '".$key."' in model '".get_called_class()."'." );
 	}
 
 	/**
@@ -457,7 +457,7 @@ class CCModel
 				return $this->_data_store[$key];
 			}
 
-			throw new \InvalidArgumentException( "CCModel - Invalid or undefined model property '".$key."'." );
+			throw new \InvalidArgumentException( "CCModel - Invalid or undefined model property '".$key."', '".get_called_class()."'." );
 		}
 
 		return $this->_data_store;
