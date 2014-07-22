@@ -29,6 +29,7 @@ class User extends \DB\Model
 	protected static $_defaults = array(
 		'id'	,
 		'active'			=> array( 'bool', true ),
+		'group_id'		=> 0,
 		'email'			=> null,
 		'password'		=> null,
 		'storage'		=> array( 'json', array() ),
@@ -36,6 +37,28 @@ class User extends \DB\Model
 		'created_at'		=> array( 'timestamp' ),
 		'modified_at'	=> array( 'timestamp' ),
 	);
+	
+	/**
+	 * Get the user group
+	 *
+	 * @return \Auth\Group
+	 */
+	public function group()
+	{
+		return $this->belongs_to( '\\Auth\\Group' );
+	}
+	
+	/**
+	 * Is the user an administrator?
+	 * We simply check the group_id in our default configuration
+	 * the user id of the admin group is 100.
+	 *
+	 * @return bool
+	 */
+	public function is_admin()
+	{
+		return $this->group_id == 100;
+	}
 	
 	/**
 	 * Always hash the passwort 
