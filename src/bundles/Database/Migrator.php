@@ -42,6 +42,13 @@ class Migrator
 			$time = time();
 		}
 		
+		$namespace = null;
+		
+		if ( strpos( $name, '::' ) !== false )
+		{
+			list( $namespace, $name ) = explode( '::', $name );
+		}
+		
 		$name = explode( '/', $name );
 		
 		foreach( $name as $key => $value )
@@ -51,7 +58,7 @@ class Migrator
 		
 		$name = implode( '/', $name );
 		
-		return \CCPath::get( $name.'_'.$time, \ClanCats::directory( 'migration' ), '.sql' );
+		return \CCPath::get( ( $namespace ? $namespace.'::' : '' ) .$name.'_'.$time, \ClanCats::directory( 'migration' ), '.sql' );
 	}
 	
 	/**
