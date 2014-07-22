@@ -1,6 +1,8 @@
 test-env/ccf/storage/
 test-env/vendor/
+storage/
 .DS_Store
 Thumbs.db
 composer.phar
 composer.lock
+test-env/ccf/app/config/migrator.json

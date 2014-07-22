@@ -5,7 +5,9 @@
  *---------------------------------------------------------------
  */
 return array(
-
+	
+	'main' => 'phpunit',
+	
 	'phpunit' => array(
 		// selected database
 		'db'	 => 'db_ccf2_phpunit',

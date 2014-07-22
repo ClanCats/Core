@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `auth_logins` (
   `restore_token` varchar(255) NOT NULL,
   `last_login` int(11) NOT NULL,
   `client_agent` varchar(255) NOT NULL,
+  `client_ip` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `restore_id` (`restore_id`,`restore_token`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
