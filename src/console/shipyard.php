@@ -59,6 +59,18 @@ class shipyard extends \CCConsoleController
 						'-no-events' => 'Don\'t generate the wake and sleep function.',
 					),
 				),
+				
+				// controller action
+				'ship' => array(
+					'usage' => 'shipyard::ship <name> <namespace>',
+					'argumnets' => array(
+						'name' => 'The name of the ship',
+						'namespace' => 'The namespace the ship is going to operate from.',
+					),
+					'options' => array(
+						'-no-namespace' => 'Create the ship without an own namespace.',
+					),
+				),
 			),
 		);
 	}
@@ -270,9 +282,10 @@ class shipyard extends \CCConsoleController
 	 */
 	public function action_ship( $params ) 
 	{	
-		// params
-		$name = $params[0];
-		$namespace = $params[1];
+		$options = \CCDataObject::assign( $params );
+		
+		$name = $options->get( 0, null );
+		$namespace = $options->get( 1, null );
 		
 		// get name if we dont have one
 		while( !$name ) 
@@ -286,37 +299,25 @@ class shipyard extends \CCConsoleController
 			$namespace = $name;
 		}
 		
-		if ( $params['-no-namespace'] ) 
+		// no namespace?
+		if ( $params['no-namespace'] ) 
 		{
 			$namespace = false;
 		}
 		
-		$target = ORBITPATH.$name.'/';
+		// custom target
+		$target = $options->get( 'target', ORBITPATH );
 		
-		if ( isset( $params['target'] ) ) 
+		if ( substr( $target, 0, 1 ) !== '/' )
 		{
-			if ( substr( $params['target'], -1 ) != '/' )
-			{
-				$params['target'] .= '/';
-			}
-			$target = CCFPATH.$name.$params['target'];
+			$target = CCFPATH.$target;
+		}
+		if ( substr( $target, -1 ) !== '/' )
+		{
+			$target .= '/';
 		}
 		
-		// create blueprint
-		$blueprint = array(
-			'name'			=> $name,
-			'version'		=> \CCConfig::create( 'shipyard' )->get( 'defaults.version' ),
-			'description'	=> \CCConfig::create( 'shipyard' )->get( 'defaults.description' ),
-			'homepage'		=> \CCConfig::create( 'shipyard' )->get( 'defaults.homepage' ),
-			'keywords'		=> \CCConfig::create( 'shipyard' )->get( 'defaults.keywords' ),
-			'license'		=> \CCConfig::create( 'shipyard' )->get( 'defaults.license' ),
-			
-			'authors'		=> \CCConfig::create( 'shipyard' )->get( 'defaults.authors' ),
-						
-			'namespace'		=> $namespace,
-		);
-		
-		
+		$target .= $name.'/';
 		
 		// check if the module is in our orbit path
 		if ( is_dir( $target ) ) 
@@ -327,8 +328,25 @@ class shipyard extends \CCConsoleController
 			}
 		}
 		
+		// create the blueprint
+		$defaults = \CCConfig::create( 'shipyard' );
+		
+		$blueprint = array(
+			'name'			=> $name,
+			'version'		=> $defaults->get( 'defaults.version' ),
+			'description'	=> $defaults->get( 'defaults.description' ),
+			'homepage'		=> $defaults->get( 'defaults.homepage' ),
+			'keywords'		=> $defaults->get( 'defaults.keywords' ),
+			'license'		=> $defaults->get( 'defaults.license' ),
+			
+			'authors'		=> $defaults->get( 'defaults.authors' ),
+						
+			'namespace'		=> $namespace,
+		);
+		
 		// create file
 		\CCJson::write( $target.'blueprint.json', $blueprint, true );
+		
 		
 		$ship = \CCOrbit_Ship::blueprint( $blueprint, $target );
 		
@@ -396,29 +414,6 @@ class shipyard extends \CCConsoleController
 		
 		// sucess
 		CCCli::line( "'".$name."' succesfully created under: ".$target, 'green' );
-	}
-	
-	/**
-	 * generate themes
-	 *
-	 * exmample:
-	 * run shipyard::theme <name>
-	 *
-	 * @param array 		$params 
-	 * @return void
-	 */
-	public function action_theme( $params ) 
-	{
-		// params
-		$name = $params[0];
-		
-		// get name if we dont have one
-		while( !$name ) 
-		{
-			$name = CCCli::read( 'Please enter the theme name: ' );
-		}
-		
-		\CCConsoleController::parse( 'shipyard::ship '.$name.' -target CCF/app/themes/' );
 	}
 	
 	/**
