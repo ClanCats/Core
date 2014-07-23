@@ -1,5 +1,7 @@
 # ---> up
 
+DROP TABLE IF EXISTS `auth_logins`;
+
 CREATE TABLE IF NOT EXISTS `auth_logins` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `restore_id` int(255) NOT NULL,
@@ -11,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `auth_logins` (
   KEY `restore_id` (`restore_id`,`restore_token`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
+DROP TABLE IF EXISTS `auth_users`;
 
 CREATE TABLE IF NOT EXISTS `auth_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

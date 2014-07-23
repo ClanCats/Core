@@ -20,6 +20,8 @@ class PHPUnitApp extends CCApp
 	 */
 	public static function wake() 
 	{
+		CCFile::delete( APPPATH.'config/migrator.json' );
+		
 		DB::connect();
 		while( \DB\Migrator::rollback() );
 		\DB\Migrator::migrate();

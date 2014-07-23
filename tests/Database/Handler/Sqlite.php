@@ -40,6 +40,23 @@ class Test_Database_Handler_Sqlite extends \DB\TestCase
 	{
 		$this->assertTrue( DB::connect( 'phpunit_sqlite' ) );
 	}
+	
+	/**
+	 * Try to create the sql tables
+	 */
+	public function test_create_table()
+	{
+		$handler = DB::handler( 'phpunit_sqlite' );
+		
+		$handler->run( "DROP TABLE IF EXISTS people" );
+		
+		$handler->run( 
+		"CREATE TABLE people ( 
+			id INTEGER PRIMARY KEY AUTOINCREMENT, 
+			name VARCHAR, 
+			age INTEGER
+		);");
+	}
 
 	/**
 	 * test the handler instance
@@ -57,23 +74,6 @@ class Test_Database_Handler_Sqlite extends \DB\TestCase
 		$this->assertTrue( $handler->driver() instanceof \DB\Handler_Sqlite );
 
 		$this->assertTrue( $handler->statement( 'select * from people' ) instanceof \PDOStatement );
-	}
-	
-	/**
-	 * Try to create the sql tables
-	 */
-	public function test_create_table()
-	{
-		$handler = DB::handler( 'phpunit_sqlite' );
-		
-		$handler->run( "DROP TABLE IF EXISTS people" );
-		
-		$handler->run( 
-		"CREATE TABLE people ( 
-			id INTEGER PRIMARY KEY AUTOINCREMENT, 
-			name VARCHAR, 
-			age INTEGER
-		);");
 	}
 	
 	/**
