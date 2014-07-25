@@ -20,10 +20,14 @@ class PHPUnitApp extends CCApp
 	 */
 	public static function wake() 
 	{
-		CCFile::delete( APPPATH.'config/migrator.json' );
+		// complete overwrite of DB configuration
+		CCConfig::create( 'database' )->_data = CCConfig::create( 'Core::phpunit/database' )->_data;
 		
-		DB::connect();
-		while( \DB\Migrator::rollback() );
-		\DB\Migrator::migrate();
+		// delete all database table
+		DB\Migrator::hard_reset();
+		DB\Migrator::hard_reset( 'phpunit' );
+		
+		// run the migrations
+		DB\Migrator::migrate( true );
 	}
 }
