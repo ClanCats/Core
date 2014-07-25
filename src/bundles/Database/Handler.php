@@ -103,6 +103,16 @@ class Handler
 		
 		return static::$_instances[$name];
 	}
+	
+	/**
+	 * Kill all database connections
+	 *
+	 * @return void
+	 */
+	public static function kill_all_connections()
+	{
+		static::$_instances = array();
+	}
 
 	/**
 	 * Get the query log 
