@@ -11,7 +11,7 @@
  * @group Auth
  * @group Auth_CCAuth
  */
-class Test_Auth_CCAuth extends DB\TestCase
+class Test_Auth_CCAuth extends \PHPUnit_Framework_TestCase
 {
 	protected static $current_user = null;
 

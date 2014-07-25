@@ -6,11 +6,25 @@
  */
 return array(
 	
-	'main' => 'phpunit',
+	'main' => 'app',
+	
+	'app' => array(
+		// selected database
+		'db'	 => 'ccf2_phpunit_application',
+	
+		// driver
+		'driver' => 'mysql',
+	
+		// auth
+		'host'		=> '127.0.0.1',
+		'user' 		=> 'root',
+		'pass'		=> '',
+		'charset'	=> 'utf8'
+	),
 	
 	'phpunit' => array(
 		// selected database
-		'db'	 => 'db_ccf2_phpunit',
+		'db'	 => 'ccf2_phpunit_database',
 
 		// driver
 		'driver' => 'mysql',
@@ -21,8 +35,7 @@ return array(
 		'pass'		=> '',
 		'charset'	=> 'utf8'
 	),
-
-
+	
 	'phpunit_sqlite' => array(
 
 		// driver

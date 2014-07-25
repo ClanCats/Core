@@ -72,7 +72,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
 	{	
 		// lets make sure that we have an db configuration for phpunit
 		if ( CCConfig::create( 'database' )->has( 'phpunit' ) )
-		{
+		{	
 			// lets try to connect to that database if the conection
 			// fails we just return and continue the other tests
 			try { DB::connect( 'phpunit' ); }
@@ -81,9 +81,12 @@ class TestCase extends \PHPUnit_Framework_TestCase
 			// connection succeeded?
 			static::$dbtests = true;
 			
-			// also set the default db to phpunit
-			CCConfig::create( 'database' )->main = 'phpunit';
-
+			// overwrite the main db
+			CCConfig::create( 'database' )->set( 'main', 'phpunit' );
+			
+			// kill all connections
+			Handler::kill_all_connections();
+			
 			// in the CCUnit bundle there is a little sql file containing 
 			// the needed tables to run our tests. Lets load that file
 			// and create the phpunit tables
@@ -99,6 +102,14 @@ class TestCase extends \PHPUnit_Framework_TestCase
 				}
 			}
 		}
+	}
+	
+	public static function tearDownAfterClass() 
+	{	
+		// write the main database back to app
+		CCConfig::create( 'database' )->set( 'main', 'app' );
+		// kill all connections
+		Handler::kill_all_connections();
 	}
 
 	/**

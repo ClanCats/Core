@@ -11,7 +11,7 @@
  * @group Core
  * @group CCShipyard
  */
-class Test_CCShipyard extends \PHPUnit_Framework_TestCase
+class Test_CCShipyard extends \DB\TestCase
 {
 	/** 
 	 * test invalid driver

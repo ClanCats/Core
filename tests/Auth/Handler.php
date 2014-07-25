@@ -11,7 +11,7 @@
  * @group Auth
  * @group Auth_Handler
  */
-class Test_Auth_Handler extends DB\TestCase
+class Test_Auth_Handler extends \PHPUnit_Framework_TestCase
 {
 	protected static $current_user = null;
 	
