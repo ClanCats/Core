@@ -64,11 +64,15 @@ class Migrator
 	/**
 	 * Run all new migration
 	 *
+	 * @param bool			$silent 		In the silent mode the migrator ignores the migration file
+	 * 
 	 * @return void
 	 */
-	public static function migrate()
+	public static function migrate( $silent = false )
 	{
-		foreach( static::unstaged() as $key => $value )
+		$migrations = $silent ? static::available() : static::unstaged();
+		
+		foreach( $migrations as $key => $value )
 		{
 			if ( empty( $value ) )
 			{
@@ -96,7 +100,10 @@ class Migrator
 			static::$config->set( $key.'.revision', $time );
 		}
 		
-		static::$config->write();
+		if ( !$silent )
+		{
+			static::$config->write();
+		}
 	}
 	
 	/**
@@ -168,6 +175,21 @@ class Migrator
 		static::$config->write();
 		
 		return true;
+	}
+	
+	/**
+	 * The hard reset method deletes all tables from the database
+	 *
+	 * @param string 		$databse
+	 */
+	public static function hard_reset( $database = null )
+	{
+		$tables = DB::fetch( 'SHOW TABLES', array(), $database, array( 'assoc' ) );
+		
+		foreach( $tables as $table )
+		{
+			DB::run( 'DROP TABLE IF EXISTS '.reset( $table ), array(), $database );
+		}
 	}
 	
 	/**
