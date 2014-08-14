@@ -24,7 +24,7 @@ class CCProfiler
 	 *
 	 * @var array
 	 */
-	protected static $data = array();
+	protected static $_data = array();
 	
 	/**
 	 * The Autoloader initialisation
@@ -61,7 +61,7 @@ class CCProfiler
 				
 				$table->header( array( '#', 'message', 'memory', 'time' ) );
 				
-				foreach( \CCProfiler::$data as $key => $item )
+				foreach( \CCProfiler::data() as $key => $item )
 				{
 					$table->row( array( $key+1, $item[0], $item[1], $item[2] ) );
 				}
@@ -76,7 +76,7 @@ class CCProfiler
 			{	
 				$table = array();
 				
-				foreach( \CCProfiler::$data as $key => $check )
+				foreach( \CCProfiler::data() as $key => $check )
 				{
 					$table[('#'.($key+1).': '.$check[2] )] = $check[0];
 				}
@@ -84,6 +84,46 @@ class CCProfiler
 				return $table;
 			});
 		}
+	}
+	
+	/**
+	 * Enables the profiler
+	 *
+	 * @return array
+	 */
+	public static function enable()
+	{
+		return static::$_enabled = true;
+	}
+	
+	/**
+	 * Disables the profiler
+	 *
+	 * @return array
+	 */
+	public static function disable()
+	{
+		return static::$_enabled = false;
+	}
+	
+	/**
+	 * Returns the current profiler data
+	 *
+	 * @return array
+	 */
+	public static function data()
+	{
+		return static::$_data;
+	}
+	
+	/**
+	 * Resets all profiler data
+	 *
+	 * @return void
+	 */
+	public static function reset()
+	{
+		static::$_data = array();
 	}
 	
 	/**
@@ -125,7 +165,7 @@ class CCProfiler
 	/**
 	 * Make a profiler checkpoint
 	 *
-	 * @param string 	$point just a short message what here happend
+	 * @param string 	$message		just a short message what here happend
 	 * @return void
 	 */
 	public static function check( $message ) 
@@ -135,6 +175,6 @@ class CCProfiler
 			return;
 		}
 		
-		static::$data[] = array( $message, static::memory( true ), static::time( true ) );
+		static::$_data[] = array( $message, static::memory( true ), static::time( true ) );
 	}
 }
