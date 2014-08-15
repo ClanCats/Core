@@ -156,7 +156,7 @@ class CCProfiler
 		
 		if ( $format )
 		{
-			return CCStr::mircotime( $time );
+			return CCStr::microtime( $time );
 		}
 		
 		return $time;
