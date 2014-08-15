@@ -47,4 +47,28 @@ class Test_CCProfiler extends \PHPUnit_Framework_TestCase
 		
 		$this->assertEquals( count( CCProfiler::data() ), 2 );
 	}
+	
+	/**
+	 * CCProfiler::check tests
+	 */
+	public function test_enable_disable() 
+	{
+		$checks = count( CCProfiler::data() );
+		
+		CCProfiler::check( 'check 1' );
+		
+		$this->assertEquals( count( CCProfiler::data() ), $checks+1 );
+		
+		CCProfiler::disable();
+		
+		CCProfiler::check( 'check 2' );
+		
+		$this->assertEquals( count( CCProfiler::data() ), $checks+1 );
+		
+		CCProfiler::enable();
+		
+		CCProfiler::check( 'check 3' );
+		
+		$this->assertEquals( count( CCProfiler::data() ), $checks+2 );
+	}
 }
