@@ -243,6 +243,9 @@ class CCUrl
 	 *
 	 * !Important it's not possible to link between action on multiple routes
 	 * This method always assumes that all actions are in the same route.
+	 * If you want to link to another route using an alias you could do something like:
+	 *
+	 * CCUrl::to( '@myalias/myaction' );
 	 *
 	 * @param string 	$action
 	 * @param array  	$params
