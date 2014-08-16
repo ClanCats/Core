@@ -241,6 +241,9 @@ class CCUrl
 	/**
 	 * Get the url to a action of the current route
 	 *
+	 * !Important it's not possible to link between action on multiple routes
+	 * This method always assumes that all actions are in the same route.
+	 *
 	 * @param string 	$action
 	 * @param array  	$params
 	 * @param bool		$retain		Should we keep the get parameters?
@@ -256,7 +259,7 @@ class CCUrl
 		if ( CCRequest::current() && ( $route = CCRequest::current()->route ) )
 		{
 			$uri = $route->uri;
-
+			
 			if ( !is_null( $route->action ) )
 			{
 				$uri =  substr( $uri, 0, strlen( $route->action ) * -1 );
