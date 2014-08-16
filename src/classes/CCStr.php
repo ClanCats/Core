@@ -246,7 +246,27 @@ class CCStr
 	 */
 	public static function hash( $string ) 
 	{
-		return call_user_func( ClanCats::$config->get( 'security.hash', 'md5' ), $string );
+		if (is_numeric( $algo = ClanCats::$config->get( 'security.hash', 'md5') ))
+		{
+			return password_hash( $string, $algo );
+		}
+		return call_user_func( $algo, $string );
+	}
+
+	/**
+	 * Verifies a hash with a plaintext string using the configurable method. ( main.config -> security.hash )
+	 *
+	 * @param string 	$hash
+	 * @param string 	$string
+	 * @return bool
+	 */
+	public static function verify_hash( $hash, $string ) 
+	{
+		if (is_numeric( $algo = ClanCats::$config->get( 'security.hash', 'md5') ))
+		{
+			return password_verify( $string, $hash );
+		}
+		return ($hash === call_user_func( $algo, $string ));
 	}
 
 	/**
