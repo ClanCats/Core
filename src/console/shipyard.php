@@ -230,7 +230,7 @@ class shipyard extends \CCConsoleController
 		}
 		
 		// create the class
-		$class = \CCShipyard::create( 'class', $name.'Controller', $parent );
+		$class = \CCShipyard::create( 'class', $name, $parent );
 		
 		// get the actions
 		$actions = array( 'index' );
