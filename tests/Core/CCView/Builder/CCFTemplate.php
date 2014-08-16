@@ -18,7 +18,7 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 		$compiler = new Core\CCView_Builder_CCFTemplate( $template );
 		return $compiler->compile();
 	}
-	
+
 	/**
 	 * tests Builder echo 
 	 */
@@ -26,27 +26,27 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 	{
 		$this->assertEquals( '<?php echo $foo; ?>', $this->compile( '{{$foo}}' ) );
 		$this->assertEquals( '<?php echo $count + 1; ?>', $this->compile( '{{$count + 1}}' ) );
-		
+
 		$this->assertEquals( 
 			'<?php echo $name; ?> of <?php echo $other; ?>', 
 			$this->compile( '{{$name}} of {{$other}}' 
 		) );
-		
+
 		// functions
 		$this->assertEquals( 
 			'<?php echo _e( $input ); ?>', 
 			$this->compile( '{{_e( $input )}}' 
 		) );
-		
+
 		// if
 		$this->assertEquals( 
 			'<?php echo empty($items) ? \'There are no items.\' : count($items).\' items found.\'; ?>', 
 			$this->compile( '{{empty($items) ? \'There are no items.\' : count($items).\' items found.\'}}' ) 
 		);
-		
-		
+
+
 	}
-	
+
 	/**
 	 * tests Builder if
 	 */
@@ -57,62 +57,62 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 			'<?php if ( $foo > 0 ) : ?>', 
 			$this->compile( '{% if $foo > 0 %}' ) 
 		);
-		
+
 		// endif
 		$this->assertEquals( 
 			'<?php endif; ?>', 
 			$this->compile( '{% endif %}' ) 
 		);
-		
+
 		// endif with semi
 		$this->assertEquals( 
 			'<?php endif; ?>', 
 			$this->compile( '{% endif; %}' ) 
 		);
-		
+
 		// else
 		$this->assertEquals( 
 			'<?php else : ?>', 
 			$this->compile( '{% else %}' ) 
 		);
-		
+
 		// else with opening
 		$this->assertEquals( 
 			'<?php else : ?>', 
 			$this->compile( '{% else : %}' ) 
 		);
-		
+
 		// brackets already there
 		$this->assertEquals( 
 			'<?php if ( $foo > 0 ) : ?>', 
 			$this->compile( '{% if ( $foo > 0 ) %}' ) 
 		);
-		
+
 		// opening already tehere
 		$this->assertEquals( 
 			'<?php if ( $foo > 0 ) : ?>', 
 			$this->compile( '{% if $foo > 0 : %}' ) 
 		);
-		
+
 		// both already there
 		$this->assertEquals( 
 			'<?php if ( $foo > 0 ) : ?>', 
 			$this->compile( '{% if ( $foo > 0 ) : %}' ) 
 		);
-		
+
 		// more levels
 		$this->assertEquals( 
 			'<?php if ( $foo > ( 5 + 5 ) ) : ?>', 
 			$this->compile( '{% if $foo > ( 5 + 5 ) %}' ) 
 		);
-		
+
 		// more levels
 		$this->assertEquals( 
 			'<?php elseif ( $foo > ( 5 + 5 ) ) : ?>', 
 			$this->compile( '{% elseif $foo > ( 5 + 5 ) %}' ) 
 		);
 	}
-	
+
 	/**
 	 * tests Builder loops
 	 */
@@ -123,50 +123,50 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 			'<?php foreach ( $users as $user ) : ?>', 
 			$this->compile( '{% foreach $users as $user %}' ) 
 		);
-		
+
 		// end foreach
 		$this->assertEquals( 
 			'<?php endforeach; ?>', 
 			$this->compile( '{% endforeach %}' ) 
 		);
-		
+
 		// each
 		$this->assertEquals( 
 			'<?php foreach ( $users as $user ) : ?>', 
 			$this->compile( '{% each $users as $user %}' ) 
 		);
-		
+
 		// end foreach
 		$this->assertEquals( 
 			'<?php endforeach; ?>', 
 			$this->compile( '{% endeach %}' ) 
 		);
-		
+
 		// for
 		$this->assertEquals( 
 			'<?php for ( $i=0;$i<10;$i++ ) : ?>', 
 			$this->compile( '{% for $i=0;$i<10;$i++ %}' ) 
 		);
-		
+
 		// end for
 		$this->assertEquals( 
 			'<?php endfor; ?>', 
 			$this->compile( '{% endfor %}' ) 
 		);
-		
+
 		// loop
 		$this->assertEquals( 
 			'<?php for ( $i=0;$i<10;$i++ ) : ?>', 
 			$this->compile( '{% loop 10 %}' ) 
 		);
-		
+
 		// end loop
 		$this->assertEquals( 
 			'<?php endfor; ?>', 
 			$this->compile( '{% endloop %}' ) 
 		);
 	}
-	
+
 	/**
 	 * tests Builder switch
 	 */
@@ -177,26 +177,26 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 			'<?php switch ( $category ) : ?>', 
 			$this->compile( '{% switch $category %}' ) 
 		);
-		
+
 		// case
 		$this->assertEquals( 
 			'<?php case "foo": ?>', 
 			$this->compile( '{% case "foo": %}' ) 
 		);
-		
+
 		// break
 		$this->assertEquals( 
 			'<?php break; ?>', 
 			$this->compile( '{% break %}' ) 
 		);
-		
+
 		// endswitch
 		$this->assertEquals( 
 			'<?php endswitch; ?>', 
 			$this->compile( '{% endswitch %}' ) 
 		);
 	}
-	
+
 	/**
 	 * tests Builder switch
 	 */
@@ -207,23 +207,29 @@ class CCView_Builder_CCFTemplate_Test extends \PHPUnit_Framework_TestCase
 			'<?php echo $foo[\'bar\']; ?>', 
 			$this->compile( '{{ $foo.bar }}' ) 
 		);
-		
+
 		// multidimension
 		$this->assertEquals( 
 			'<?php echo $foo[\'bar\'][\'yay\']; ?>', 
 			$this->compile( '{{ $foo.bar.yay }}' ) 
 		);
-		
+
 		// more multidimension
 		$this->assertEquals( 
 			'<?php echo $foo[\'bar\'][\'yay\'][\'yes\']; ?>', 
 			$this->compile( '{{ $foo.bar.yay.yes }}' ) 
 		);
-		
+
 		// objects
 		$this->assertEquals( 
 			'<?php echo $user->profile[\'name\']; ?>', 
 			$this->compile( '{{ $user->profile.name }}' ) 
+		);
+
+		// special case
+		$this->assertEquals( 
+			'<?php echo $page->__("type_".$type); ?>', 
+			$this->compile( '{{$page->__("type_".$type)}}' ) 
 		);
 	}
 }

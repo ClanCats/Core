@@ -286,7 +286,7 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 		// now search and replace var in the php sections
 		foreach( $tags as $search => &$replace )
 		{
-			$replace = preg_replace_callback('/(\$[^)\s]+)/s', function( $match )
+			$replace = preg_replace_callback('/(\$[a-zA-Z0-9\_\.\-\>\;]+)/s', function( $match )
 			{ 
 				$var = $match[1];
 
@@ -300,7 +300,7 @@ class CCView_Builder_CCFTemplate implements CCView_Builder_Interface
 					{
 						$char = $var[$i];
 
-						if ( $char == '.' && !$inside_arr )
+						if ( $char == '.' && !$inside_arr  )
 						{
 							$buffer .= "['";
 							$inside_arr = true;
