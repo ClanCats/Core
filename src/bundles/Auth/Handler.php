@@ -356,7 +356,7 @@ class Handler
 		}
 		
 		// when the passwords match return the user object
-		if ( \CCStr::verify_hash( $user->password, $password )) 
+		if ( \CCStr::verify_hash( $password, $user->password )) 
 		{
 			return $user;
 		}

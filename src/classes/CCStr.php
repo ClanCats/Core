@@ -256,11 +256,11 @@ class CCStr
 	/**
 	 * Verifies a hash with a plaintext string using the configurable method. ( main.config -> security.hash )
 	 *
-	 * @param string 	$hash
 	 * @param string 	$string
+	 * @param string 	$hash
 	 * @return bool
 	 */
-	public static function verify_hash( $hash, $string ) 
+	public static function verify_hash( $string, $hash ) 
 	{
 		if (is_numeric( $algo = ClanCats::$config->get( 'security.hash', 'md5') ))
 		{
