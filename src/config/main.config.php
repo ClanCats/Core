@@ -157,11 +157,20 @@ return array(
 	 * Security
 	 */
 	'security' => array(
+		
 		// it is really important that you choose your own one!
 		'salt' => 'ThisAintGoodBro',
 		
-		// you can set a default hashing function like md5, sha1 whatever or define your own one
-		'hash' => function( $str ) {
+		// To use the builtin (PHP>=5.5) password hashing functions set this 
+		// to the contant PASSWORD_DEFAULT or PASSWORD_BCRYPT.
+		// 
+		// If the function password_hash is'nt available, you can add the password-compat patch 
+		// using composer: "composer require ircmaxell/password-compat:1.0.*"
+		// 
+		// To make use of any other hashing algorithm simply set a string like "md5" or
+		// "sha1" or simply create a function that handles the string to be hashed.
+		'hash' => function( $str ) 
+		{
 			return sha1( $str );
 		}
 	),
