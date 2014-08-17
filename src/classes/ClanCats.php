@@ -332,8 +332,7 @@ class ClanCats
 	public static function wake_app( $app )
 	{
 		static::$runtime_class = $app;
-		
-		\CCFinder::bind( $app, APPPATH.$app.EXT );
+		\CCFinder::bind( $app, static::$paths['app'].$app.EXT );
 		
 		// run the application wake
 		$response = $app::wake();
