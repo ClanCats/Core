@@ -11,7 +11,7 @@
  * @group Database
  * @group Database_Relations
  */
-class Test_Database_Relations extends \DB\TestCase
+class Test_Database_Relations extends \DB\Test_Case_Database
 {	
 	/**
 	 * DB\Model::has_one

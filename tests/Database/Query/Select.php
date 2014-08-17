@@ -13,7 +13,7 @@
  * @group Database
  * @group Database_Query_Select
  */
-class Test_Database_Query_Select extends \DB\TestCase
+class Test_Database_Query_Select extends \DB\Test_Case_Database
 {
 	/**
 	 * Test select

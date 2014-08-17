@@ -11,7 +11,7 @@
  * @group Database
  * @group Database_Handler_Mysql
  */
-class Test_Database_Handler_Mysql extends \DB\TestCase
+class Test_Database_Handler_Mysql extends \DB\Test_Case_Database
 {
 	/**
 	 * our data

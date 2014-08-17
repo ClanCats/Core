@@ -11,7 +11,7 @@
  * @group Database
  * @group Database_Model
  */
-class Test_Database_Model extends \DB\TestCase
+class Test_Database_Model extends \DB\Test_Case_Database
 {	
 	/**
 	 * DB\Model::$defaults

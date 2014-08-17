@@ -11,7 +11,7 @@
  * @group Auth
  * @group Auth_CCAuth
  */
-class Test_Auth_CCAuth extends \PHPUnit_Framework_TestCase
+class Test_Auth_CCAuth extends \DB\Test_Case
 {
 	protected static $current_user = null;
 
@@ -42,7 +42,7 @@ class Test_Auth_CCAuth extends \PHPUnit_Framework_TestCase
 		$this->assertTrue( CCAuth::handler() instanceof Auth\Handler );
 		$this->assertTrue( CCAuth::handler( 'other' ) instanceof Auth\Handler );
 	}
-	
+
 	/**
 	 * CCAuth::valid tests
 	 */
@@ -51,7 +51,7 @@ class Test_Auth_CCAuth extends \PHPUnit_Framework_TestCase
 		$this->assertFalse( CCAuth::valid() );
 		$this->assertFalse( CCAuth::valid( 'other' ) );
 	}
-	
+
 	/**
 	 * CCAuth::validate tests
 	 */
@@ -60,10 +60,10 @@ class Test_Auth_CCAuth extends \PHPUnit_Framework_TestCase
 		$this->assertFalse( CCAuth::validate() );
 		$this->assertFalse( CCAuth::validate( 'somthing', 'wrong' ) );
 		$this->assertFalse( CCAuth::validate( 'test@example.com', 'wrongpass' ) );
-		
+
 		$this->assertTrue( CCAuth::validate( 'test@example.com', 'phpunit' ) instanceof DB\Model );
 	}
-	
+
 	/**
 	 * CCAuth::sign_in and sign_out tests
 	 */

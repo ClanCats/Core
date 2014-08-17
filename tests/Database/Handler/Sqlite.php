@@ -11,7 +11,7 @@
  * @group Database
  * @group Database_Handler_Sqlite
  */
-class Test_Database_Handler_Sqlite extends \DB\TestCase
+class Test_Database_Handler_Sqlite extends \DB\Test_Case_Database
 {
 	/**
 	 * our data

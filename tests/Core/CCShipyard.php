@@ -11,7 +11,7 @@
  * @group Core
  * @group CCShipyard
  */
-class Test_CCShipyard extends \DB\TestCase
+class Test_CCShipyard extends \DB\Test_Case_Database
 {
 	/** 
 	 * test invalid driver

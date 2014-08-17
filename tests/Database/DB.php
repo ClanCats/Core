@@ -11,7 +11,7 @@
  * @group Database
  * @group DB
  */
-class Test_Database_DB extends \DB\TestCase
+class Test_Database_DB extends \DB\Test_Case_Database
 {
 	/**
 	 * DB::connect test
