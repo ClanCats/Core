@@ -161,7 +161,7 @@ class CCCli
 	{
 		for( $i=0; $i<$count; $i++ ) 
 		{
-			static::write_line( '' );
+			static::line( '' );
 		}
 	}
 	
