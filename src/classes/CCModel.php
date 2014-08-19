@@ -298,10 +298,13 @@ class CCModel
 	{
 		switch ( $type ) 
 		{
-			// integer types
 			case 'int':
 			case 'timestamp':
 				return (int) $value;
+			break;
+
+			case 'string':
+				return (string) $value;
 			break;
 
 			case 'bool':
@@ -328,10 +331,13 @@ class CCModel
 	{
 		switch ( $type ) 
 		{
-			// integer types
 			case 'int':
 			case 'timestamp':
 				return (int) $value;
+			break;
+
+			case 'string':
+				return (string) $value;
 			break;
 
 			case 'bool':
@@ -402,7 +408,7 @@ class CCModel
 			return $this->__call_property( $key );
 		}
 
-		throw new \InvalidArgumentException( "CCModel - Invalid or undefined property '".$key."' in model '".get_called_class()."'." );
+		throw new \InvalidArgumentException( "CCModel - Invalid or undefined model property '".$key."'." );
 	}
 
 	/**
@@ -457,7 +463,7 @@ class CCModel
 				return $this->_data_store[$key];
 			}
 
-			throw new \InvalidArgumentException( "CCModel - Invalid or undefined model property '".$key."', '".get_called_class()."'." );
+			throw new \InvalidArgumentException( "CCModel - Invalid or undefined model property '".$key."'." );
 		}
 
 		return $this->_data_store;
