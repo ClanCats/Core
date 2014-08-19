@@ -449,7 +449,10 @@ class CCModel
 	}
 
 	/**
-	 * return the raw data of the object or a single attribute
+	 * Returns all raw data of the object or a single property
+	 *
+	 *     $model->raw();
+	 *     $model->raw( 'key' );
 	 *
 	 * @param string 			$key
 	 * @return array
@@ -471,6 +474,8 @@ class CCModel
 
 	/**
 	 * Set a value to the model without using the modifiers
+	 *
+	 *     $model->raw_set( 'key', 'value' );
 	 *
 	 * @param string 		$key
 	 * @param string			$value
