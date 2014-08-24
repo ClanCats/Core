@@ -60,7 +60,7 @@ return array(
 		// the inspector class that gets 
 		// additional information about 
 		// the exception
-		'inpector'		=> null,
+		'inspector'		=> null,
 	),
 	
 	/** 

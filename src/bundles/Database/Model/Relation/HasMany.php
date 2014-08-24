@@ -25,6 +25,6 @@ class Model_Relation_HasMany extends Model_Relation
 	 */
 	protected function prepare_query() 
 	{
-		$this->query->where( $this->foreign_key, $this->local_model->{$this->local_key} );;
+		$this->query->where( $this->foreign_key, $this->local_model->{$this->local_key} );
 	}
 }

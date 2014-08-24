@@ -47,14 +47,14 @@ class CCError_Inspector
 	protected $exception = null;
 	
 	/**
-	 * The inpector trace
+	 * The inspector trace
 	 *
 	 * @var array
 	 */
 	protected $trace = null;
 	
 	/**
-	 * The inpector tables
+	 * The inspector tables
 	 *
 	 * @var array
 	 */

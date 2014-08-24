@@ -531,7 +531,7 @@ class Model extends \CCModel
 
 	/**
 	 * After save hook 
-	 * to modify your data before they get saved
+	 * to modify your data after they get saved
 	 */
 	protected function _after_save() {}
 }

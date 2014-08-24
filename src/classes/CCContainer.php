@@ -87,6 +87,6 @@ class CCContainer
 		}
 
 		// default callback
-		return call_user_func_array( $key, $arguments );;
+		return call_user_func_array( $key, $arguments );
 	}
 }

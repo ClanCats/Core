@@ -35,14 +35,18 @@ class CCArr
 	}
 	
 	/**
-	 * Adds an item at the end of the array
+	 * Adds a single item or array of items at the end of the referenced array
+	 * If you want to combine multiple arrays recursivly or use key => value pairs, please use CCArr::merge()
 	 * 
 	 * Example:
-	 *     CCArr::push( 'foo', array( 'bar' ) );
+	 * 	$bar = array( 'bar' );
+	 * 	CCArr::push( 'foo', $bar ); // $bar = array( 'bar', 'foo' )
+	 * 	CCArr::push( array( 'foo', 'baz' ), $bar ); // $bar = array( 'bar', array( 'foo', 'baz' ) )
+	 * 	CCArr::push( array( 'foo', 'baz' ), $bar, true ); // $bar = array( 'bar', 'foo', 'baz' )
 	 *
 	 * @param mixed		$item		The item you would like to add to the array
-	 * @param array 		$array
-	 * @param bool		$merge
+	 * @param array 	$array		The input array by reference
+	 * @param bool		$merge		If $merge is set to true, push will merge each element of $item into $array
 	 * @return array
  	 */
 	public static function push( $item, &$arr, $merge = false ) 
@@ -60,7 +64,8 @@ class CCArr
 			}	
 			return $arr;
 		}
-		$arr[] = $item; return $arr;
+		$arr[] = $item;
+		return $arr;
 	}
 	
 	/**
@@ -117,13 +122,20 @@ class CCArr
 	}
 	
 	/**
-	 * check if an array is multidimensional
+	 * Check if an array is multidimensional
+	 * Elements with empty arrays doesn't count!
 	 *
+	 * Example:
+	 * 	CCArr::is_multi( array( 'foo', array( 'bar', 'baz' ) ) ) === true
+	 * 	CCArr::is_multi( array( array() ) ) === false
+	 * 	CCArr::is_multi( false ) === false
+	 * 
 	 * @param array 		$arr
 	 * @return bool
 	 */
-	public static function is_mulit( $arr ) 
+	public static function is_multi( $arr ) 
 	{
+		// if $arr isn't an array both count() will return useless values 0 (count(null)) or 1 (count(false)) and so the function will return false
 		if ( count( $arr ) == count( $arr, COUNT_RECURSIVE ) ) 
 		{
 			return false;
@@ -132,7 +144,12 @@ class CCArr
 	}
 	
 	/**
-	 * check if an array is multidimensional
+	 * Check if first element of an array is an array
+	 *
+	 * Example:
+	 * 	CCArr::is_collection( array( 'foo', array( 'bar', 'baz' ) ) ) === false
+	 * 	CCArr::is_collection( array( array() ) ) === true
+	 * 	CCArr::is_collection( false ) // Exception
 	 *
 	 * @param array 		$arr
 	 * @return bool
