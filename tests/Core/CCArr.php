@@ -162,14 +162,14 @@ class Test_CCArr extends \PHPUnit_Framework_TestCase
 	public function testArrayIsMulti() 
 	{	
 		// test
-		$this->assertTrue( CCArr::is_mulit( array(
+		$this->assertTrue( CCArr::is_multi( array(
 			array(
 				'name' 	=> 'johnson',
 				'age'	=> 20
 			),
 		)));
 		
-		$this->assertTrue( CCArr::is_mulit( array(
+		$this->assertTrue( CCArr::is_multi( array(
 			array(
 				'name' 	=> 'johnson',
 				'age'	=> 20
@@ -180,7 +180,7 @@ class Test_CCArr extends \PHPUnit_Framework_TestCase
 			),
 		)));
 		
-		$this->assertTrue( CCArr::is_mulit( array(
+		$this->assertTrue( CCArr::is_multi( array(
 			array(
 				'name' 	=> 'johnson',
 				'age'	=> 20
@@ -193,13 +193,13 @@ class Test_CCArr extends \PHPUnit_Framework_TestCase
 			32
 		)));
 		
-		$this->assertFalse( CCArr::is_mulit( array(
+		$this->assertFalse( CCArr::is_multi( array(
 			'jack',
 			'john',
 			'johnson'
 		)));
 		
-		$this->assertFalse( CCArr::is_mulit( array(
+		$this->assertFalse( CCArr::is_multi( array(
 			'jack' => 12,
 			'john' => 24,
 			'johnson' => 32

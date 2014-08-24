@@ -174,7 +174,7 @@ class CCArr
 		
 		$sum = 0;
 		
-		if ( is_string( $key ) && CCArr::is_mulit( $arr ) ) 
+		if ( is_string( $key ) && CCArr::is_multi( $arr ) ) 
 		{
 			$arr = CCArr::pick( $key, $arr );
 		}
@@ -203,7 +203,7 @@ class CCArr
 			throw new \InvalidArgumentException('CCArr::average - first argunent has to be an array.');
 		}
 		
-		if ( is_string( $key ) && CCArr::is_mulit( $arr ) ) 
+		if ( is_string( $key ) && CCArr::is_multi( $arr ) ) 
 		{
 			$arr = CCArr::pick( $key, $arr );
 		}
