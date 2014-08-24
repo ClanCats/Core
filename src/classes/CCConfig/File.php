@@ -151,14 +151,14 @@ class CCConfig_File implements CCConfig_Driver
 	 */
 	protected function path( $name, $env = false )
 	{
-		$conf = CCPath::get( $name, CCDIR_CONFIG, static::EXT );
+		$conf = CCPath::get( $name, \CCDIR_CONFIG, static::EXT );
 		
 		if ( !$env )
 		{
 			return $conf;
 		}
 		
-		$env_conf = CCPath::get( $name, CCDIR_CONFIG.ClanCats::environment().'/', static::EXT );
+		$env_conf = CCPath::get( $name, \CCDIR_CONFIG.ClanCats::environment().'/', static::EXT );
 		
 		if ( file_exists( $env_conf ) ) 
 		{

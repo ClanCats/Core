@@ -28,9 +28,9 @@ class CCPath {
 		if ( substr( $path, 0, 1 ) == '/' || substr( $path, 0, 3 ) == "::/" ) {
 			return $path.$suffix;
 		} 
-		
+
 		if ( strpos( $path, '::' ) === false ) {
-			return APPPATH.$prefix.$path.$suffix;
+			return \APPPATH.$prefix.$path.$suffix;
 		}
 		
 		$name = explode( '::', $path );
