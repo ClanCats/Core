@@ -45,6 +45,13 @@ class CCRouter {
 	 */
 	public static function _init() {
 		
+		static::$filters = CCArr::merge(static::$filters, array(
+			'$' => '\$',
+			'+' => '\+',
+			'(' => '\(',
+			')' => '\)'
+		));
+
 		// default string
 		static::filter( 'any', '[a-zA-Z0-9'.ClanCats::$config->get( 'router.allowed_special_chars' ).']' );
 		
@@ -380,8 +387,8 @@ class CCRouter {
 			if ( strpos( $pattern, '[' ) !== false && strpos( $pattern, ']' ) !== false ) 
 			{
 				// build an reqular expression	
-				$regx = '~^'.CCStr::replace( $pattern, static::$filters ).'$~i';
-				
+				$regx = '#^'.CCStr::replace( $pattern, static::$filters ).'$#i';
+
 				// try to match the uri with regex
 				if ( preg_match( $regx, $uri, $params ) ) 
 				{	
@@ -432,7 +439,7 @@ class CCRouter {
 	 */
 	protected static function configure( $route, $raw_route ) 
 	{	
-		// deal with emptyness
+		// deal with emptiness
 		if ( is_null( $raw_route ) )
 		{
 			return false;	
