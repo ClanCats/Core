@@ -125,7 +125,7 @@ class CCUrl
 		foreach( $params as $key => $value )
 		{
 			// replace the parameter provider
-			if ( is_numeric( $key ) && $value[0] === ':' )
+			if ( is_numeric( $key ) && is_string($value) && $value[0] === ':' )
 			{
 				$param_provider_key = substr( $value, 1 );
 
@@ -139,11 +139,14 @@ class CCUrl
 			}
 
 			// replace the parameters
-			$uri = str_replace( ':'.$key, $value, $uri, $count );
-
-			if ( $count > 0 )
+			if ( !is_array($value))
 			{
-				unset( $params[$key] );
+				$uri = str_replace( ':'.$key, $value, $uri, $count );
+
+				if ( $count > 0 )
+				{
+					unset( $params[$key] );
+				}
 			}
 		}
 
