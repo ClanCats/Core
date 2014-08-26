@@ -250,4 +250,14 @@ class Test_CCUrl extends \PHPUnit_Framework_TestCase
 		
 		$this->assertTrue( CCUrl::active( 'foo/bar/file.xml?sdfsd' ) );
 	}
+	
+	/**
+	 * CCUrl::active tests
+	 */
+	public function test_dimensions() 
+	{
+		$url = CCUrl::to( '/', array( "test" => array( "a" => array( "b" => "z", "c" => "z" ) ) ) );
+		
+		$this->assertEquals( '/?test[a][b]=z&test[a][c]=z', urldecode( $url ) );
+	}
 }
