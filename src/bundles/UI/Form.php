@@ -133,7 +133,7 @@ class Form
 	 * @param string			$name
 	 * @return string
 	 */
-	protected static function form_id( $type, $name )
+	public static function form_id( $type, $name )
 	{
 		return sprintf( Builder::$config->get( 'form.'.$type.'_id_format' ), $name );
 	}
