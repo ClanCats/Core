@@ -17,7 +17,7 @@ class CCRouter_Test extends \PHPUnit_Framework_TestCase
 	/**
 	 * Test CCRouter event
 	 */
-	public function testEvent()
+	public function test_event()
 	{
 		CCRouter::on( 'never/reach/me', function(){
 			echo "I Do";
@@ -56,7 +56,7 @@ class CCRouter_Test extends \PHPUnit_Framework_TestCase
 	/**
 	 * Test CCRouter event
 	 */
-	public function testEventMatching()
+	public function test_event_matching()
 	{
 		CCRouter::event( 'wake', 'never*', function() {
 			return CCResponse::create( "Whoop" );
@@ -75,7 +75,7 @@ class CCRouter_Test extends \PHPUnit_Framework_TestCase
 	/**
 	 * Test CCRouter alias
 	 */
-	public function testAlias()
+	public function test_alias()
 	{
 		
 		CCRouter::on( 'phpunit/test-alias1', array( 'alias' => 'phpunit.case.1' ), function()
@@ -118,7 +118,7 @@ class CCRouter_Test extends \PHPUnit_Framework_TestCase
 	/**
 	 * Test CCRouter on
 	 */
-	public function testOn() 
+	public function test_on() 
 	{
 		CCRouter::on( 'phpunit', function(){
 			echo "Tests are Awesome!";
@@ -142,10 +142,10 @@ class CCRouter_Test extends \PHPUnit_Framework_TestCase
 		});
 		
 		// default callback
-		CCRouter::on( 'phpunit/test4', array( $this, 'testResponse' ) );
+		CCRouter::on( 'phpunit/test4', array( $this, 'test_response' ) );
 		
 		// return callback
-		CCRouter::on( 'phpunit/test5', array( $this, 'testReturn' ) );
+		CCRouter::on( 'phpunit/test5', array( $this, 'test_return' ) );
 		
 		$response = CCRequest::uri( 'phpunit' )->perform()->response()->body;
 		$this->assertEquals( $response , "Tests are Awesome!" );
@@ -181,17 +181,30 @@ class CCRouter_Test extends \PHPUnit_Framework_TestCase
 	}
 	
 	/**
-	 * Returns an test Resposne
+	 * Tests the CCRouter filter escaping
 	 */
-	public function testResponse() 
+	public function test_escaping() 
+	{
+		CCRouter::on( 'this/u$l/conta([num])n+special/[any]', function(){
+			echo "Escaping works";
+		});
+		
+		$response = CCRequest::uri( 'this/u$l/conta(1)n+special/chars' )->perform()->response()->body;
+		$this->assertEquals( $response , "Escaping works" );
+	}
+	
+	/**
+	 * Returns an test CCResposne
+	 */
+	public function test_response() 
 	{
 		return CCResponse::create( 'Callbacks are pretty cool' );
 	}
 	
 	/**
-	 * Returns an test Resposne
+	 * Returns an test text
 	 */
-	public function testReturn() 
+	public function test_return() 
 	{
 		return 'Callback returns are also pretty cool';
 	}
