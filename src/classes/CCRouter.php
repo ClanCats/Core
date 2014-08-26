@@ -10,48 +10,59 @@
  * @copyright 	2010 - 2014 ClanCats GmbH
  *
  */
-class CCRouter {
-	
-	/*
-	 * the routes holder
+class CCRouter 
+{	
+	/**
+	 * The routes holder
+	 *
+	 * @var array
 	 */
 	protected static $routes = array();
 	
-	/*
-	 * the alias holder
+	/**
+	 * The alias holder
+	 *
+	 * @var array
 	 */
 	protected static $aliases = array();
 	 
-	/*
+	/**
 	 * the private routes holder
+	 *
+	 * @var array
 	 */
 	protected static $privates = array();
 	
-	/*
-	 * the uri filters
+	/**
+	 * The uri filters
+	 *
+	 * The initial filters here are used to escape special regex characters
+	 * to allow them be used in the url. 
+	 *
+	 * @var array
 	 */
-	protected static $filters = array();
+	protected static $filters = array(
+		'$' => '\$',
+		'+' => '\+',
+		'(' => '\(',
+		')' => '\)'
+	);
 	
-	/*
-	 * the events
+	/**
+	 * The events
+	 *
+	 * @var array
 	 */
 	protected static $events = array();
 	
 	/**
-	 * set up the basic uri filters in our
-	 * static init 
-	 * 
-	 * also add a default 404 and root resposne
+	 * Set up the basic uri filters in our static init and 
+	 * also add a default 404 response
+	 *
+	 * @return void
 	 */
-	public static function _init() {
-		
-		static::$filters = CCArr::merge(static::$filters, array(
-			'$' => '\$',
-			'+' => '\+',
-			'(' => '\(',
-			')' => '\)'
-		));
-
+	public static function _init() 
+	{	
 		// default string
 		static::filter( 'any', '[a-zA-Z0-9'.ClanCats::$config->get( 'router.allowed_special_chars' ).']' );
 		
@@ -65,13 +76,14 @@ class CCRouter {
 		static::filter( 'alphanum', '[a-zA-Z0-9]' );
 
 		// 404 not found error
-		CCRouter::on( '#404', function() {
+		CCRouter::on( '#404', function() 
+		{
 			return CCResponse::create( CCView::create( 'Core::CCF/404' )->render(), 404 );
 		});
 	}
 	
 	/**
-	 * creates an alias to a route or gets one
+	 * Creates an alias to a route or gets one
 	 *
 	 * @param string			$key
 	 * @param string 		$to 
@@ -103,7 +115,7 @@ class CCRouter {
 	}
 	
 	/**
-	 * register an event over a route
+	 * Register an event over a route
 	 *
 	 * @param string		$event
 	 * @param string 	$route 
@@ -116,7 +128,7 @@ class CCRouter {
 	}
 	
 	/**
-	 * get all events matching a rule
+	 * Get all events matching a rule
 	 *
 	 * @param string		$event
 	 * @param string 	$route 
@@ -145,11 +157,11 @@ class CCRouter {
 	}
 	
 	/**
-	 * add a route to the router
+	 * Add a route to the router
 	 *
 	 * example: 
-	 * CCRouter::on( 'user/mario', function(){} )
-	 * CCRouter::on( 'user/mario', array( 'alias' => 'profile' ), function(){} )
+	 *     CCRouter::on( 'user/mario', function(){} )
+	 *     CCRouter::on( 'user/mario', array( 'alias' => 'profile' ), function(){} )
 	 * 
 	 * @param mixed		$param1
 	 * @param mixed		$param2
@@ -197,7 +209,7 @@ class CCRouter {
 	}
 	
 	/**
-	 * prepare the routes assing them to their containers
+	 * Prepare the routes assing them to their containers
 	 * 
 	 * @param array		$routes
 	 * @return void
@@ -251,7 +263,7 @@ class CCRouter {
 	}
 	
 	/**
-	 * add an uri filter to the router
+	 * Add an uri filter to the router
 	 * 
 	 * @param string		$key
 	 * @param string		$pattern 	an regex pattern that should match the given parameter
@@ -263,7 +275,7 @@ class CCRouter {
 	}
 	
 	/**
-	 * flatten the routes
+	 * Flatten the routes
 	 * 
 	 * @param array		$routes
 	 * @param string		$param_prefix
@@ -299,7 +311,7 @@ class CCRouter {
 	}
 	
 	/**
-	 * resolve an uri and get the route object
+	 * Resolve an uri and get the route object
 	 *
 	 * @param string 		$uri
 	 * @return CCRoute
