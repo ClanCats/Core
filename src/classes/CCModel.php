@@ -233,7 +233,18 @@ class CCModel
 	 */
 	public function __( $key, $params = array() )
 	{
-		return __( 'model/'.static::_model( 'name' ).'.label.'.$key, $params );
+		$namespace = explode( "\\", get_called_class() );
+		
+		$class = 'model/'.str_replace( '_', '/', array_pop( $namespace ) );
+		
+		$namespace = implode( "\\", $namespace );
+		
+		if ( $namespace )
+		{
+			$class = $namespace.'::'.$class;
+		}
+		
+		return __( $class.'.label.'.$key, $params );
 	}
 
 	/**
