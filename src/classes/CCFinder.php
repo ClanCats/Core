@@ -54,7 +54,7 @@ class CCFinder
 	 */
 	public static function register() 
 	{
-		spl_autoload_register( array( '\\CCFinder', 'find' ) );
+		spl_autoload_register( array( '\\CCFinder', 'find' ), true, true );
 	}
 	
 	/**
