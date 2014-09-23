@@ -16,7 +16,7 @@ class Alert
 	 * @var array
 	 */
 	protected static $_alerts = array();
-	
+
 	/**
 	 * available alert types
 	 *
@@ -28,7 +28,7 @@ class Alert
 		'info',
 		'success',
 	);
-	
+
 	/**
 	 * When loading the alerts we going to add alerts
 	 * from the previous request stored in the session
@@ -42,7 +42,7 @@ class Alert
 			static::$_alerts = \CCSession::once( 'ui.alerts', array() );
 		}
 	}
-	
+
 	/**
 	 * Validate the alert type and format the message
 	 *
@@ -59,7 +59,7 @@ class Alert
 		{
 			throw new Exception( "UI\Alert - Unknown alert type '{$type}'!" );
 		}
-		
+
 		// We always need to return an array
 		if ( !is_array( $message ) )
 		{
@@ -67,7 +67,7 @@ class Alert
 		}
 		return $message;
 	}
-	
+
 	/**
 	 * Flash an alert
 	 * This will add the alert to session so it gets displayed on the next request.
@@ -80,7 +80,7 @@ class Alert
 	{	
 		\CCSession::add( 'ui.alerts.'.$type, static::prepare( $type, $message ) );
 	}
-	
+
 	/**
 	 * Add an alert to the current queue
 	 *
@@ -92,7 +92,27 @@ class Alert
 	{
 		static::$_alerts[$type][] = static::prepare( $type, $message );
 	}
-	
+
+	/**
+	 * Get the available alerts
+	 *
+	 * @return array
+	 */
+	public static function get()
+	{
+		return static::$_alerts;
+	}
+
+	/**
+	 * Reset the created notifications
+	 *
+	 * @return void
+	 */
+	public static function reset()
+	{
+		static::$_alerts = array();
+	}
+
 	/**
 	 * Render the alerts and reset the queue
 	 *
@@ -101,9 +121,9 @@ class Alert
 	public static function render()
 	{
 		$html = Builder::handle( 'alert', static::$_alerts );
-		
+
 		static::$_alerts = array();
-		
+
 		return $html;
 	}
 }
