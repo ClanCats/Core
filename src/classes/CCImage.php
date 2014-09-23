@@ -734,4 +734,51 @@ class CCImage
 
 		return (int) ( $total_lum / $sample_no );
 	}
+
+	/**
+	 * Flip an image
+	 *
+	 * @param string			$mode	vertical, horizontal, both
+	 * @return self
+	 */
+	function flip( $mode )
+	{
+		$width = $this->width;
+		$height = $this->height;
+
+		$src_x = 0;
+		$src_y = 0;
+		$src_width = $width;
+		$src_height = $height;
+
+		switch ( $mode )
+		{
+			case 'vertical':
+				$src_y = $height -1;
+				$src_height = -$height;
+			break;
+
+			case 'horizontal': 
+				$src_x = $width -1;
+				$src_width = -$width;
+			break;
+
+			case 'both':
+				$src_x = $width -1;
+				$src_y = $height -1;
+				$src_width = -$width;
+				$src_height = -$height;
+			break;
+		}
+
+		$imgdest = imagecreatetruecolor( $width, $height );
+
+		if ( imagecopyresampled( $imgdest, $this->image_context, 0, 0, $src_x, $src_y , $width, $height, $src_width, $src_height ) )
+		{
+			$this->image_context = $imgdest;
+		}
+
+		return $this->image_context;
+
+	}
 }
