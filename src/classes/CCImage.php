@@ -18,7 +18,7 @@ class CCImage
 	 * @var array
 	 */
 	private static $available_image_types = array( 'gif', 'png', 'jpg', 'jpeg' );
-	
+
 	/**
 	 * Creates an new empty image
 	 *
@@ -60,7 +60,7 @@ class CCImage
 		if ( is_null( $type ) ) 
 		{
 			$type = CCStr::extension( $file );
-			
+
 			// validate type
 			if ( !in_array( $type, static::$available_image_types ) )
 			{
@@ -82,21 +82,21 @@ class CCImage
 			case 'image/gif':
 				$image = imagecreatefromgif( $file );
 			break;
-			
+
 			case 'image/jpeg';
 				$image = imagecreatefromjpeg( $file );
 			break;
-			
+
 			case 'image/png':
 				$image = imagecreatefrompng( $file );
 			break;
-			
+
 			default:
 				// we dont support other image types
 				return false;
 			break;
 		}
-		
+
 		// when the image type is still null we are going to use 
 		// the mime type of the image 
 		if ( is_null( $type ) )
@@ -177,14 +177,14 @@ class CCImage
 	 * @var int
 	 */
 	public $width = 0;
-	
+
 	/**
 	 * The image height
 	 *
 	 * @var int
 	 */
 	public $height = 0;
-	
+
 	/**
 	 * The image context
 	 *
@@ -205,14 +205,14 @@ class CCImage
 		{
 			throw new CCException( "CCImage - Invalid image context given." );
 		}
-		
+
 		$this->set_type( $type );
 
 		$this->image_context = $image_context;
-		
+
 		$this->reload_context_info();
 	}
-	
+
 	/**
 	 * Reload the image dimension etc.
 	 *
@@ -223,7 +223,7 @@ class CCImage
 		$this->width  = imagesx( $this->image_context );  
 		$this->height = imagesy( $this->image_context );
 	}
-	
+
 	/**
 	 * Set the current image type
 	 *
@@ -239,19 +239,19 @@ class CCImage
 			{
 				throw new CCException( "CCImage - Invalid image type '".$type."'." );
 			}
-			
+
 			// don't allow jpg, set to jpeg
 			if ( $type === 'jpg' )
 			{
 				$type = 'jpeg';
 			}
-			
+
 			if ( $overwrite )
 			{
 				$this->type = $type;
 			}
 		}
-		
+
 		return $type;
 	}
 
@@ -278,13 +278,13 @@ class CCImage
 	public function save( $file, $quality = null, $type = null ) 
 	{
 		$type = $this->set_type( $type );
-		
+
 		// create directory if not exists
 		if ( !is_null( $file ) )
 		{
 			CCFile::mkdir( $file );
 		}
-		
+
 		switch( $type ) 
 		{
 			// PNG images
@@ -297,12 +297,12 @@ class CCImage
 				}
 				return imagepng( $this->image_context, $file, $quality );
 			break;
-			
+
 			// GIF images
 			case 'gif':
 				return imagegif( $this->image_context, $file );
 			break;
-			
+
 			// JPEG images
 			case 'jpeg':
 			default:
@@ -349,12 +349,12 @@ class CCImage
 	public function response( $quality = null, $type = null ) 
 	{
 		$response = CCResponse::create( $this->stringify( $quality, $type ) );
-		
+
 		if ( !is_null( $this->type ) )
 		{
 			$response->header( 'Content-Type', 'image/'.$this->type );
 		}
-		
+
 		return $response;
 	}
 
@@ -522,7 +522,7 @@ class CCImage
 	{
 		$original_aspect = $this->width / $this->height;
 		$thumb_aspect = $width / $height;
-		
+
 		if ( $original_aspect >= $thumb_aspect )
 		{
 		   $new_height = $height;
@@ -533,19 +533,19 @@ class CCImage
 		   $new_width = $width;
 		   $new_height = $this->height / ($this->width / $width);
 		}
-		
+
 		$x = 0 - ( $new_width - $width ) / 2;
 		$y = 0 - ( $new_height - $height ) / 2;
-		
+
 		$result = imagecreatetruecolor( $width, $height );
 		imagecopyresampled( $result, $this->image_context, $x, $y, 0, 0, $new_width, $new_height, $this->width, $this->height );
-		
+
 		// overwrite the image context 
 		$this->image_context = $result;
-		
+
 		// update properties
 		$this->reload_context_info();
-		
+
 		// return self
 		return $this;
 	}
@@ -579,7 +579,7 @@ class CCImage
 		// return self
 		return $this;
 	}
-	
+
 	/**
 	 * Crop the current image
 	 *
@@ -599,20 +599,20 @@ class CCImage
 		{
 			$x = ( $this->width / 2 ) - ( $width / 2 );
 		}
-		
+
 		if ( $y == 'middle' || $y == 'auto' )
 		{
 			$y = ( $this->height / 2 ) - ( $height / 2 );
 		}
-		
+
 		$result = imagecreatetruecolor( $width, $height );  
 		ImageCopyResampled( $result, $this->image_context, 0, 0, $x, $y, $width, $height, $width, $height );
-		
+
 		$this->image_context = $result;
-		
+
 		// update properties
 		$this->reload_context_info();
-		
+
 		// return self
 		return $this;
 	}
@@ -626,7 +626,7 @@ class CCImage
 	 *
 	 * @return self
 	 */
-	public function add_layer( CCImage $image, $x = 0, $y = 0 ) 
+	public function add_layer( CCImage $image, $x = 0, $y = 0, $alpha = 100 ) 
 	{
 		// auto values
 		if ( $x == 'center' || $x == 'auto' )
@@ -641,7 +641,7 @@ class CCImage
 		{
 			$x = $this->width - $image->width;
 		}
-		
+
 		if ( $y == 'middle' || $y == 'auto' )
 		{
 			$y = ( $this->height / 2 ) - ( $image->height / 2 );
@@ -654,10 +654,10 @@ class CCImage
 		{
 			$x = $this->height - $image->height;
 		}
-		
+
 		// run image copy
-		imagecopy( $this->image_context, $image->image_context, $x, $y, 0, 0, $image->width, $image->height );
-		
+		imagecopymerge( $this->image_context, $image->image_context, $x, $y, 0, 0, $image->width, $image->height, $alpha );
+
 		return $this;
 	}
 
@@ -668,15 +668,17 @@ class CCImage
 	 * @param mixed 		$color
 	 * @return self
 	 */
-	public function fill_color( $color ) 
+	public function fill_color( $color, $alpha = 1 ) 
 	{
+		$alpha = $alpha * 127;
+
 		// parse the color
 		$color = CCColor::create( $color );
-		$color = imagecolorallocate( $this->image_context, $color->RGB[0], $color->RGB[1], $color->RGB[2] );
+		$color = imagecolorallocatealpha( $this->image_context, $color->RGB[0], $color->RGB[1], $color->RGB[2], $alpha );
 
 		// run image fill
 		imagefill( $this->image_context, 0, 0, $color );
-		
+
 		return $this;
 	}
 
@@ -694,7 +696,7 @@ class CCImage
 			//$gaussian = array(array(1.0, 2.0, 1.0), array(2.0, 1.0, 2.0), array(1.0, 2.0, 1.0));
 			//imageconvolution($this->image_context, $gaussian, 16, 0);
 		}
-		
+
 		return $this;
 	}
 
@@ -722,14 +724,14 @@ class CCImage
 				$r = ($rgb >> 16) & 0xFF;
 				$g = ($rgb >> 8) & 0xFF;
 				$b = $rgb & 0xFF;
-				
+
 				$lum = ($r+$r+$b+$g+$g+$g)/6;
 
 				$total_lum += $lum;
 				$sample_no++;
 			}
 		}
-		
+
 		return (int) ( $total_lum / $sample_no );
 	}
 }
