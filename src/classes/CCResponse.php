@@ -68,23 +68,23 @@ class CCResponse
 		505 => 'HTTP Version Not Supported',
 		509 => 'Bandwidth Limit Exceeded'
 	);
-	
+
 	/*
 	 * status
 	 */
 	protected $_status = 200;
-	
+
 	/*
 	 * body
 	 */
 	protected $_body = null;
-	
+
 	/*
 	 * header
 	 */
 	protected $_header = array();
-	
-	
+
+
 	/**
 	 * response factory 
 	 * create new responses
@@ -97,7 +97,7 @@ class CCResponse
 	{		
 		return new static( $body, $status );
 	}
-	
+
 	/**
 	 * error response
 	 * executes an private route with the error status code and 
@@ -110,7 +110,7 @@ class CCResponse
 	{
 		return CCRequest::uri( '#'.$status )->perform()->response();
 	}
-	
+
 	/**
 	 * json response
 	 * you can pass an array of data wich will be converted to json
@@ -126,13 +126,13 @@ class CCResponse
 		{
 			throw new CCException( "CCResponse::json - first argument has to be an array." );
 		}
-		
+
 		$response = new static( CCJson::encode( $data, $beautify ), $status );
 		$response->header( 'Content-Type', 'text/json' );
-		
+
 		return $response;
 	}
-	
+
 	/**
 	 * download response
 	 * creates an respose that forces the browser to download as file
@@ -146,7 +146,7 @@ class CCResponse
 	{
 		return static::create( $body, $status )->as_download( $filename );
 	}
-	
+
 	/**
 	 * response constructor
 	 *
@@ -158,7 +158,7 @@ class CCResponse
 		$this->_body = $body;
 		$this->_status = $status;
 	}
-	
+
 	/**
 	 * magic get
 	 *
@@ -172,7 +172,7 @@ class CCResponse
 			return call_user_func( array( $this, $key ) );
 		}
 	}
-	
+
 	/**
 	 * magic set
 	 *
@@ -187,7 +187,7 @@ class CCResponse
 			return call_user_func( array( $this, $key ), $value );
 		}
 	}
-	
+
 	/**
 	 * body setter and getter
 	 *
@@ -200,10 +200,10 @@ class CCResponse
 		{
 			$this->_body = $body; return $this;
 		}
-		
+
 		return $this->_body;
 	}
-	
+
 	/**
 	 * status setter and getter
 	 *
@@ -218,13 +218,13 @@ class CCResponse
 			{
 				throw new CCException( "CCResponse::status - cannot change status header has already been send." );
 			}
-			
+
 			$this->_status = $code; return $this;
 		}
-		
+
 		return $this->_status;
 	}
-	
+
 	/**
 	 * status setter and getter
 	 *
@@ -238,10 +238,10 @@ class CCResponse
 		{
 			$this->_header[$key] = $str; return $this;
 		}
-		
+
 		return $this->_header[$key];
 	}
-	
+
 	/**
 	 * modify the headers to force a download
 	 *
@@ -254,7 +254,7 @@ class CCResponse
 		{
 			$filename = 'file.'.CCStr::suffix( $this->header( 'Content-Type' ), '/' );
 		}
-		
+
 		$this->header( 'Content-Description', 'File Transfer' );
 		$this->header( 'Content-Disposition', 'attachment; filename='.$filename );
 		$this->header( 'Content-Transfer-Encoding', 'binary' );
@@ -262,10 +262,10 @@ class CCResponse
 		$this->header( 'Cache-Control', 'must-revalidate' );
 		$this->header( 'Pragma', 'public' );
 		$this->header( 'Content-Length', strlen( $this->body() ) );
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * send response
 	 * means printing the response and setting the headers if set
@@ -279,12 +279,12 @@ class CCResponse
 		{
 			throw new CCException( "CCResponse::send - cannot send header, header has already been send." );
 		}
-		
+
 		if ( $headers ) 
 		{
 			// status header
 			header( CCIn::server( 'SERVER_PROTOCOL' ).' '.$this->_status.' '.CCResponse::$messages[$this->_status] );
-			
+
 			// check if content type is already set
 			if ( !isset( $this->_header['Content-Type'] ) ) 
 			{
@@ -292,18 +292,18 @@ class CCResponse
 			}
 
 			$this->header( 'X-Powered-By', 'ClanCatsFramework version: '.ClanCats::VERSION );
-		
+
 			// set headers
 			foreach( $this->_header as $key => $content ) 
 			{
 				header( $key.': '.$content );
 			}
 		}
-		
+
 		// profiler
 		CCProfiler::check( 'CCResponse - sending response' );
-		
+
 		// print the body
-		echo CCEvent::pass( 'response.output', $this->_body );
+		echo CCEvent::pass( 'response.output', $this->body() );
 	}
 }
