@@ -235,17 +235,18 @@ class CCModel
 	{
 		$namespace = explode( "\\", get_called_class() );
 		
-		$class = 'model/'.str_replace( '_', '/', array_pop( $namespace ) );
+		$class = strtolower( 'model/'.str_replace( '_', '/', array_pop( $namespace ) ) );
 		
 		$namespace = implode( "\\", $namespace );
 		
 		if ( $namespace )
 		{
-			$class = $namespace.'::'.$class;
+				$class = $namespace.'::'.$class;
 		}
 		
 		return __( $class.'.label.'.$key, $params );
 	}
+
 
 	/**
 	 * Assign an model with some data
