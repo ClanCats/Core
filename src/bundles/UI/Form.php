@@ -16,21 +16,21 @@ class Form
 	 * @var string
 	 */
 	private static $id_prefix = null;
-	
+
 	/**
 	 * Registerd patterns
 	 *
 	 * @var array[callbacks]
 	 */
 	private static $macros = array();
-	
+
 	/**
 	 * Is the builder enabled
 	 *
 	 * @var bool
 	 */
 	private static $builder_enabled = false;
-	
+
 	/**
 	 * Static init
 	 * Here we register all inital macros
@@ -39,7 +39,7 @@ class Form
 	{
 		static::$builder_enabled = Builder::$config->get( 'form.builder_enabled' );
 	}
-	
+
 	/**
 	 * Create a new static pattern for the form generator.
 	 * I found this Macro idea in the wonderfull laravel framework thanks.
@@ -52,7 +52,7 @@ class Form
 	{
 		static::$macros[$key] = $callback;
 	}
-	
+
 	/**
 	 * Open a new form
 	 * This will set the current form to this one
@@ -64,20 +64,20 @@ class Form
 	public static function start( $key, $attr = array() )
 	{
 		$attributes = array();
-		
+
 		// force the form role
 		$attributes['role'] = 'form';
-		
+
 		if ( !is_null( $key ) )
 		{
 			 static::$id_prefix = $attributes['id'] = static::form_id( 'form', $key );
 		}
-		
+
 		$attributes = array_merge( $attributes, $attr );
-		
+
 		return '<form'.HTML::attr( $attributes ).'>';
 	}
-	
+
 	/**
 	 * Closes the form and resest the current form
 	 * 
@@ -89,7 +89,7 @@ class Form
 	{
 		static::$id_prefix = null; return '</form>';
 	}
-	
+
 	/**
 	 * Create a new from instance
 	 *
@@ -109,23 +109,23 @@ class Form
 			$callback = $attr;
 			$attr = $new_attr;
 		}
-		
+
 		$form = new static;
-		
+
 		if ( is_null( $callback ) )
 		{
 			throw new Exception( 'Cannot use capture without a callback or string given.' );
 		}
-		
+
 		// fix no array given
 		if ( !is_array( $attr ) )
 		{
 			$attr = array();
 		} 
-		
+
 		return static::start( $key, $attr ).\CCStr::capture( $callback, array( $form ) ).static::end();
 	}
-	
+
 	/**
 	 * Format an id by configartion
 	 *
@@ -137,7 +137,7 @@ class Form
 	{
 		return sprintf( Builder::$config->get( 'form.'.$type.'_id_format' ), $name );
 	}
-	
+
 	/**
 	 * Format an id by configartion with the current form prefix
 	 *
@@ -153,7 +153,7 @@ class Form
 		}
 		return static::form_id( $type, $name );
 	}
-	
+
 	/**
 	 * Forward intance functions to static using the current instance
 	 *
@@ -165,21 +165,21 @@ class Form
 	{
 		// take the first argument and add it again as the id
 		array_unshift( $args, static::build_id( $method, reset( $args ) ) );
-		
+
 		if ( array_key_exists( $method, static::$macros ) )
 		{
 			// execute the macro
 			return call_user_func_array( static::$macros[$method], $args );
 		}
-		
+
 		if ( method_exists( __CLASS__, 'make_'.$method ) )
 		{
 			return call_user_func_array( array( __CLASS__, 'make_'.$method ), $args );
 		}
-		
+
 		throw new Exception( "UI\\Form - Unknown macro '".$method."'." );
 	}
-	
+
 	/**
 	 * Simply forward to call static to allow execution from 
 	 * object context
@@ -192,7 +192,7 @@ class Form
 	{
 		return static::__callStatic( $method, $args );
 	}
-	
+
 	/**
 	 * make an input
 	 *
@@ -208,20 +208,20 @@ class Form
 			'name' => $key, 
 			'type' => $type 
 		), $attr ));
-		
+
 		if ( !is_null( $value ) )
 		{
 			$element->value( _e( $value ) );
 		}
-		
+
 		if ( !static::$builder_enabled )
 		{
 			 return $element;
 		}
-		
+
 		return Builder::handle( 'form_input', $element );
 	}
-	
+
 	/**
 	 * make a label
 	 *
@@ -236,20 +236,20 @@ class Form
 		{
 			$text = $key;
 		}
-		
+
 		$element = HTML::tag( 'label', $text, array_merge( array( 
 			'id' => $id, 
 			'for' => static::build_id( 'input', $key ) 
 		), $attr ));
-		
+
 		if ( !static::$builder_enabled )
 		{
 			 return $element;
 		}
-		
+
 		return Builder::handle( 'form_label', $element );
 	}
-	
+
 	/**
 	 * make a checkbox
 	 *
@@ -267,19 +267,19 @@ class Form
 			'name' => $key, 
 			'type' => 'checkbox' 
 		), $attr ));
-		
+
 		$element->checked( (bool) $active );
-		
+
 		$element = HTML::tag( 'label', $element->render().' '.$text );
-		
+
 		if ( !static::$builder_enabled )
 		{
 			 return $element;
 		}
-		
+
 		return Builder::handle( 'form_checkbox', $element );
 	}
-	
+
 	/**
 	 * generate a textarea
 	 *
@@ -295,15 +295,15 @@ class Form
 			'id' => $id, 
 			'name' => $key,
 		), $attr ));
-		
+
 		if ( !static::$builder_enabled )
 		{
 			 return $element;
 		}
-		
+
 		return Builder::handle( 'form_textarea', $element );
 	}
-	
+
 	/**
 	 * generate a file input
 	 *
@@ -337,33 +337,36 @@ class Form
 		{
 			$selected = array( $selected );
 		}
-		
+
 		$buffer = "";
-		
-		foreach( $options as $key => $value )
+
+		foreach( $options as $key => $option )
 		{
-			$option = HTML::tag( 'option', $value )
-				->value( $key );
-			
+			if ( ! ( $option instanceof HTML ) )
+			{
+				$option = HTML::tag( 'option', $option )
+					->value( $key );
+			}
+
 			if ( in_array( $key, $selected ) )
 			{
 				$option->selected( true );
 			}
-			
+
 			$buffer .= $option->render();
 		}
-		
+
 		$element = HTML::tag( 'select', $buffer, array(
 			'id' => $id,
 			'name' => $name,
 			'size' => $size,
 		) );
-		
+
 		if ( !static::$builder_enabled )
 		{
 			 return $element;
 		}
-		
+
 		return Builder::handle( 'form_select', $element );
 	}
 }
