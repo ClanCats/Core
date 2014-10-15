@@ -247,7 +247,6 @@ class CCModel
 		return __( $class.'.label.'.$key, $params );
 	}
 
-
 	/**
 	 * Assign an model with some data
 	 *
@@ -398,26 +397,25 @@ class CCModel
 		// try getting the item
 		if ( array_key_exists( $key, $this->_data_store ) ) 
 		{
-			if ( !$has_modifier )
+			$value = $this->_data_store[$key];
+
+			if ( $has_modifier )
 			{
-				return $this->_data_store[$key];
+				$value = $this->{'_get_modifier_'.$key}( $value );
 			}
-			else
-			{
-				return $this->{'_get_modifier_'.$key}( $this->_data_store[$key] );
-			}
+
+			return $value;
 		}
 
 		if ( $has_modifier )
 		{
-			$modifier_result = $this->{'_get_modifier_'.$key}();
-			return $modifier_result;
+			$value = $this->{'_get_modifier_'.$key}(); return $value;
 		}
 
 		// when a function extists we forward the call
 		if ( method_exists( $this, $key ) )
 		{
-			return $this->__call_property( $key );
+			$value = $this->__call_property( $key ); return $value;
 		}
 
 		throw new \InvalidArgumentException( "CCModel - Invalid or undefined model property '".$key."'." );

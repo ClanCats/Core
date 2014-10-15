@@ -296,7 +296,7 @@ class Builder
 		$build = '';
 
 		foreach( $query->wheres as $where ) 
-		{	
+		{
 			// to make nested wheres possible you can pass an closure 
 			// wich will create a new query where you can add your nested wheres
 			if ( !isset( $where[2] ) && is_closure( $where[1] ) )
