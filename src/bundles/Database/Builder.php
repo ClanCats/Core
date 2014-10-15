@@ -17,7 +17,7 @@ class Builder
 	 * @var array
 	 */
 	public $parameters = array();
-	
+
 	/**
 	 * The escape pattern escapes table column names etc. 
 	 * select * from `table`...
@@ -25,7 +25,7 @@ class Builder
 	 * @var string
 	 */
 	protected $escape_pattern = '`%s`';
-	
+
 	/**
 	 * Clear all set parameters
 	 *
@@ -35,7 +35,7 @@ class Builder
 	{
 		$this->parameters = array();
 	}
-	
+
 	/**
 	 * Adds a parameter to the builder
 	 *
@@ -45,7 +45,7 @@ class Builder
 	{
 		$this->parameters[] = $value;
 	}
-	
+
 	/**
 	 * creates an parameter and adds it
 	 *
@@ -60,7 +60,7 @@ class Builder
 		}
 		return $value;
 	}
-	
+
 	/**
 	 * Filters the parameters removes the keys and Expressions
 	 *
@@ -73,7 +73,7 @@ class Builder
 			return !\DB::is_expression( $item );
 		}));
 	}
-	
+
 	/**
 	 * Escape / wrap an string for sql
 	 *
@@ -85,30 +85,30 @@ class Builder
 		{
 			return $string->value;
 		}
-		
+
 		// the string might contain an 'as' statement that we wil have to split.
 		if ( strpos( $string, ' as ' ) !== false )
 		{
 			$string = explode( ' as ', $string );
 			return $this->escape( trim( $string[0] ) ).' as '. $this->escape( trim( $string[1] ) );
 		}
-		
+
 		// it also might contain dott seperations we have to split
 		if ( strpos( $string, '.' ) !== false )
 		{
 			$string = explode( '.', $string );
-			
+
 			foreach( $string as $key => $item )
 			{
 				$string[$key] = $this->escape_string( $item );
 			}
-			
+
 			return implode( '.' , $string );
 		}
-		
+
 		return $this->escape_string( $string );
 	}
-	
+
 	/**
 	 * Escape a single string without checking for as and dots
 	 *
@@ -119,7 +119,7 @@ class Builder
 	{
 		return sprintf( $this->escape_pattern, $string );
 	}
-	
+
 	/**
 	 * Escape an array of items an seprate them with a comma
 	 *
@@ -132,10 +132,10 @@ class Builder
 		{
 			$array[$key] = $this->escape( $item );
 		}
-		
+
 		return implode( ', ', $array );
 	}
-	
+
 	/**
 	 * Escape the table 
 	 *
@@ -145,15 +145,15 @@ class Builder
 	public function escape_table( &$query )
 	{
 		$table = $query->table;
-		
+
 		if ( is_array( $table ) )
 		{
 			reset($table); $table = key($table).' as '.$table[key($table)];
 		}
-		
+
 		return $this->escape( $table );
 	}
-	
+
 	/**
 	 * Convert data to parameters and bind them to the query
 	 *
@@ -166,7 +166,7 @@ class Builder
 		{
 			$params[$key] = $this->param( $param );
 		}
-		
+
 		return implode( ', ', $params );
 	}
 
@@ -179,23 +179,23 @@ class Builder
 	public function compile_insert( &$query )
 	{
 		$build = ( $query->ignore ? 'insert ignore' : 'insert' ).' into '.$this->escape_table( $query ).' ';
-		
+
 		$value_collection = $query->values;
-		
+
 		// Get the array keys from the first array in the collection.
 		// We use them as insert keys.
 		$build .= '('.$this->escape_list( array_keys( reset( $value_collection ) ) ).') values ';
-		
+
 		// add the array values.
 		foreach( $value_collection as $values )
 		{
 			$build .= '('.$this->parameterize( $values ).'), ';
 		}
-		
+
 		// cut the last comma away
 		return substr( $build, 0, -2 );
 	}
-	
+
 	/**
 	 * Build an update query
 	 *
@@ -205,21 +205,21 @@ class Builder
 	public function compile_update( &$query )
 	{
 		$build = 'update '.$this->escape_table( $query ).' set ';
-		
+
 		// add the array values.
 		foreach( $query->values as $key => $value )
 		{
 			$build .= $this->escape( $key ).' = '.$this->param( $value ).', ';
 		}
-		
+
 		$build = substr( $build, 0, -2 );
 		$build .= $this->compile_where( $query );
 		$build .= $this->compile_limit( $query );
-		
+
 		// cut the last comma away
 		return $build;
 	}
-	
+
 	/**
 	 * Build an delete query
 	 *
@@ -229,14 +229,14 @@ class Builder
 	public function compile_delete( &$query )
 	{
 		$build = 'delete from '.$this->escape_table( $query );
-		
+
 		$build .= $this->compile_where( $query );
 		$build .= $this->compile_limit( $query );
-		
+
 		// cut the last comma away
 		return $build;
 	}
-	
+
 	/**
 	 * Build a select
 	 *
@@ -246,7 +246,7 @@ class Builder
 	public function compile_select( &$query )
 	{
 		$build = ( $query->distinct ? 'select distinct' : 'select' ).' ';
-		
+
 		if ( !empty( $query->fields ) )
 		{
 			foreach( $query->fields as $key => $field )
@@ -265,26 +265,26 @@ class Builder
 				}
 				$build .= ', ';
 			}
-			
+
 			$build = substr( $build, 0, -2 );
 		}
 		else 
 		{
 			$build .= '*';
 		}
-		
+
 		// append the table
 		$build .= ' from '.$this->escape_table( $query );
-		
+
 		// build the where stuff
 		$build .= $this->compile_where( $query );
 		$build .= $this->compile_group( $query );
 		$build .= $this->compile_order( $query );
 		$build .= $this->compile_limit_with_offset( $query );
-		
+
 		return $build;
 	}
-	
+
 	/**
 	 * Build the where part
 	 *
@@ -294,7 +294,7 @@ class Builder
 	public function compile_where( &$query )
 	{
 		$build = '';
-		
+
 		foreach( $query->wheres as $where ) 
 		{	
 			// to make nested wheres possible you can pass an closure 
@@ -302,19 +302,15 @@ class Builder
 			if ( !isset( $where[2] ) && is_closure( $where[1] ) )
 			{
 				$sub_query = new Query;
-				
+
 				call_user_func( $where[1], $sub_query );
-				
+
+				// The parameters get added by the call of compile where
 				$build .= ' '.$where[0].' ( '.substr( $this->compile_where( $sub_query ), 7 ).' )';
-				
-				foreach( $sub_query->parameters as $param )
-				{
-					$this->add_parameter( $param );
-				}
-				
+
 				continue;
 			}
-			
+
 			// when we have an array as where values we have 
 			// to parameterize them
 			if ( is_array( $where[3] ) ) 
@@ -325,17 +321,17 @@ class Builder
 			{
 				$where[3] = $this->param( $where[3] );
 			}
-			
+
 			// we always need to escepe where 1 wich referrs to the key
 			$where[1] = $this->escape( $where[1] );
-			
+
 			// implode the beauty
 			$build .= ' '.implode( ' ', $where );
 		}
-		
+
 		return $build;
 	}
-	
+
 	/**
 	 * Build the limit and offset part
 	 *
@@ -348,10 +344,10 @@ class Builder
 		{
 			return "";
 		}
-		
+
 		return ' limit '.( (int) $query->offset ).', '.( (int) $query->limit );
 	}
-	
+
 	/**
 	 * Build the limit and offset part
 	 *
@@ -364,10 +360,10 @@ class Builder
 		{
 			return "";
 		}
-		
+
 		return ' limit '.( (int) $query->limit );
 	}
-	
+
 	/**
 	 * Build the order by statement
 	 *
@@ -380,17 +376,17 @@ class Builder
 		{
 			return '';
 		}
-		
+
 		$build = " order by ";
-		
+
 		foreach( $query->orders as $order ) 
 		{
 			$build .= $this->escape( $order[0] ).' '.$order[1].', ';
 		}
-		
+
 		return substr( $build, 0, -2 ); 
 	}
-	
+
 	/**
 	 * Build the gorup by statemnet
 	 *
@@ -403,7 +399,7 @@ class Builder
 		{
 			return '';
 		}
-		
+
 		return ' group by '.$this->escape_list( $query->groups );
 	}
 }
