@@ -1,4 +1,4 @@
-<?php namespace CC\Core;
+<?php namespace Core;
 /**
  * ClanCats HTTP Client
  *
@@ -9,12 +9,12 @@
  *
  */
 class CCHTTP {
-	
+
 	/*
 	 * bot version
 	 */
 	const BOT_VERSION = '1.0';
-	
+
 	/*
 	 * Request types
 	 */
@@ -22,7 +22,7 @@ class CCHTTP {
 	const post 		= 'POST';
 	const put 		= 'PUT';
 	const delete 	= 'DELETE';
-	
+
 	/**
 	 * create new get request
 	 *
@@ -32,7 +32,7 @@ class CCHTTP {
 	public static function get( $url, $headers = array() ) {
 		return new static( static::get, $url, $headers );
 	}
-	
+
 	/**
 	 * create new post request
 	 *
@@ -43,7 +43,7 @@ class CCHTTP {
 	public static function post( $url, $headers = array(), $data = array() ) {
 		return new static( static::post, $url, $headers, $data );
 	}
-	
+
 	/**
 	 * create new put request
 	 *
@@ -54,7 +54,7 @@ class CCHTTP {
 	public static function put( $url, $headers = array(), $data = array() ) {
 		return new static( static::put, $url, $headers, $data );
 	}
-	
+
 	/**
 	 * create new delete request
 	 *
@@ -64,38 +64,38 @@ class CCHTTP {
 	public static function delete( $url, $headers = array() ) {
 		return new static( static::delete, $url, $headers );
 	}
-	
-	
+
+
 	/*
 	 * the request type
 	 */
 	private $request_type = null;
-	
+
 	/*
 	 * the request url
 	 */
 	public $url = null;
-	
+
 	/*
 	 * request cookies
 	 */
 	public $cookies = array();
-	
+
 	/*
 	 * request data
 	 */
 	public $data = array();
-	
+
 	/*
 	 * request headers
 	 */
 	protected $_headers = array();
-	
+
 	/*
 	 * strtolower the header keys?
 	 */
 	public $_normalize_header_keys = true;
-	
+
 	/**
 	 * HTTP Request constructor
 	 *
@@ -108,15 +108,15 @@ class CCHTTP {
 		$this->type = $type;
 		$this->url = $url;
 		$this->data = $data;
-		
+
 		// default useragent
 		$this->header( 'user-agent', 'ClanCatsBot/'.static::BOT_VERSION.' (+http://www.clancats.com/infobot.html)' );
-		
+
 		foreach( $headers as $key => $header ) {
 			$this->header( $key, $header );
 		}
 	}
-	
+
 	/**
 	 * return the current host from the url
 	 * @return string
@@ -124,7 +124,7 @@ class CCHTTP {
 	public function host() {
 		return parse_url( $this->url, PHP_URL_HOST );
 	}
-	
+
 	/**
 	 * header getter and setter
 	 *
@@ -132,20 +132,20 @@ class CCHTTP {
 	 * @param mixed		$value
 	 */
 	public function header( $key, $value = null ) {
-		
+
 		$key = explode( '-', $key );
 		foreach( $key as $k => $v ) {
 			$key[$k] = ucfirst( strtolower($v));
 		}
 		$key = implode( '-', $key );
-		
+
 		if ( !is_null( $value ) ) {
 			$this->_headers[$key] = $value;
 		}
-		
+
 		return $this->_headers[$key];
 	}
-	
+
 	/**
 	 * and finally execute the request
 	 *
@@ -155,7 +155,7 @@ class CCHTTP {
 	 * @return mixed
 	 */
 	public function request( $what = 'both' ) {
-		
+
 		/*
 		 * prepare curl
 		 */
@@ -164,7 +164,7 @@ class CCHTTP {
 		//curl_setopt( $ch, CURLOPT_VERBOSE, 1 );
 		curl_setopt( $ch, CURLOPT_HEADER, 1 );
 		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-	
+
 		/*
 		 * prepare the headers
 		 */
@@ -173,7 +173,7 @@ class CCHTTP {
 			$headers[] = $key.': '.$header;
 		}
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
-		
+
 		/*
 		 * post data
 		 */
@@ -181,7 +181,7 @@ class CCHTTP {
 			curl_setopt( $ch, CURLOPT_POST, 1 );  
 			curl_setopt( $ch, CURLOPT_POSTFIELDS, $post_data ); 
 		}
-		
+
 		/*
 		 * execute that request
 		 */
@@ -193,10 +193,10 @@ class CCHTTP {
 		$header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
 		$header = substr( $response, 0, $header_size );
 		$body = substr( $response, $header_size ); 
-		
+
 		// close it
 		curl_close($ch);
-		
+
 		// format the header
 		$arr_header = array();
 		$header = explode( "\n", $header );
@@ -209,7 +209,7 @@ class CCHTTP {
 				$arr_header[trim($head_part[0])] = trim($head_part[1]);
 			}
 		}
-		
+
 		/*
 		 * return it
 		 */
