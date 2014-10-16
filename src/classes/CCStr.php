@@ -302,7 +302,7 @@ class CCStr
 		$string = strtolower( static::replace_accents( trim( $string ) ) );
 
 		// these characters get replaced with our seperator
-		$string = str_replace( array( ' ', '&', '\r\n', '\n', '+', ',', '.' ) , '-', $string );
+		$string = str_replace( array( ' ', '&', '\r\n', '\n', '+', ',', '.', '_' ) , '-', $string );
 
 		$string = preg_replace( array(
 			'/[^a-z0-9\-]/', // remove non alphanumerics
