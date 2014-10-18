@@ -234,16 +234,16 @@ class CCModel
 	public function __( $key, $params = array() )
 	{
 		$namespace = explode( "\\", get_called_class() );
-		
+
 		$class = strtolower( 'model/'.str_replace( '_', '/', array_pop( $namespace ) ) );
-		
+
 		$namespace = implode( "\\", $namespace );
-		
+
 		if ( $namespace )
 		{
 				$class = $namespace.'::'.$class;
 		}
-		
+
 		return __( $class.'.label.'.$key, $params );
 	}
 
@@ -397,7 +397,7 @@ class CCModel
 		// try getting the item
 		if ( array_key_exists( $key, $this->_data_store ) ) 
 		{
-			$value = $this->_data_store[$key];
+			$value = &$this->_data_store[$key];
 
 			if ( $has_modifier )
 			{
