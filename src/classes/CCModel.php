@@ -397,11 +397,11 @@ class CCModel
 		// try getting the item
 		if ( array_key_exists( $key, $this->_data_store ) ) 
 		{
-			$value = &$this->_data_store[$key];
+			$value =& $this->_data_store[$key];
 
 			if ( $has_modifier )
 			{
-				$value = $this->{'_get_modifier_'.$key}( $value );
+				return $this->{'_get_modifier_'.$key}( $value );
 			}
 
 			return $value;
