@@ -225,6 +225,6 @@ class DB
 	 */
 	public static function truncate( $table )
 	{
-		return DB::run( 'truncate table `'.$table.';' );
+		return DB::run( 'truncate table `'.$table.'`;' );
 	}
 }
