@@ -33,7 +33,7 @@ class Test_CCModel extends \PHPUnit_Framework_TestCase
 			),
 		);
 	}
-	
+
 	/**
 	 * people data bulk
 	 */
@@ -53,7 +53,7 @@ class Test_CCModel extends \PHPUnit_Framework_TestCase
 			),
 		);
 	}
-	
+
 	/**
 	 * CCModel::$defaults
 	 */
@@ -65,7 +65,7 @@ class Test_CCModel extends \PHPUnit_Framework_TestCase
 			'library_id'		=> null,
 		), CCUnit\Model_Person::_model( 'defaults' ) );
 	}
-	
+
 	/**
 	 * CCModel::create, construction and assign
 	 *
@@ -76,12 +76,12 @@ class Test_CCModel extends \PHPUnit_Framework_TestCase
 		$person_create = CCUnit\Model_Person::create( $person );
 		$person_assign = CCUnit\Model_Person::assign( $person );
 		$person_construct = new CCUnit\Model_Person( $person );
-		
+
 		$this->assertEquals( $person, $person_create->raw() );
 		$this->assertEquals( $person, $person_construct->raw() );
 		$this->assertEquals( $person, $person_assign->raw() );
 	}
-	
+
 	/**
 	 * CCModel::assing
 	 *
@@ -90,13 +90,13 @@ class Test_CCModel extends \PHPUnit_Framework_TestCase
 	public function test_bulk_assign( $people ) 
 	{
 		$people_assigned = CCUnit\Model_Person::assign( $people );
-		
+
 		foreach( $people_assigned as $key => $person )
 		{
 			$this->assertEquals( $people[$key], $person->raw() );
 		}
 	}
-	
+
 	/**
 	 * CCModel::__get
 	 *
@@ -105,12 +105,36 @@ class Test_CCModel extends \PHPUnit_Framework_TestCase
 	public function test_get( $person ) 
 	{
 		$person_model = CCUnit\Model_Person::create( $person );
-		
+
 		$this->assertEquals( $person['name'], $person_model->name );
 		$this->assertTrue( $person_model->age >= 18 );
 		$this->assertEquals( $person_model->name.' '.$person_model->age, $person_model->line );
 	}
-	
+
+	/**
+	 * CCModel::__get by reference
+	 *
+	 * @dataProvider people_provider
+	 */
+	public function test_get_reference( $person ) 
+	{
+		$person_model = CCUnit\Model_Person::create( $person );
+
+		$person_model->array = array();
+
+		$person_model->array[] = 'foo';
+		$person_model->array[] = 'Bar';
+		
+		$this->assertEquals( array( 'foo', 'Bar' ), $person_model->array );
+		
+		$person_model->a = 1;
+		
+		$person_model->a++;
+		$person_model->a++;
+		
+		$this->assertEquals( 3, $person_model->a );
+	}
+
 	/**
 	 * CCModel::__set
 	 *
@@ -119,13 +143,13 @@ class Test_CCModel extends \PHPUnit_Framework_TestCase
 	public function test_set( $person ) 
 	{
 		$person_model = CCUnit\Model_Person::create( $person );
-		
+
 		$person_model->age = mt_rand( -20, 20 );
-		
+
 		$this->assertTrue( $person_model->age >= 18 );
 		$this->assertTrue( CCArr::get( 'age', $person_model->raw() ) >= 18 );
 	}
-	
+
 	/**
 	 * CCModel::__isset
 	 *
@@ -134,7 +158,7 @@ class Test_CCModel extends \PHPUnit_Framework_TestCase
 	public function test_isset( $person ) 
 	{
 		$person_model = CCUnit\Model_Person::create( $person );
-		
+
 		$this->assertTrue( isset( $person_model->age ) );
 		$this->assertTrue( isset( $person_model->line ) );
 	}
