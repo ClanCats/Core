@@ -22,7 +22,7 @@ class CCArr
 	{
 		return array_shift( $arr );
 	}
-	
+
 	/**
 	 * Get the last element of an array
 	 *
@@ -33,7 +33,7 @@ class CCArr
 	{
 		return array_pop( $arr );
 	}
-	
+
 	/**
 	 * Adds a single item or array of items at the end of the referenced array
 	 * If you want to combine multiple arrays recursivly or use key => value pairs, please use CCArr::merge()
@@ -55,7 +55,7 @@ class CCArr
 		{
 			throw new \InvalidArgumentException('CCArr::push - second argument has to be an array.');
 		}
-		
+
 		if ( $merge && is_array( $item ) ) 
 		{
 			foreach ( $item as $value ) 
@@ -67,7 +67,7 @@ class CCArr
 		$arr[] = $item;
 		return $arr;
 	}
-	
+
 	/**
 	 * Adds an item to an element in the array
 	 * 
@@ -88,15 +88,15 @@ class CCArr
 		{
 			throw new \InvalidArgumentException('CCArr::add - second argument has to be an array.');
 		}
-		
+
 		if ( !is_array( static::get( $key, $arr ) ) )
 		{
 			return static::set( $key, array( $item ), $arr );
 		}
-		
+
 		return static::set( $key, static::push( $item, static::get( $key, $arr ) ), $arr );
 	}
-	
+
 	/**
 	 * get a special item from every array
 	 *
@@ -110,17 +110,41 @@ class CCArr
 		{
 			throw new \InvalidArgumentException('CCArr::pick - second argument has to be an array.');
 		}
-		
+
 		$return = array();
-		
+
 		foreach( $arr as $array ) 
 		{
 			$return[] = CCArr::get( $key, $array );
 		}
-		
+
 		return $return;
 	}
-	
+
+	/**
+	 * get a special item from every array
+	 *
+	 * @param mixed				$key
+	 * @param array[obj]		$arr
+	 * @return array
+	 */
+	public static function pick_object( $key, $arr ) 
+	{
+		if( !is_array( $arr ) ) 
+		{
+			throw new \InvalidArgumentException('CCArr::pick - second argument has to be an array.');
+		}
+
+		$return = array();
+
+		foreach( $arr as $object ) 
+		{
+			$return[] = $object->{$key};
+		}
+
+		return $return;
+	}
+
 	/**
 	 * Check if an array is multidimensional
 	 * Elements with empty arrays doesn't count!
@@ -142,7 +166,7 @@ class CCArr
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Check if first element of an array is an array
 	 *
@@ -158,7 +182,7 @@ class CCArr
 	{
 		return is_array( reset( $arr ) );
 	}
-	
+
 	/**
 	 * sum items in an array or use special item in the array
 	 *
@@ -171,14 +195,14 @@ class CCArr
 		{
 			throw new \InvalidArgumentException('CCArr::sum - first argument has to be an array.');
 		}
-		
+
 		$sum = 0;
-		
+
 		if ( is_string( $key ) && CCArr::is_multi( $arr ) ) 
 		{
 			$arr = CCArr::pick( $key, $arr );
 		}
-		
+
 		foreach ( $arr as $item ) 
 		{
 			if ( is_numeric( $item ) ) 
@@ -186,10 +210,10 @@ class CCArr
 				$sum += $item;	
 			}
 		}
-	
+
 		return $sum;
 	}
-	
+
 	/**
 	 * get the average of the items 
 	 *
@@ -202,15 +226,15 @@ class CCArr
 		{
 			throw new \InvalidArgumentException('CCArr::average - first argunent has to be an array.');
 		}
-		
+
 		if ( is_string( $key ) && CCArr::is_multi( $arr ) ) 
 		{
 			$arr = CCArr::pick( $key, $arr );
 		}
-		
+
 		return ( static::sum( $arr ) / count( $arr ) );
 	}
-	
+
 	/** 
 	 * create an object from an array
 	 *
@@ -223,9 +247,9 @@ class CCArr
 		{
 			throw new \InvalidArgumentException("CCArr::object - only arrays can be passed.");
 		}
-	   
+
 		$object = new \stdClass();
-		
+
 		if ( !empty( $arr ) ) 
 		{
 			foreach ( $arr as $name => $value) 
@@ -237,10 +261,10 @@ class CCArr
 				$object->$name = $value;
 			}
 		}
-		
+
 		return $object;
 	}
-	
+
 	/**
 	 * merge arrays recursivly together
 	 *
@@ -252,14 +276,14 @@ class CCArr
 		// get all arguments
 		$arrs = func_get_args();
 		$return = array();
-	
+
 		foreach ( $arrs as $arr )
 		{
 			if ( !is_array( $arr ) ) 
 			{
 				throw new \InvalidArgumentException('CCArr::merge - all arguments have to be arrays.');
 			}
-	
+
 			foreach ( $arr as $key => $value ) 
 			{	
 				if ( array_key_exists( $key, $return ) ) 
@@ -272,10 +296,10 @@ class CCArr
 				$return[$key] = $value;
 			}
 		}
-		
+
 		return $return;
 	}
-	
+
 	/**
 	 * return an item from an array with dottet dimensions
 	 *
@@ -290,11 +314,11 @@ class CCArr
 		{
 			return $arr[$key];
 		}
-		
+
 		if ( strpos( $key, '.' ) !== false ) 
 		{
 			$kp = explode( '.', $key );
-			
+
 			switch ( count( $kp ) ) 
 			{
 				case 2:
@@ -315,7 +339,7 @@ class CCArr
 					return $arr[$kp[0]][$kp[1]][$kp[2]][$kp[3]]; 
 				}
 				break;
-				
+
 				// if there are more then 4 parts loop trough them
 				default:
 					$curr = $arr;
@@ -331,10 +355,10 @@ class CCArr
 				break;
 			}	
 		}
-		
+
 		return $default;
 	}
-	
+
 	/**
 	 * checks if the array has an item with dottet dimensions
 	 *
@@ -348,11 +372,11 @@ class CCArr
 		{
 			return true;
 		}
-		
+
 		if ( strpos( $key, '.' ) !== false ) 
 		{
 			$kp = explode( '.', $key );
-			
+
 			switch ( count( $kp ) ) {
 				case 2:
 					return isset( $arr[$kp[0]][$kp[1]] ); break;
@@ -360,7 +384,7 @@ class CCArr
 					return isset( $arr[$kp[0]][$kp[1]][$kp[2]] ); break;	
 				case 4:
 					return isset( $arr[$kp[0]][$kp[1]][$kp[2]][$kp[3]] ); break;
-					
+
 				// if there are more then 4 parts loop trough them
 				default:
 					$curr = $arr;
@@ -378,7 +402,7 @@ class CCArr
 		}
 		return false;
 	}
-	
+
 	/**
 	 * sets an item from an array with dottet dimensions
 	 *
@@ -392,12 +416,12 @@ class CCArr
 		if ( strpos( $key, '.' ) === false ) 
 		{
 			$arr[$key] = $value;
-			
+
 		} 
 		else 
 		{
 			$kp = explode( '.', $key );
-			
+
 			switch ( count( $kp ) ) 
 			{
 				case 2:
@@ -406,24 +430,24 @@ class CCArr
 					$arr[$kp[0]][$kp[1]][$kp[2]] = $value; break;	
 				case 4:
 					$arr[$kp[0]][$kp[1]][$kp[2]][$kp[3]] = $value; break;
-					
+
 				// if there are more then 4 parts loop trough them
 				default:
 					$kp = array_reverse( $kp );
 					$curr = $value;
-					
+
 					foreach( $kp as $k ) 
 					{
 						$curr = array( $k => $curr );
 					}
-					
+
 					$arr = static::merge( $arr, $curr );
 				break;
 			}
 		}
 		return $arr;
 	}
-	
+
 	/**
 	 * deletes an item from an array with dottet dimensions
 	 *
@@ -437,11 +461,11 @@ class CCArr
 		{
 			unset( $arr[$key] ); return;
 		}
-		
+
 		if ( strpos( $key, '.' ) !== false ) 
 		{	
 			$kp = explode( '.', $key );
-			
+
 			switch ( count( $kp ) ) {
 				case 2:
 					unset( $arr[$kp[0]][$kp[1]] ); return; break;
