@@ -297,7 +297,7 @@ class Handler
 	 */
 	public function restore_key( $user ) 
 	{
-		return \CCStr::hash( $user->password.'@'.$user->{$this->config->user_key}.'%'.\CCIn::client()->ip );
+		return \CCStr::hash( $user->password.'@'.$user->{$this->config->user_key}.'%'.\CCIn::client()->agent );
 	}
 	
 	/**
