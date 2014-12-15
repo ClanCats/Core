@@ -401,7 +401,7 @@ class CCModel
 
 			if ( $has_modifier )
 			{
-				return $this->{'_get_modifier_'.$key}( $value );
+				$tmpvalue = $this->{'_get_modifier_'.$key}( $value ); return $tmpvalue;
 			}
 
 			return $value;
