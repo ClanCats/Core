@@ -1,6 +1,6 @@
 {
 	"name": "clancats/core",
-	"type": "clancatsframework-ship",
+	"type": "ccframework-ship",
 	"description": "The ClanCatsFramework Core repository",
 	"license": "MIT",
 	"require": {
