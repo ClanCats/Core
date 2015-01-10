@@ -1,11 +1,9 @@
 {
 	"name": "clancats/core",
-	"type": "ccframework-ship",
 	"description": "The ClanCatsFramework Core repository",
 	"license": "MIT",
 	"require": {
 		"php": ">=5.3",
-		"composer/installers": "~1.0",
 		"nesbot/carbon": "~1.0"
 	},
 	"config": {
