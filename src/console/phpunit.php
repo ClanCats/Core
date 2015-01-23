@@ -42,7 +42,10 @@ class phpunit extends \CCConsoleController {
 		}
 
 		// add the core tests
-		$test_directories['Core'] = COREPATH.'../'.CCDIR_TEST;
+		if ( $params['-include-core'] )
+		{
+			$test_directories['Core'] = COREPATH.'../'.CCDIR_TEST;
+		}
 
 		// check all bundles for tests
 		foreach( \CCFinder::$bundles as $bundle => $path )
