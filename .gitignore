@@ -1,5 +1,5 @@
-test-env/ccf/storage/
-test-env/vendor/
+test-env/CCF/storage/*
+test-env/CCF/vendor/*
 storage/
 .DS_Store
 Thumbs.db

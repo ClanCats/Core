@@ -62,8 +62,4 @@ return array(
 	'CCView'			=> 'CCView'.EXT,
 	'CCTheme'		=> 'CCTheme'.EXT,
 	'CCAsset'		=> 'CCAsset'.EXT,
-			
-	// -- Orbit
-	'CCOrbit'				=> 'CCOrbit'.EXT,
-	'CCOrbit_Ship'			=> 'CCOrbit/Ship'.EXT,
 );

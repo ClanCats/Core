@@ -362,4 +362,22 @@ class ClanCats
 		// add routes from the app
 		CCRouter::on( $app::routes() );
 	}
+	
+	/**
+	 * Write the Command line header
+	 *
+	 * @return void
+	 */
+	public static function write_cli_header()
+	{
+CCCli::line("==============================
+    _____ _____ ______ 
+   / ____/ ____|  ____|
+  | |   | |    | |__   
+  | |   | |    |  __|  
+  | |___| |____| |     
+   \_____\_____|_| ramework
+==============================
+", 'cyan');
+	}
 }

@@ -1,0 +1,16 @@
+{
+	"repos": [
+		{
+			"name": "ClanCats Orbit Repository",
+			"url": "http://clancats.io/orbit/repo",
+			"website": "http://clancats.io/orbit"
+		}
+	],
+	"installed": [
+		{
+			"name": "CCF Development Tools",
+			"bundle": "Dev",
+			"wake": "map.php"
+		}
+	]
+}

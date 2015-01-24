@@ -1,12 +1,11 @@
 <?php
 /**
  *---------------------------------------------------------------
- * Framework initialisation
+ * Framework initialisation ( PHPUnit )
  *---------------------------------------------------------------
  *
- * This is the framework initialisation. Thats the point where
- * all important parts come together and build something 
- * aweomse together.
+ * This is the framework initialisation for phpunit 
+ * using an test environment "test-env/".
  *
  * @package		ClanCatsFramework
  * @author		Mario Döring <mario@clancats.com>
@@ -43,12 +42,11 @@ define( 'EXT', '.php' );
  * to use just one core or one orbit for them all.
  */
 $paths = array(
-	'public'			=> CCROOT.'test-env/public/',
-	'ccf'			=> CCROOT.'test-env/ccf/',
-	'app'			=> CCROOT.'test-env/ccf/app/',
-	'orbit'			=> CCROOT.'test-env/ccf/orbit/',
-	'vendor'			=> CCROOT.'test-env/vendor/',
-
+	'public'		=> CCROOT.'test-env/public/',
+	'ccf'			=> CCROOT.'test-env/CCF/',
+	'app'			=> CCROOT.'test-env/CCF/app/',
+	'orbit'			=> CCROOT.'test-env/CCF/orbit/',
+	'vendor'		=> CCROOT.'test-env/CCF/vendor/',
 	'core'			=> CCROOT.'src/',
 );
 
@@ -58,16 +56,13 @@ $paths = array(
  *---------------------------------------------------------------
  * 
  * Here are the module directories defined. 
- * @ToDo: move them to the classes that use that direcotries. 
- *        that way the you could subclass a class and define 
- *        a custom direcotry.
  */
 $directories = array(
-	'controller'			=> 'controllers/',
+	'controller'		=> 'controllers/',
 	'language'			=> 'language/',
 	'class'				=> 'classes/',
 	'console'			=> 'console/',
-	'config'				=> 'config/',
+	'config'			=> 'config/',
 	'view'				=> 'views/',
 	'test'				=> 'tests/',
 );
@@ -90,10 +85,8 @@ $environment = 'phpunit';
  */
 require $paths['core'].'wake'.EXT;
 
-
-// wake the phpunit application class this bypasses a failure 
-// of the clancats::runtime unitest
-ClanCats::wake_app( 'PHPUnitApp' );
+// write header
+ClanCats::write_cli_header();
 
 /*
  *---------------------------------------------------------------
@@ -103,15 +96,9 @@ ClanCats::wake_app( 'PHPUnitApp' );
  * For the unit tests we need some additional resources like
  * controllers, views, ect... 
  */
-CCOrbit::enter( COREPATH.'orbit/CCUnit' );
+CCFinder::bundle( 'CCUnit', CCFPATH.'CCUnit/' );
 
-// writ header
-CCCli::line("==============================
-    _____ _____ ______ 
-   / ____/ ____|  ____|
-  | |   | |    | |__   
-  | |   | |    |  __|  
-  | |___| |____| |     
-   \_____\_____|_| ramework
-==============================
-", 'cyan');
+
+// wake the phpunit application class this bypasses a failure 
+// of the clancats::runtime unitest
+ClanCats::wake_app( 'PHPUnitApp' );

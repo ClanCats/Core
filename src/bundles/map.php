@@ -66,3 +66,16 @@
 
 // and the shdaow
 \CCFinder::shadow( 'CCMail', 'Mail', COREPATH.'bundles/Mail/CCMail'.EXT );
+
+/*
+ *---------------------------------------------------------------
+ * Orbit Bundle
+ *---------------------------------------------------------------
+ * 
+ * Orbit bundle provides simple extesion loading
+ */
+// namepace
+\CCFinder::map( 'Orbit', COREPATH.'bundles/Orbit/' );
+
+// and the shdaow
+\CCFinder::shadow( 'CCOrbit', 'Orbit', COREPATH.'bundles/Orbit/CCOrbit'.EXT );

@@ -20,7 +20,7 @@ class PHPUnitApp extends CCApp
 	 */
 	public static function wake() 
 	{
-		// complete overwrite of DB configuration
+		// force complete overwrite of DB configuration
 		CCConfig::create( 'database' )->_data = CCConfig::create( 'Core::phpunit/database' )->_data;
 		
 		// delete all database table

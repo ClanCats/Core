@@ -292,7 +292,7 @@ CCProfiler::check( "CCF - Vendro autoloader registered." );
  * 
  * Load and wake all installed ships.
  */
-CCOrbit::enter_installed_ships();
+//CCOrbit::enter_installed_ships();
 
 // all done
 CCProfiler::check( "CCF - All runtime ships entered the Orbit." );

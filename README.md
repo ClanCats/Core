@@ -15,10 +15,12 @@ There is still alot stuf todo:
  
 ### CCF 3.0
 
- - The current `bundles` should be renamed to ships.
+ - The current `bundles` in CCFinder should be renamed to ships.
  - Make all configuration in the `framework.php` optional.
  - `vendor`, `app` and `orbit` directory in application root.
  - deployment scripts.
  - monolog implementation.
  - IoC container.
  - Better template engine and alternative drivers twig etc.
+ - Bundle should be follow a structure using a static provider.
+ - PSR-4 Namespace autoloading.
