@@ -1,0 +1,10 @@
+{
+	"name": "clancats/testship",
+	"type": "ccframework-ship",
+	"description": "Development Tools ship for the ClanCats Framework",
+	"license": "MIT",
+	"require": {
+		"composer/installers": "~1.0"
+	},
+	"minimum-stability": "dev"
+}

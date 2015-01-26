@@ -1,16 +1,17 @@
 {
-	"repos": [
-		{
-			"name": "ClanCats Orbit Repository",
-			"url": "http://clancats.io/orbit/repo",
-			"website": "http://clancats.io/orbit"
+	"installed": {
+		"test-env/CCF/orbit/testship/": {
+			"path": "test-env/CCF/orbit/testship/",
+			"name": "Test Ship",
+			"version": null,
+			"description": "Development Tools ship for the ClanCats Framework",
+			"license": "MIT",
+			"authors": null,
+			"homepage": null,
+			"namespace": "ClanCats\\TestShip",
+			"wake": "Ship->wake",
+			"install": "Ship->install",
+			"uninstall": "Ship->uninstall"
 		}
-	],
-	"installed": [
-		{
-			"name": "CCF Development Tools",
-			"bundle": "Dev",
-			"wake": "map.php"
-		}
-	]
+	}
 }

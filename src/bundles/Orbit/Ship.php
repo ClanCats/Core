@@ -1,7 +1,7 @@
 <?php namespace Orbit;
 /**
  * Orbit Ship
- * Ship Object
+ * This is just a data holder
  ** 
  *
  * @package		ClanCatsFramework
@@ -13,143 +13,150 @@
 class Ship 
 {	
 	/**
-	 * create new ship with given data
+	 * The available ship properties
 	 *
-	 * @param array 					$data
-	 * @return CCOrbit_Ship
+	 * @var array
 	 */
-	public static function blueprint( $data, $path ) 
+	protected static $available_properties = array(
+		'path',
+		'name',
+		'version',
+		'description',
+		'license',
+		'authors',
+		'homepage',
+		'namespace',
+		'wake',
+		'install',
+		'uninstall'
+	);
+	
+	/**
+	 * Create an instance from path using the ship inspector
+	 *
+	 * @param string 			$path
+	 * @return Orbit\Ship
+	 */
+	public static function path( $path )
 	{
-		if ( !is_array( $data ) )
+		$inspector = ShipInspector::path( $path );
+		
+		$properties = array();
+		
+		foreach ( static::$available_properties as $key ) 
 		{
-			throw new \InvalidArgumentException( "CCOrbit_Ship::blueprint - first argument has to be an array." );
+			$properties[$key] = $inspector->get( $key );
 		}
-
-		$ship = new static();
-
-		$name = $data['name'];
-		$namespace = $data['namespace'];
-
-		// check if we have a name if not use dir name
-		if ( is_null( $name ) ) {
-			$name = basename( $path );
-		}
-
-		// get ship namespace
-		if ( $namespace === true ) {
-			$namespace = $name;
-		}
-
-		// try to load other ship class
-		if ( is_string( $namespace ) ) 
-		{
-			// register the namespace
-			\CCFinder::bundle( $namespace, $path );
-
-			$class = $namespace.'\\Ship';
-
-			if ( class_exists( $class ) ) 
-			{
-				$ship = new $class();
-			}
-		}
-
-		// set the path
-		$ship->name = $name;
-		$ship->path = $path;
-		$ship->namespace = $namespace;
-
-		// assign the data
-		foreach( $data as $key => $item ) 
-		{
-			if ( property_exists( $ship, $key ) ) 
-			{
-				$ship->$key = $item;
-			}
-		}
-
-		// check the namespace
-		if ( $ship->namespace === false ) 
-		{
-			if ( is_null( $ship->wake ) ) 
-			{
-				$ship->wake = 'shipyard/wake'.EXT;
-			}
-			if ( is_null( $ship->install ) ) 
-			{
-				$ship->install = 'shipyard/install'.EXT;
-			}
-			if ( is_null( $ship->uninstall ) ) 
-			{
-				$ship->uninstall = 'shipyard/uninstall'.EXT;
-			}
-		} 
-		elseif ( is_string( $ship->namespace ) ) 
-		{
-			if ( is_null( $ship->wake ) ) 
-			{
-				$ship->wake = 'Ship::wake';
-			}
-			if ( is_null( $ship->install ) ) 
-			{
-				$ship->install = 'Ship::install';
-			}
-			if ( is_null( $ship->uninstall ) ) 
-			{
-				$ship->uninstall = 'Ship::uninstall';
-			}
-		}
-
-		return $ship;
+		
+		$properties['path'] = substr( $path, strlen( CCROOT ) );
+		
+		return new static( $properties );
 	}
-
-	/*
-	 * ship name
+	
+	/**
+	 * ship file path
+	 *
+	 * @var string
 	 */
 	public $path = null;
 
-	/*
+	/**
 	 * ship name
+	 *
+	 * @var string
 	 */
 	public $name = null;
 
-	/*
+	/**
 	 * ship version
+	 *
+	 * @var string
 	 */
-	public $version = "";
+	public $version = null;
 
-	/*
+	/**
 	 * ship description
+	 *
+	 * @var string
 	 */
-	public $description = "";
-
-	/*
-	 * ship description
+	public $description = null;
+	
+	/**
+	 * ship license
+	 *
+	 * @var string
 	 */
-	public $authors = "";
+	public $license = null;
 
-	/*
-	 * ship description
+	/**
+	 * ship authors
+	 *
+	 * @var array
 	 */
-	public $homepage = "";
+	public $authors = null;
 
-	/*
+	/**
+	 * ship homepage
+	 *
+	 * @var string
+	 */
+	public $homepage = null;
+
+	/**
 	 * ship namespace
+	 *
+	 * @var string
 	 */
 	public $namespace = true;
 
-	/*
+	/**
 	 * ship wake event
+	 *
+	 * @var string
 	 */
 	public $wake = null;
 
-	/*
+	/**
 	 * ship install event
+	 *
+	 * @var string
 	 */
 	public $install = null;
 
-	/*
+	/**
 	 * ship uninstall event
+	 *
+	 * @var string 
 	 */
 	public $uninstall = null;
+	
+	/**
+	 * Create new ship using properties
+	 *
+	 * @param array 			$properties
+	 */
+	public function __construct( array $properties = array() )
+	{
+		foreach( $properties as $key => $value )
+		{
+			$this->{$key} = $value;
+		}
+	}
+	
+	/**
+	 * returns the ships properties as array
+	 *
+	 * @return array
+	 */
+	public function properties()
+	{
+		$properties = array();
+		
+		foreach( static::$available_properties as $key )
+		{
+			$properties[$key] = $this->{$key};
+		}
+		
+		return $properties;
+	}
 }

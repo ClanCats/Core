@@ -4,7 +4,8 @@
 	"license": "MIT",
 	"require": {
 		"php": ">=5.3",
-		"nesbot/carbon": "~1.0"
+		"nesbot/carbon": "~1.0",
+		"mario-deluna/hip": "~1.0"
 	},
 	"config": {
 		"vendor-dir": "test-env/CCF/vendor"

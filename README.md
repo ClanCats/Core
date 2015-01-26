@@ -24,3 +24,4 @@ There is still alot stuf todo:
  - Better template engine and alternative drivers twig etc.
  - Bundle should be follow a structure using a static provider.
  - PSR-4 Namespace autoloading.
+ - CamelCase.
