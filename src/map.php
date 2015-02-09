@@ -7,10 +7,10 @@
  * Here we define the database interface shadow and namespace
  */
 // namepace
-\CCFinder::map( 'DB', COREPATH.'bundles/Database/' );
+\CCFinder::map( 'DB', COREPATH.'Database/' );
 
 // and the shdaow
-\CCFinder::shadow( 'DB', 'DB', COREPATH.'bundles/Database/DB'.EXT );
+\CCFinder::shadow( 'DB', 'DB', COREPATH.'Database/DB'.EXT );
 
 /*
  *---------------------------------------------------------------
@@ -20,7 +20,7 @@
  * The UI Bundle contains some helpers to generate HTML.
  */
 // namepace
-\CCFinder::map( 'UI', COREPATH.'bundles/UI/' );
+\CCFinder::map( 'UI', COREPATH.'UI/' );
 
 /*
  *---------------------------------------------------------------
@@ -30,10 +30,10 @@
  * Session managment bundle
  */
 // namepace
-\CCFinder::map( 'Session', COREPATH.'bundles/Session/' );
+\CCFinder::map( 'Session', COREPATH.'Session/' );
 
 // and the shdaow
-\CCFinder::shadow( 'CCSession', 'Session', COREPATH.'bundles/Session/CCSession'.EXT );
+\CCFinder::shadow( 'CCSession', 'Session', COREPATH.'Session/CCSession'.EXT );
 
 /*
  *---------------------------------------------------------------
@@ -43,10 +43,10 @@
  * The Authentication bundle for basic a basic user and login
  */
 // namepace
-\CCFinder::map( 'Auth', COREPATH.'bundles/Auth/' );
+\CCFinder::map( 'Auth', COREPATH.'Auth/' );
 
 // and the shdaow
-\CCFinder::shadow( 'CCAuth', 'Auth', COREPATH.'bundles/Auth/CCAuth'.EXT );
+\CCFinder::shadow( 'CCAuth', 'Auth', COREPATH.'Auth/CCAuth'.EXT );
 
 /*
  *---------------------------------------------------------------
@@ -56,16 +56,16 @@
  * The Email bundle mostly wraps phpmailer
  */
 // namepace
-\CCFinder::map( 'Mail', COREPATH.'bundles/Mail/' );
+\CCFinder::map( 'Mail', COREPATH.'Mail/' );
 // phpmailer
 \CCFinder::bind( array(
-    "Mail\\PHPMailer\\PHPMailer" => COREPATH.'bundles/Mail/PHPMailer/class.phpmailer'.EXT,
-    "Mail\\PHPMailer\\POP3" => COREPATH.'bundles/Mail/PHPMailer/class.php3'.EXT,
-    "Mail\\PHPMailer\\SMTP" => COREPATH.'bundles/Mail/PHPMailer/class.smtp'.EXT,
+    "Mail\\PHPMailer\\PHPMailer" => COREPATH.'Mail/PHPMailer/class.phpmailer'.EXT,
+    "Mail\\PHPMailer\\POP3" => COREPATH.'Mail/PHPMailer/class.php3'.EXT,
+    "Mail\\PHPMailer\\SMTP" => COREPATH.'Mail/PHPMailer/class.smtp'.EXT,
 ));
 
 // and the shdaow
-\CCFinder::shadow( 'CCMail', 'Mail', COREPATH.'bundles/Mail/CCMail'.EXT );
+\CCFinder::shadow( 'CCMail', 'Mail', COREPATH.'Mail/CCMail'.EXT );
 
 /*
  *---------------------------------------------------------------
@@ -75,7 +75,7 @@
  * Orbit bundle provides simple extesion loading
  */
 // namepace
-\CCFinder::map( 'Orbit', COREPATH.'bundles/Orbit/' );
+\CCFinder::map( 'Orbit', COREPATH.'Orbit/' );
 
 // and the shdaow
-\CCFinder::shadow( 'CCOrbit', 'Orbit', COREPATH.'bundles/Orbit/CCOrbit'.EXT );
+\CCFinder::shadow( 'CCOrbit', 'Orbit', COREPATH.'Orbit/CCOrbit'.EXT );

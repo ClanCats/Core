@@ -162,6 +162,6 @@ class ShipInspector
 			$index++;
 		}
 		
-		return \Hip\Hip::decode( $hip );
+		return $this->parse_hip( $hip );
 	}
 }

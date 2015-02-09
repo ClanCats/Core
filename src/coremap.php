@@ -11,7 +11,7 @@
  */
 return array(
 	'ClanCats'				=> 'ClanCats'.EXT,
-	'CCPath'					=> 'CCPath'.EXT,
+	'CCPath'				=> 'CCPath'.EXT,
 	'CCConfig'				=> 'CCConfig'.EXT,
 	'CCIn'					=> 'CCIn'.EXT,
 	'CCIn_Instance'			=> 'CCIn/Instance'.EXT,
@@ -20,16 +20,16 @@ return array(
 	'CCStorage'				=> 'CCStorage'.EXT,
 	'CCApp'					=> 'CCApp'.EXT,
 	'CCRequest'				=> 'CCRequest'.EXT,
-	'CCResponse'				=> 'CCResponse'.EXT,
-	'CCRedirect'				=> 'CCRedirect'.EXT,
+	'CCResponse'			=> 'CCResponse'.EXT,
+	'CCRedirect'			=> 'CCRedirect'.EXT,
 	'CCStr'					=> 'CCStr'.EXT,
 	'CCArr'					=> 'CCArr'.EXT,
 	'CCCookie'				=> 'CCCookie'.EXT,
-	'CCDate'					=> 'CCDate'.EXT,
+	'CCDate'				=> 'CCDate'.EXT,
 	'CCLog'					=> 'CCLog'.EXT,
 	'CCUrl'					=> 'CCUrl'.EXT,
-	'CCProfiler'				=> 'CCProfiler'.EXT,
-	'CCFile'					=> 'CCFile'.EXT,
+	'CCProfiler'			=> 'CCProfiler'.EXT,
+	'CCFile'				=> 'CCFile'.EXT,
 	'CCCrypter'				=> 'CCCrypter'.EXT,
 	'CCError'				=> 'CCError'.EXT,
 	'CCException'			=> 'CCException'.EXT,
@@ -38,12 +38,12 @@ return array(
 	'CCFileValidator'		=> 'CCFileValidator'.EXT,
 	'CCImage'				=> 'CCImage'.EXT,
 	'CCColor'				=> 'CCColor'.EXT,
-	'CCLang'					=> 'CCLang'.EXT,
-	'CCHTTP'					=> 'CCHTTP'.EXT,
+	'CCLang'				=> 'CCLang'.EXT,
+	'CCHTTP'				=> 'CCHTTP'.EXT,
 	'CCDataObject'			=> 'CCDataObject'.EXT,
-	'CCJson'					=> 'CCJson'.EXT,
+	'CCJson'				=> 'CCJson'.EXT,
 	'CCForge_Php'			=> 'CCForge/Php'.EXT,
-	'CCShipyard'				=> 'CCShipyard'.EXT,
+	'CCShipyard'			=> 'CCShipyard'.EXT,
 	
 	// Cli
 	'CCCli'					=> 'CCCli'.EXT,
@@ -59,7 +59,7 @@ return array(
 	'CCModel'		=> 'CCModel'.EXT,
 			
 	// -- View
-	'CCView'			=> 'CCView'.EXT,
+	'CCView'		=> 'CCView'.EXT,
 	'CCTheme'		=> 'CCTheme'.EXT,
 	'CCAsset'		=> 'CCAsset'.EXT,
 );
