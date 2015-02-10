@@ -145,7 +145,7 @@ class Station
 		$this->orbit_config->write();
 		
 		// regenerate the map file
-		$this->regenerate_map();
+		$this->create_map();
 	}
 	
 	public function uninstall()
@@ -158,9 +158,11 @@ class Station
 	 *
 	 * @return void
 	 */
-	public function regenerate_map()
+	public function create_map()
 	{
 		foreach( $this->orbit_config->installed as $path => $data )
 		{}
+		
+		return "<?php die('foo');";
 	}
 }
