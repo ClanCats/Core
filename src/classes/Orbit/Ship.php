@@ -25,7 +25,7 @@ class Ship
 		'license',
 		'authors',
 		'homepage',
-		'namespace',
+		'bundle',
 		'wake',
 		'install',
 		'uninstall'
@@ -103,11 +103,11 @@ class Ship
 	public $homepage = null;
 
 	/**
-	 * ship namespace
+	 * ship bundle namepsace
 	 *
 	 * @var string
 	 */
-	public $namespace = true;
+	public $bundle = true;
 
 	/**
 	 * ship wake event
