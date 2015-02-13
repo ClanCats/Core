@@ -1,1 +1,1 @@
-name: 'Test Ship'
+name: 'clancats/testship'

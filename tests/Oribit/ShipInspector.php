@@ -42,7 +42,7 @@ class Test_Orbit_ShipInspector extends PHPUnit_Framework_TestCase
 	 */
 	public function test_inspectorInfo( $inspector )
 	{
-		$this->assertEquals( 'Test Ship', $inspector->get( 'name' ) );	 // comes from blueprint.hip
+		$this->assertEquals( 'clancats/testship', $inspector->get( 'name' ) );	 // comes from blueprint.hip
 		$this->assertEquals( 'ClanCats\\TestShip', $inspector->get( 'bundle' ) ); // come from README.md
 		$this->assertEquals( 'MIT', $inspector->get( 'license' ) ); // comes from composer.json
 	}

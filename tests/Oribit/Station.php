@@ -27,7 +27,5 @@ class Test_Orbit_Station extends PHPUnit_Framework_TestCase
 		$ship = Ship::path( ORBITPATH.'testship/' );
 		
 		$station->install( $ship );
-		
-		var_dump( $ship );
 	}
 }
