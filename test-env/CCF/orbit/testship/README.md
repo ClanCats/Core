@@ -5,7 +5,7 @@ Some Text
 * Bar
 
 ```hip
-bundle: "ClanCats\TestShip\"
+bundle: "ClanCats\\TestShip\\"
 wake: "Ship->wake"
 install: "Ship->install"
 uninstall: "Ship->uninstall"
