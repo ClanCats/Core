@@ -1,4 +1,4 @@
-<?php
+<?php namespace ClanCats\Core;
 /**
  * ClanCats Finder 
  * 
@@ -61,11 +61,11 @@ class CCFinder
 	/**
 	 * Register the autoloader
 	 *
-	 * @return  void
+	 * @return void
 	 */
 	public static function register() 
 	{
-		spl_autoload_register( array( '\\CCFinder', 'find' ), true, true );
+		spl_autoload_register( array( '\\ClanCats\\Core\\CCFinder', 'find' ), true, true );
 	}
 	
 	/**

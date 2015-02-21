@@ -23,5 +23,5 @@ There is still alot stuf todo:
  - IoC container.
  - Better template engine and alternative drivers twig etc.
  - Bundle should be follow a structure using a static provider.
- - PSR-4 Namespace autoloading.
  - CamelCase.
+ - Add shadow named containers

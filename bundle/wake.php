@@ -8,6 +8,8 @@
  * all important parts come together and build something 
  * aweomse together.
  */
+ 
+use ClanCats\Core\CCFinder;
 
 /*
  * The paths have always to be set in the application the 
@@ -74,8 +76,10 @@ define( 'CCF_PROFILER_MEMORY_START', memory_get_usage() );
  * The time has come to load our autoloader. 
  */
 require_once CCPATH_CORE.CCDIR_SOURCE."CCFinder".EXT;
+
+CCFinder::register();
+
 die;
-\CCFinder::register();
 
 /*
  *---------------------------------------------------------------
