@@ -88,7 +88,7 @@ class CCFinder
 	 * Register a source namespace
 	 * A source namespace is the PSR-4 part of the autoloader.
 	 *
-	 *     CCFinder::map( 'Example\MySourceNamespace', '/path/to/the/source/files/' );
+	 *     CCFinder::map( 'Example\MySourceNamespace', 'path/to/the/source/files/' );
 	 *
 	 * @param string|array 		$name
 	 * @param path 				$path
@@ -139,7 +139,7 @@ class CCFinder
 	 *     // When requesting the CCSession shadow the autoloader
 	 *     // is now going to load your custom class instead.
 	 *     // Inside your class you can extend the original CCSession class.
-	 *     CCFinder::alias( 'CCSession', '/path/to/my/custom/CCSession.php' );
+	 *     CCFinder::alias( 'CCSession', 'path/to/my/custom/CCSession.php' );
 	 *
 	 * @param string|array 		$name
 	 * @param path 				$path
@@ -214,47 +214,35 @@ class CCFinder
 	/**
 	 * Autoloading handler
 	 *
-	 * @param string 	$class
+	 * @param string 			$class
 	 * @return bool
 	 */
 	public static function find( $class ) 
 	{	
-		// class with or without namespace?
+		// to safe a really small amount of performance we split 
+		// the autoloading between classes with and without namespace.
 		if ( strpos( $class , '\\' ) !== false ) 
 		{
-			// first of all we need to check if there is an alias to a 
-			if ( array_key_exists( $class, static::$aliases ) ) 
-			{
-				require static::$aliases[$class];
-			}
-			/* 
-			 * normal map
-			 */
-			elseif ( array_key_exists( $class, static::$classes ) ) 
+			// we have to check if there is manual bind for defined
+			if ( isset( static::$classes[$class] ) )
 			{
 				require static::$classes[$class];
 			}
-			/*
-			 * try your luck without the map
-			 */
+			// otherwise we load the class automatically
 			else 
 			{	
 				$namespace = substr( $class, 0, strrpos( $class, "\\" ) );
-				$class_name = substr( $class, strrpos( $class, "\\" )+1 );
+				$className = substr( $class, strlen( $namespace )+1 );
 				
-				if ( !array_key_exists( $namespace, static::$namespaces ) ) 
+				// if the namepsace is not mapped return false
+				if ( !isset( static::$namespaces[$namespace] ) ) 
 				{
 					return false;
 				}
 				
-				$path = static::$namespaces[$namespace].str_replace( '_', '/', $class_name ).EXT;
-				
-				if ( !file_exists( $path ) ) 
-				{
-					return false;
-				}
-				
-				require $path;
+				// build the path string and require the file 
+				// the file has to exsist so we don't check if the file exists
+				require static::$namespaces[$namespace].str_replace( '_', '/', $class_name ).EXT;
 			}
 			
 			/*
@@ -272,40 +260,27 @@ class CCFinder
 		}
 		else 
 		{
-			/*
-			 * alias map
-			 */
-			if ( array_key_exists( $class, static::$aliases ) ) 
+			// check the alias map for the class
+			if ( isset( static::$aliases[$class] ) ) 
 			{
 				require static::$aliases[$class];
 			}
-			/*
-			 * check shadows
-			 */
-			if ( array_key_exists( $class, static::$shadows ) )
+			// check the if a shadow exists
+			elseif ( isset( static::$shadows[$class] ) )
 			{
 				return static::find( static::$shadows[$class] );
 			}
-			/* 
-			 * normal map
-			 */
-			elseif ( array_key_exists( $class, static::$classes ) ) 
+			// check the normal binding
+			elseif ( isset( static::$classes[$class] ) ) 
 			{
 				require static::$classes[$class];
 			}
-			/*
-			 * try your luck without the map
-			 */
+			// otherwise we load the class from the app namespace
 			else 
 			{
-				$path = APPPATH.CCDIR_CLASS.str_replace( '_', '/', $class ).EXT;
-				
-				if ( !file_exists( $path ) ) 
-				{
-					return false;
-				}
-				
-				require $path ;
+				// also here we don't check if the file exists if its not there 
+				// than something is wrong
+				require CCPATH_CORE.CCDIR_CLASS.str_replace( '_', '/', $class ).EXT;
 			}
 		}
 		
