@@ -7,12 +7,6 @@
  * This is the framework initialisation. Thats the point where
  * all important parts come together and build something 
  * aweomse together.
- *
- * @package		ClanCatsFramework
- * @author		Mario Döring <mario@clancats.com>
- * @version		2.0
- * @copyright 	2010 - 2015 ClanCats GmbH
- *
  */
 
 /*
@@ -22,12 +16,12 @@
  * To be a bit more performance efficent we define 
  * the paths in the system so we can later make use them:
  * 
- *     app => APPPATH
- *     core => COREPATH
+ *     app => CCPATH_APP
+ *     core => CCPATH_CORE
  */
 foreach( $paths as $key => $path )
 {
-	define( strtoupper( $key ).'PATH', $path );
+	define( 'CCPATH_'.strtoupper( $key ), $path );
 }
 
 /*
@@ -40,11 +34,9 @@ foreach( $paths as $key => $path )
  *     class => CCDIR_CLASS
  *     view => CCDIR_VIEW
  */
-$directoreies = array_merge( array(
-    'controller'		=> 'controllers/',
+$directories = array_merge( array(
     'language'			=> 'language/',
-    'class'				=> 'classes/',
-    'console'			=> 'console/',
+    'source'			=> 'source/',
     'config'			=> 'config/',
     'view'				=> 'views/',
     'test'				=> 'tests/',
@@ -63,8 +55,8 @@ foreach( $directories as $key => $path )
  * We store the application start time and memory in an define
  * to be able to calculate the execution time later.
  */
-define( 'CCF_PROFILER_TME', microtime( true ) );
-define( 'CCF_PROFILER_MEM', memory_get_usage() );
+define( 'CCF_PROFILER_MICROTIME_START', microtime( true ) );
+define( 'CCF_PROFILER_MEMORY_START', memory_get_usage() );
 
 /*
  *---------------------------------------------------------------
@@ -73,8 +65,8 @@ define( 'CCF_PROFILER_MEM', memory_get_usage() );
  * 
  * The time has come to load our autoloader. 
  */
-require_once COREPATH.CCDIR_CLASS."CCFinder".EXT;
-
+require_once CCPATH_CORE.CCDIR_SOURCE."CCFinder".EXT;
+die;
 \CCFinder::register();
 
 /*

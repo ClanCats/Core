@@ -35,18 +35,21 @@ define( 'EXT', '.php' );
  *---------------------------------------------------------------
  * set the boot paths
  *---------------------------------------------------------------
- * 
- * You can modify that file, its yours. Its especially useful
- * if you have multiple installations on one server and want 
- * to use just one core or one orbit for them all.
  */
 $paths = array(
-	'public'		=> CCFROOT.'public/',
 	'app'			=> CCFROOT.'app/',
 	'orbit'			=> CCFROOT.'orbit/',
+	'public'		=> CCFROOT.'public/',
 	'vendor'		=> CCFROOT.'vendor/',
 	'core'			=> CCFROOT.'../bundle/',
 );
+
+/*
+ *---------------------------------------------------------------
+ * custom directory names
+ *---------------------------------------------------------------
+ */
+$directories = array();
 
 /*
  *---------------------------------------------------------------
