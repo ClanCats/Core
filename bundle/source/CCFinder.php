@@ -1,13 +1,24 @@
 <?php
 /**
  * ClanCats Finder 
- * I really try 
+ * 
+ * The Finder is the CCF autoloader it's a mixture between PSR-2 and PSR-4,
+ * that might sound really freaking strange and bad in first place but makes
+ * development a bit more comfortable.
+ * 
+ * A php namespace defines a path to source files inside that namespace are 
+ * loaded using the `underscore` seperator.
+ * 
+ *     \Example\MyBundle\Driver_Interface 
+ * 
+ * My Philosophy is to use static classes where it makes sense and I think
+ * the autoloader is something that is and stays a singleton. 
  ** 
  *
  * @package		ClanCatsFramework
  * @author		Mario Döring <mario@clancats.com>
  * @version		3.0
- * @copyright 	2010 - 2015 ClanCats GmbH
+ * @copyright 	2010 - 2015 Mario Döring
  *
  */
 class CCFinder 
