@@ -132,10 +132,14 @@ class CCFinder
 	
 	/**
 	 * Register one or more aliases
-	 * An alias can overwrite a shadow. This way we can overwrite other classes.
+	 * An alias can overwrite a shadow. This way we can overwrite and extend 
+	 * Core classes from our app.
 	 *
 	 * example:
-	 *     CCFinder::alias( 'Foo', '/path/to/my/Foo.php' );
+	 *     // When requesting the CCSession shadow the autoloader
+	 *     // is now going to load your custom class instead.
+	 *     // Inside your class you can extend the original CCSession class.
+	 *     CCFinder::alias( 'CCSession', '/path/to/my/custom/CCSession.php' );
 	 *
 	 * @param string|array 		$name
 	 * @param path 				$path
@@ -155,6 +159,9 @@ class CCFinder
 	
 	/**
 	 * Bind one or more classes to the autoloader
+	 *
+	 * Sometimes you need to bind a class manually:
+	 *     CCFinder::bind( 'OldPHPClass', 'path/to/old.class.php' );
 	 *
 	 * @param string|array 		$name
 	 * @param path 				$path
@@ -188,7 +195,6 @@ class CCFinder
 		}
 	}
 	
-	
 	/** 
 	 * This simply adds some shadows with a prefix 
 	 * 
@@ -216,9 +222,7 @@ class CCFinder
 		// class with or without namespace?
 		if ( strpos( $class , '\\' ) !== false ) 
 		{
-			/*
-			 * alias map
-			 */
+			// first of all we need to check if there is an alias to a 
 			if ( array_key_exists( $class, static::$aliases ) ) 
 			{
 				require static::$aliases[$class];
