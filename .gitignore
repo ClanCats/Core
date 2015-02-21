@@ -1,8 +1,12 @@
-test-env/CCF/storage/*
-test-env/CCF/vendor/*
-storage/
+# phpunit environment
+phpunit/storage/app/config/migrator.json
+phpunit/storage/*
+phpunit/vendor/*
+
+# os files
 .DS_Store
 Thumbs.db
+
+# composer
 composer.phar
 composer.lock
-test-env/ccf/app/config/migrator.json

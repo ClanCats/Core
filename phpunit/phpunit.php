@@ -4,8 +4,7 @@
  * Framework initialisation ( PHPUnit )
  *---------------------------------------------------------------
  *
- * This is the framework initialisation for phpunit 
- * using an test environment "test-env/".
+ * This is the framework initialisation for phpunit.
  *
  * @package		ClanCatsFramework
  * @author		Mario Döring <mario@clancats.com>
@@ -21,7 +20,7 @@
  * The application root or CCROOT defines the absoulte path to 
  * the framework.
  */
-define( 'CCFROOT', __DIR__.'/' );
+define( 'CCFROOT', __DIR__.'/../' );
 
 /*
  *---------------------------------------------------------------
