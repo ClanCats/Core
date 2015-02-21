@@ -165,10 +165,10 @@ class Station
 		}
 		
 		// we write all ship data in our config file
-		$this->orbit_config->set( 'installed.'.$ship->name, $ship->properties() );
+		$this->orbit_store()->set( 'installed.'.$ship->name, $ship->properties() );
 		
 		// write the configuration
-		$this->orbit_config->write();
+		$this->orbit_store()->write();
 		
 		// regenerate the map file
 		$this->create_map();

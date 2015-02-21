@@ -1,3 +1,11 @@
 {
-	"installed": {}
-}
+	"installed": {
+		"clancats/testship": {
+			"path": "test-env/CCF/orbit/testship/",
+			"name": "clancats/testship",
+			"version": null,
+			"description": "Development Tools ship for the ClanCats Framework",
+			"license": "MIT",
+			"authors": null,
+			"homepage": null,
+			"bundle": "ClanCats\\TestShip\\","wake":"Ship->wake","install":"Ship->install","uninstall":"Ship->uninstall"}}}
