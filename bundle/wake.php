@@ -19,6 +19,14 @@
  *     app => CCPATH_APP
  *     core => CCPATH_CORE
  */
+$paths = array_merge( array(
+	'app'			=> CCFROOT.'app/',
+	'orbit'			=> CCFROOT.'orbit/',
+	'public'		=> CCFROOT.'public/',
+	'vendor'		=> CCFROOT.'vendor/',
+	'core'			=> CCFROOT.'vendor/clancats/core/bundle/',
+), $paths ); 
+
 foreach( $paths as $key => $path )
 {
 	define( 'CCPATH_'.strtoupper( $key ), $path );

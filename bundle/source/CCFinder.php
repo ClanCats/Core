@@ -1,12 +1,12 @@
 <?php
 /**
  * ClanCats Finder 
- * The CCFinder handles class loading and binding, autoloading etc.
+ * I really try 
  ** 
  *
  * @package		ClanCatsFramework
  * @author		Mario Döring <mario@clancats.com>
- * @version		2.0
+ * @version		3.0
  * @copyright 	2010 - 2015 ClanCats GmbH
  *
  */
