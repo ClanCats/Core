@@ -28,35 +28,35 @@ class CCFinder
 	 *
 	 * @var array
 	 */
-	public static $classes = array();
+	private static $classes = array();
 	
 	/** 
 	 * The mapped aliases
 	 * 
 	 * @var array
 	 */
-	public static $aliases = array();
+	private static $aliases = array();
 	
 	/** 
 	 * The mapped shadows
 	 * 
 	 * @var array
 	 */
-	public static $shadows = array();
+	private static $shadows = array();
 	
 	/**
 	 * The mapped namespaces
 	 *
 	 * @var array
 	 */
-	public static $namespaces = array();
+	private static $namespaces = array();
 	
 	/**
 	 * The mapped bundles
 	 *
 	 * @var array
 	 */
-	public static $bundles = array();
+	private static $bundles = array();
 	
 	/**
 	 * Register the autoloader
@@ -69,48 +69,55 @@ class CCFinder
 	}
 	
 	/**
-	 * Add a bundle 
-	 * A bundle is a CCF style package with classes, controllers, views etc.
+	 * Register a CCF bundle
+	 * A bundle is a CCF style package with sources, configuration, views etc.
 	 *
-	 * @param string|array 	$name
-	 * @param path 			$path
+	 *     CCFinder::bundle( 'Example\MyPackage', 'path/to/my/package/' );
+	 *
+	 * @param string 			$name
+	 * @param path 				$path
 	 * @return void
 	 */
-	public static function bundle( $name, $path = null ) 
+	public static function bundle( $name, $path ) 
 	{
 		static::$bundles[$name] = $path;
-		static::$namespaces[$name] = $path.CCDIR_CLASS;
+		static::map( $name, $path.CCDIR_SOURCE );
 	}
 	
 	/**
-	 * Add one or more maps
-	 * A map is simply a class namepsace 
+	 * Register a source namespace
+	 * A source namespace is the PSR-4 part of the autoloader.
 	 *
-	 * @param string|array 	$name
-	 * @param path 			$path
+	 *     CCFinder::map( 'Example\MySourceNamespace', '/path/to/the/source/files/' );
+	 *
+	 * @param string|array 		$name
+	 * @param path 				$path
 	 * @return void
 	 */
 	public static function map( $name, $path = null ) 
 	{
-		if ( is_array( $name ) ) 
+		if ( is_null( $path ) && is_array( $name ) )
 		{
-			static::$namespaces = array_merge( static::$namespaces, $name ); return;
+			foreach( $name as $namepsace => $path )
+			{
+				static::map( $namespace, $path );
+			}
 		}
-		static::$namespaces[$name] = $path;
+		else { static::$namespaces[$name] = $path; }
 	}
 	
 	/**
-	 * Add a shadow class 
+	 * Register a shadow class 
 	 * A shadow class is a global class and gets liftet to the global namespace.
 	 * 
-	 * \Some\Longer\Namespace\Foo::bar() -> Foo::bar()
+	 * Some\Longer\Namespace\Foo::bar() -> Foo::bar()
 	 *
 	 * exmpale:
-	 *     CCFinder::shadow( 'Foo', 'Some\Longer\Namespace', 'myclasses/Foo.php' );
+	 *     CCFinder::shadow( 'Foo', 'Some\Longer\Namespace', 'my/path/to/Foo.php' );
 	 *
 	 * @param string			$name		The shadow
 	 * @param string			$namespace	The real class namespace
-	 * @param string 		$path		The path of the real class
+	 * @param string 			$path		The path of the php file
 	 * @return void
 	 */
 	public static function shadow( $name, $namespace, $path = null ) 
@@ -124,39 +131,45 @@ class CCFinder
 	}
 	
 	/**
-	 * Add one or more aliases
-	 * An alias can overwrite an shadow. This way we can extend other classes.
+	 * Register one or more aliases
+	 * An alias can overwrite a shadow. This way we can overwrite other classes.
 	 *
 	 * example:
 	 *     CCFinder::alias( 'Foo', '/path/to/my/Foo.php' );
 	 *
-	 * @param string 	$name
-	 * @param path 		$path
+	 * @param string|array 		$name
+	 * @param path 				$path
 	 * @return void
 	 */
 	public static function alias( $name, $path = null ) 
 	{
-		if ( is_array( $name ) ) 
+		if ( is_null( $path ) && is_array( $name ) )
 		{
-			static::$aliases = array_merge( static::$aliases, $name ); return;
+			foreach( $name as $alias => $path )
+			{
+				static::alias( $alias, $path );
+			}
 		}
-		static::$aliases[$name] = $path;
+		else { static::$aliases[$name] = $path; }
 	}
 	
 	/**
-	 * Add one or more class to the autoloader
+	 * Bind one or more classes to the autoloader
 	 *
-	 * @param string 	$name
-	 * @param path 		$path
+	 * @param string|array 		$name
+	 * @param path 				$path
 	 * @return void
 	 */
 	public static function bind( $name, $path = null ) 
 	{
-		if ( is_array( $name ) ) 
+		if ( is_null( $path ) && is_array( $name ) )
 		{
-			static::$classes = array_merge( static::$classes, $name ); return;
+			foreach( $name as $class => $path )
+			{
+				static::bind( $class, $path );
+			}
 		}
-		static::$classes[$name] = $path;
+		else { static::$classes[$name] = $path; }
 	}
 		
 	
@@ -200,11 +213,6 @@ class CCFinder
 	 */
 	public static function find( $class ) 
 	{	
-		if ( class_exists( $class, false ) )
-		{
-			return;
-		}
-
 		// class with or without namespace?
 		if ( strpos( $class , '\\' ) !== false ) 
 		{
