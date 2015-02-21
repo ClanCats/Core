@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="phpunit.php">
+<phpunit colors="true" bootstrap="phpunit/wake.php">
   <testsuites>
 	<testsuite name="Core tests">
-	  <directory suffix=".php">./tests/</directory>
+	  <directory suffix=".php">./bundle/tests/</directory>
 	</testsuite>
   </testsuites>
 </phpunit>

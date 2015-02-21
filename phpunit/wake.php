@@ -20,7 +20,7 @@
  * The application root or CCROOT defines the absoulte path to 
  * the framework.
  */
-define( 'CCFROOT', __DIR__.'/../' );
+define( 'CCFROOT', __DIR__.'/' );
 
 /*
  *---------------------------------------------------------------
@@ -33,7 +33,7 @@ define( 'EXT', '.php' );
 
 /*
  *---------------------------------------------------------------
- * get the boot paths
+ * set the boot paths
  *---------------------------------------------------------------
  * 
  * You can modify that file, its yours. Its especially useful
@@ -41,29 +41,11 @@ define( 'EXT', '.php' );
  * to use just one core or one orbit for them all.
  */
 $paths = array(
-	'public'		=> CCROOT.'test-env/public/',
-	'ccf'			=> CCROOT.'test-env/CCF/',
-	'app'			=> CCROOT.'test-env/CCF/app/',
-	'orbit'			=> CCROOT.'test-env/CCF/orbit/',
-	'vendor'		=> CCROOT.'test-env/CCF/vendor/',
-	'core'			=> CCROOT.'src/',
-);
-
-/*
- *---------------------------------------------------------------
- * the direcotries
- *---------------------------------------------------------------
- * 
- * Here are the module directories defined. 
- */
-$directories = array(
-	'controller'		=> 'controllers/',
-	'language'			=> 'language/',
-	'class'				=> 'classes/',
-	'console'			=> 'console/',
-	'config'			=> 'config/',
-	'view'				=> 'views/',
-	'test'				=> 'tests/',
+	'public'		=> CCFROOT.'public/',
+	'app'			=> CCFROOT.'app/',
+	'orbit'			=> CCFROOT.'orbit/',
+	'vendor'		=> CCFROOT.'vendor/',
+	'core'			=> CCFROOT.'../bundle/',
 );
 
 /*
@@ -95,9 +77,9 @@ ClanCats::write_cli_header();
  * For the unit tests we need some additional resources like
  * controllers, views, ect... 
  */
-CCFinder::bundle( 'CCUnit', CCFPATH.'CCUnit/' );
+//CCFinder::bundle( 'CCUnit', CCFPATH.'CCUnit/' );
 
 
 // wake the phpunit application class this bypasses a failure 
 // of the clancats::runtime unitest
-ClanCats::wake_app( 'PHPUnitApp' );
+//ClanCats::wake_app( 'PHPUnitApp' );
