@@ -21,7 +21,7 @@
  * The application root or CCROOT defines the absoulte path to 
  * the framework.
  */
-define( 'CCROOT', __DIR__.'/' );
+define( 'CCFROOT', __DIR__.'/' );
 
 /*
  *---------------------------------------------------------------
