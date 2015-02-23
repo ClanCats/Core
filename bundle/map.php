@@ -6,9 +6,9 @@
  * 
  * Add the Core bundle, so we can start using framework resources.
  */
-define( 'CCCORE_NAMESPACE', 'Core' );
+define( 'CCNAMESPACE_CORE', 'ClanCats\\Core' );
 
-\CCFinder::bundle( CCCORE_NAMESPACE, COREPATH );
+\CCFinder::bundle( CCNAMESPACE_CORE, CCPATH_CORE );
 
 /*
  *---------------------------------------------------------------
@@ -21,7 +21,7 @@ define( 'CCCORE_NAMESPACE', 'Core' );
  * 
  * This allows us to overwrite and extend any core class.
  */
-\CCFinder::shadow_package( COREPATH.CCDIR_CLASS, CCCORE_NAMESPACE, array(
+\CCFinder::shadow_package( CCPATH_CORE.CCDIR_SOURCE, CCNAMESPACE_CORE, array(
 
     'ClanCats'				=> 'ClanCats'.EXT,
     'CCPath'				=> 'CCPath'.EXT,
