@@ -1,4 +1,4 @@
-<?php namespace ClanCats\Core;
+<?php
 /**
  * ClanCats Finder 
  * 
@@ -202,7 +202,7 @@ class CCFinder
 	 * @param path 		$path
 	 * @return void
 	 */
-	public static function shadow_package( $dir, $namespace, $shadows ) 
+	public static function shadowPackage( $dir, $namespace, $shadows ) 
 	{
 		foreach( $shadows as $name => $path ) 
 		{
@@ -241,8 +241,12 @@ class CCFinder
 				}
 				
 				// build the path string and require the file 
-				// the file has to exsist so we don't check if the file exists
-				require static::$namespaces[$namespace].str_replace( '_', '/', $class_name ).EXT;
+				if ( !file_exists( $file = static::$namespaces[$namespace].str_replace( '_', '/', $class_name ).EXT ) )
+				{
+					return false;
+				}
+				
+				require $file;
 			}
 			
 			/*
@@ -278,9 +282,12 @@ class CCFinder
 			// otherwise we load the class from the app namespace
 			else 
 			{
-				// also here we don't check if the file exists if its not there 
-				// than something is wrong
-				require CCPATH_CORE.CCDIR_CLASS.str_replace( '_', '/', $class ).EXT;
+				if ( !file_exists( $file = CCPATH_APP.CCDIR_SOURCE.str_replace( '_', '/', $class ).EXT ) )
+				{
+					return false;
+				}
+				
+				require $file;
 			}
 		}
 		
