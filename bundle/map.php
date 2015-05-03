@@ -22,8 +22,12 @@ define( 'CCNAMESPACE_CORE', 'ClanCats\\Core' );
  * This allows us to overwrite and extend any core class.
  */
 \CCFinder::shadowPackage( CCPATH_CORE.CCDIR_SOURCE, CCNAMESPACE_CORE, array(
-
-    'ClanCats'				=> 'ClanCats'.EXT,
+    
+    // CCF application manager
+    'CCF' => 'CCF'.EXT,
+    
+    
+    
     'CCPath'				=> 'CCPath'.EXT,
     'CCConfig'				=> 'CCConfig'.EXT,
     'CCIn'					=> 'CCIn'.EXT,

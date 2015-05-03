@@ -14,7 +14,7 @@ class CCF
 	/**
 	 * The current CCF version
 	 *
-	 * @var string
+	 * @const string
 	 */
 	const VERSION 	= '3.0.0';
 	
@@ -26,25 +26,25 @@ class CCF
 	private static $environment = null;
 	
 	/**
-	 * The runtime application class name
+	 * An array of CCF applications loaded
 	 *
 	 * @var string
 	 */
-	private static $runtime_class = null;
+	private static $applications = array();
 	
 	/**
-	 * Is ccf running on a cli?
+	 * Is CCF running on a cli?
 	 *
 	 * @var bool
 	 */
-	private static $is_cli = null;
+	private static $isCommandLine = null;
 	
 	/**
-	 * Is ccf in in development mode?
+	 * Is CCF in in development mode?
 	 *
 	 * @var bool
 	 */
-	private static $in_development = null;
+	private static $isDevelopment = null;
 	
 	/**
 	 * The defined paths 

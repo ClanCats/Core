@@ -61,4 +61,4 @@ require $paths['core'].'wake.php';
  * 
  * The core bundle wake file initialises the ClanCats Framework.
  */
-CCF::create( '\\PHPUnitApp' );
+//CCF::create( '\\PHPUnitApp' );

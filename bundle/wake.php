@@ -104,7 +104,7 @@ CCFinder::register();
  * include the CCF map file 
  */
 require CCPATH_CORE.'map'.EXT;
-die;
+return;
 /*
  *---------------------------------------------------------------
  * shortcuts
