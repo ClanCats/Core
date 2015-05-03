@@ -21,7 +21,7 @@ define( 'CCNAMESPACE_CORE', 'ClanCats\\Core' );
  * 
  * This allows us to overwrite and extend any core class.
  */
-\CCFinder::shadow_package( CCPATH_CORE.CCDIR_SOURCE, CCNAMESPACE_CORE, array(
+\CCFinder::shadowPackage( CCPATH_CORE.CCDIR_SOURCE, CCNAMESPACE_CORE, array(
 
     'ClanCats'				=> 'ClanCats'.EXT,
     'CCPath'				=> 'CCPath'.EXT,
@@ -85,10 +85,10 @@ define( 'CCNAMESPACE_CORE', 'ClanCats\\Core' );
  * Here we define the database interface shadow and namespace
  */
 // namepace
-\CCFinder::map( 'DB', COREPATH.CCDIR_CLASS.'Database/' );
+\CCFinder::map( 'DB', CCPATH_CORE.CCDIR_SOURCE.'Database/' );
 
 // and the shdaow
-\CCFinder::shadow( 'DB', 'DB', COREPATH.CCDIR_CLASS.'Database/DB'.EXT );
+\CCFinder::shadow( 'DB', 'DB', CCPATH_CORE.CCDIR_SOURCE.'Database/DB'.EXT );
 
 /*
  *---------------------------------------------------------------
@@ -98,7 +98,7 @@ define( 'CCNAMESPACE_CORE', 'ClanCats\\Core' );
  * The UI Bundle contains some helpers to generate HTML.
  */
 // namepace
-\CCFinder::map( 'UI', COREPATH.CCDIR_CLASS.'UI/' );
+\CCFinder::map( 'UI', CCPATH_CORE.CCDIR_SOURCE.'UI/' );
 
 /*
  *---------------------------------------------------------------
@@ -108,10 +108,10 @@ define( 'CCNAMESPACE_CORE', 'ClanCats\\Core' );
  * Session managment bundle
  */
 // namepace
-\CCFinder::map( 'Session', COREPATH.CCDIR_CLASS.'Session/' );
+\CCFinder::map( 'Session', CCPATH_CORE.CCDIR_SOURCE.'Session/' );
 
 // and the shdaow
-\CCFinder::shadow( 'CCSession', 'Session', COREPATH.CCDIR_CLASS.'Session/CCSession'.EXT );
+\CCFinder::shadow( 'CCSession', 'Session', CCPATH_CORE.CCDIR_SOURCE.'Session/CCSession'.EXT );
 
 /*
  *---------------------------------------------------------------
@@ -121,10 +121,10 @@ define( 'CCNAMESPACE_CORE', 'ClanCats\\Core' );
  * The Authentication bundle for basic a basic user and login
  */
 // namepace
-\CCFinder::map( 'Auth', COREPATH.CCDIR_CLASS.'Auth/' );
+\CCFinder::map( 'Auth', CCPATH_CORE.CCDIR_SOURCE.'Auth/' );
 
 // and the shdaow
-\CCFinder::shadow( 'CCAuth', 'Auth', COREPATH.CCDIR_CLASS.'Auth/CCAuth'.EXT );
+\CCFinder::shadow( 'CCAuth', 'Auth', CCPATH_CORE.CCDIR_SOURCE.'Auth/CCAuth'.EXT );
 
 /*
  *---------------------------------------------------------------
@@ -134,16 +134,16 @@ define( 'CCNAMESPACE_CORE', 'ClanCats\\Core' );
  * The Email bundle mostly wraps phpmailer
  */
 // namepace
-\CCFinder::map( 'Mail', COREPATH.CCDIR_CLASS.'Mail/' );
+\CCFinder::map( 'Mail', CCPATH_CORE.CCDIR_SOURCE.'Mail/' );
 // phpmailer
 \CCFinder::bind( array(
-    "Mail\\PHPMailer\\PHPMailer" => COREPATH.CCDIR_CLASS.'Mail/PHPMailer/class.phpmailer'.EXT,
-    "Mail\\PHPMailer\\POP3" => COREPATH.CCDIR_CLASS.'Mail/PHPMailer/class.php3'.EXT,
-    "Mail\\PHPMailer\\SMTP" => COREPATH.CCDIR_CLASS.'Mail/PHPMailer/class.smtp'.EXT,
+    "Mail\\PHPMailer\\PHPMailer" => CCPATH_CORE.CCDIR_SOURCE.'Mail/PHPMailer/class.phpmailer'.EXT,
+    "Mail\\PHPMailer\\POP3" => CCPATH_CORE.CCDIR_SOURCE.'Mail/PHPMailer/class.php3'.EXT,
+    "Mail\\PHPMailer\\SMTP" => CCPATH_CORE.CCDIR_SOURCE.'Mail/PHPMailer/class.smtp'.EXT,
 ));
 
 // and the shdaow
-\CCFinder::shadow( 'CCMail', 'Mail', COREPATH.CCDIR_CLASS.'Mail/CCMail'.EXT );
+\CCFinder::shadow( 'CCMail', 'Mail', CCPATH_CORE.CCDIR_SOURCE.'Mail/CCMail'.EXT );
 
 /*
  *---------------------------------------------------------------
@@ -153,7 +153,7 @@ define( 'CCNAMESPACE_CORE', 'ClanCats\\Core' );
  * Orbit bundle provides simple extesion loading
  */
 // namepace
-\CCFinder::map( 'Orbit', COREPATH.CCDIR_CLASS.'Orbit/' );
+\CCFinder::map( 'Orbit', CCPATH_CORE.CCDIR_SOURCE.'Orbit/' );
 
 // and the shdaow
-\CCFinder::shadow( 'CCOrbit', 'Orbit', COREPATH.CCDIR_CLASS.'Orbit/CCOrbit'.EXT );
+\CCFinder::shadow( 'CCOrbit', 'Orbit', CCPATH_CORE.CCDIR_SOURCE.'Orbit/CCOrbit'.EXT );

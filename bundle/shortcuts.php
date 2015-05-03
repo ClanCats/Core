@@ -1,14 +1,4 @@
 <?php
-/**
- * Le System init
- *
- * @package 		ClanCats-Framework
- * @author     		Mario Döring <mariodoering@me.com>
- * @version 		0.4
- * @copyright 		2010 - 2013 ClanCats GmbH
- *
- */
- 
 /*
  * escape function shortcut
  */

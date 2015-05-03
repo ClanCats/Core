@@ -2,7 +2,7 @@
 /**
  * ClanCats Finder 
  * 
- * The Finder is the CCF autoloader it's a mixture between PSR-2 and PSR-4,
+ * The Finder is the CCF autoloader it's a mixture between PSR-0 and PSR-4,
  * that might sound really freaking strange and bad in first place but makes
  * development a bit more comfortable.
  * 
@@ -18,7 +18,7 @@
  * @package		ClanCatsFramework
  * @author		Mario Döring <mario@clancats.com>
  * @version		3.0
- * @copyright 	2010 - 2015 Mario Döring
+ * @copyright 	2010 - 2015 ClanCats GmbH
  *
  */
 class CCFinder 
@@ -294,9 +294,9 @@ class CCFinder
 		/*
 		 * run the static init if possible
 		 */
-		if ( method_exists( $class, '_init' ) ) 
+		if ( method_exists( $class, '__staticConstruct' ) ) 
 		{
-			$class::_init();
+			$class::__staticConstruct();
 		}
 		
 		return true;

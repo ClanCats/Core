@@ -8,9 +8,16 @@
  * all important parts come together and build something 
  * aweomse together.
  */
- 
-use ClanCats\Core\CCFinder;
 
+/*
+ *---------------------------------------------------------------
+ * file extension 
+ *---------------------------------------------------------------
+ * 
+ * This defines the global used file extention of the php files.
+ */
+define( 'EXT', '.php' );
+ 
 /*
  * The paths have always to be set in the application the 
  * core does not have any defaults.
@@ -22,11 +29,21 @@ use ClanCats\Core\CCFinder;
  *     core => CCPATH_CORE
  */
 $paths = array_merge( array(
+
+    // The default path to your CCF application
 	'app'			=> CCFROOT.'app/',
+	
+	// the default path the applications orbit
 	'orbit'			=> CCFROOT.'orbit/',
+	
+	// the default path of the application public directory
 	'public'		=> CCFROOT.'public/',
+	
+	// the default path to the composer vendor
 	'vendor'		=> CCFROOT.'vendor/',
-	'core'			=> CCFROOT.'vendor/clancats/core/bundle/',
+	
+	// the default path of the CCF core bundle
+	'core'			=> CCFROOT.'vendor/CCF/core/bundle/',
 ), $paths ); 
 
 foreach( $paths as $key => $path )
@@ -70,7 +87,7 @@ define( 'CCF_PROFILER_MEMORY_START', memory_get_usage() );
 
 /*
  *---------------------------------------------------------------
- * Require autoloader & register the autoloader
+ * Require CCFinder & register the autoloader
  *---------------------------------------------------------------
  * 
  * The time has come to load our autoloader. 
@@ -79,17 +96,15 @@ require_once CCPATH_CORE.CCDIR_SOURCE."CCFinder".EXT;
 
 CCFinder::register();
 
-die;
-
 /*
  *---------------------------------------------------------------
- * ClanCatsFramework map 
+ * CCFFramework map 
  *---------------------------------------------------------------
  * 
  * include the CCF map file 
  */
-require COREPATH.'map'.EXT;
-
+require CCPATH_CORE.'map'.EXT;
+die;
 /*
  *---------------------------------------------------------------
  * shortcuts
@@ -174,8 +189,8 @@ error_reporting(-1);
  * CCF wants to know wich paths and directories are registerd
  * so we pass the initinal param to the CCF object.
  */
-ClanCats::paths( $paths, false );
-ClanCats::directories( $directories, false );
+CCF::paths( $paths, false );
+CCF::directories( $directories, false );
 
 unset( $paths, $directories );
 
@@ -194,7 +209,7 @@ unset( $paths, $directories );
  */
 if ( !isset( $environment ) )
 {
-	$environment = ClanCats::environment_detector( require CCROOT.'boot/environment'.EXT );
+	$environment = CCF::environment_detector( require CCROOT.'boot/environment'.EXT );
 }
 
 /*
@@ -204,7 +219,7 @@ if ( !isset( $environment ) )
  * 
  * Lets wake the ccf and pass the environment.
  */
-ClanCats::wake( $environment );
+CCF::wake( $environment );
 
 unset( $environment );
 
@@ -219,7 +234,7 @@ CCProfiler::check( "[CCF] framework wake completed" );
  * Start output buffering if it isn't disabled and we are not 
  * running ccf from the command line interface.
  */
-if ( !ClanCats::is_cli() && ClanCats::$config->output_buffering ) 
+if ( !CCF::is_cli() && CCF::$config->output_buffering ) 
 {
 	ob_start();
 }
@@ -232,9 +247,9 @@ if ( !ClanCats::is_cli() && ClanCats::$config->output_buffering )
  * Sets the default timezone used by all php native date/time 
  * functions in the application. 
  */
-if ( ClanCats::$config->timezone ) 
+if ( CCF::$config->timezone ) 
 {
-	if ( !date_default_timezone_set( ClanCats::$config->timezone ) ) 
+	if ( !date_default_timezone_set( CCF::$config->timezone ) ) 
 	{
 		throw new CCException( "CCF - The given timezone is invalid. check main config -> timezone." );
 	}
@@ -247,9 +262,9 @@ if ( ClanCats::$config->timezone )
  * 
  * Sets the default locale.
  */
-if ( ClanCats::$config->locale ) 
+if ( CCF::$config->locale ) 
 {
-	if ( !setlocale( LC_ALL, ClanCats::$config->locale ) ) {
+	if ( !setlocale( LC_ALL, CCF::$config->locale ) ) {
 		throw new CCException( "CCF - The given locale is invalid.  check main config -> locale" );
 	}
 }

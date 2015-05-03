@@ -1,4 +1,4 @@
-<?php namespace Core;
+<?php namespace ClanCats\Core;
 /**
  * ClanCatsFramework main class
  ** 
@@ -9,14 +9,14 @@
  * @copyright 	2010 - 2015 ClanCats GmbH
  *
  */
-class ClanCats 
+class CCF 
 {
 	/**
-	 * The current ccf version
+	 * The current CCF version
 	 *
 	 * @var string
 	 */
-	const VERSION 	= '2.0.0';
+	const VERSION 	= '3.0.0';
 	
 	/**
 	 * The current CCF environment

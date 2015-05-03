@@ -8,10 +8,8 @@
  *
  * @package		ClanCatsFramework
  * @author		Mario Döring <mario@clancats.com>
- * @version		2.0
+ * @version		3.0
  * @copyright 	2010 - 2015 ClanCats GmbH
- *
- * ###
  *
  *---------------------------------------------------------------
  * Application root 
@@ -24,24 +22,11 @@ define( 'CCFROOT', __DIR__.'/' );
 
 /*
  *---------------------------------------------------------------
- * file extension 
- *---------------------------------------------------------------
- * 
- * This defines the global used file extention of the php files.
- */
-define( 'EXT', '.php' );
-
-/*
- *---------------------------------------------------------------
  * set the boot paths
  *---------------------------------------------------------------
  */
 $paths = array(
-	'app'			=> CCFROOT.'app/',
-	'orbit'			=> CCFROOT.'orbit/',
-	'public'		=> CCFROOT.'public/',
-	'vendor'		=> CCFROOT.'vendor/',
-	'core'			=> CCFROOT.'../bundle/',
+	'core' => CCFROOT.'../bundle/',
 );
 
 /*
@@ -62,27 +47,18 @@ $environment = 'phpunit';
 
 /*
  *---------------------------------------------------------------
- * wake CCF
+ * Require CCF core bundle wake
  *---------------------------------------------------------------
  * 
- * Lets require the ClanCatsFramework resources
+ * The core bundle wake file initialises the ClanCats Framework.
  */
-require $paths['core'].'wake'.EXT;
-
-// write header
-ClanCats::write_cli_header();
+require $paths['core'].'wake.php';
 
 /*
  *---------------------------------------------------------------
- * CCUnit resources
+ * Create new CCF Application
  *---------------------------------------------------------------
- *
- * For the unit tests we need some additional resources like
- * controllers, views, ect... 
+ * 
+ * The core bundle wake file initialises the ClanCats Framework.
  */
-//CCFinder::bundle( 'CCUnit', CCFPATH.'CCUnit/' );
-
-
-// wake the phpunit application class this bypasses a failure 
-// of the clancats::runtime unitest
-//ClanCats::wake_app( 'PHPUnitApp' );
+CCF::create( '\\PHPUnitApp' );
